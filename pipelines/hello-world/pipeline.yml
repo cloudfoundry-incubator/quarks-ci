@@ -1,0 +1,38 @@
+---
+jobs:
+- name: hello-world
+  plan:
+  - task: hello-inline
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ubuntu
+          tag: bionic
+      params:
+        GREETING: ((secret-greeting))
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - |
+          #!/bin/sh
+
+          echo "Hello, ${GREETING}!"
+
+  - task: hello-script
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: ubuntu
+          tag: bionic
+      params:
+        GREETING: ((greeting))
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - (( file "scripts/hello-greeting.sh" ))

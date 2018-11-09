@@ -1,0 +1,105 @@
+#!/bin/bash
+
+set -euo pipefail
+
+BASEDIR="$(cd "$(dirname "$0")" && pwd)"
+
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+PipelineInfo() {
+  local -r PIPELINE=$1
+  local -r TARGET=$2
+
+  if hash spruce 2>/dev/null; then
+    if hash jq 2>/dev/null; then
+      CONCOURSE_URL=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].api")
+      TEAM_NAME=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].team")
+      API_PIPELINE_PATH="${CONCOURSE_URL}/api/v1/teams/${TEAM_NAME}/pipelines"
+
+      TOKEN=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].token.value")
+      if [[ ${TOKEN} == "null" ]]; then
+        echo "Not able to retrieve the token, skipping info section"
+        return
+      fi
+
+      PIPELINE_EXISTS=$(curl --silent --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}")
+      if [[ -z ${PIPELINE_EXISTS} ]]; then
+        echo "Pipeline is not deployed."
+        return
+      fi
+
+      ALL_GROUPS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r '.groups[]?.name')
+      PIPELINE_STATUS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r .paused)
+      PIPELINE_RESOURCES=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}/resources" | jq '. | length')
+
+      echo -e "Displaying some insights of the $GREEN${PIPELINE}$NC pipeline:"
+      echo -e ""
+      echo -e "Paused: $GREEN${PIPELINE_STATUS}$NC"
+      echo -e "Resources: $GREEN${PIPELINE_RESOURCES}$NC"
+
+      if [ "$ALL_GROUPS" != "" ]; then
+        echo -e "Groups: "
+        for GROUP in $ALL_GROUPS; do
+          echo -e "  ---->" "$GREEN${GROUP}$NC"
+        done
+      fi
+
+      CONCOURSE_URL=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].api")
+      TEAM_NAME=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].team")
+      echo
+      echo "On a Mac with iTerm2, just press 'Cmd' and click on the link to open a browser tab with the pipeline:"
+      echo -e '\033[4;94m'"${CONCOURSE_URL}/teams/${TEAM_NAME}/pipelines/${PIPELINE}"'\033[0m'
+      echo
+    fi
+  fi
+}
+
+FlyPipeline() {
+  local -r target=$1
+  local -r pipeline=$2
+
+  pushd "${BASEDIR}/pipelines/${pipeline}" >/dev/null 2>&1
+  if [ -f "pipeline.yml" ] && [ -f "vars.yml" ]; then
+    fly --target "${target}" set-pipeline \
+      --pipeline="${pipeline}" \
+      --config=<(spruce merge "pipeline.yml") \
+      --load-vars-from="vars.yml" \
+      --load-vars-from=<(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" --notes)
+    PipelineInfo "$pipeline" "$target"
+  else
+    echo "Error: required ${pipeline} pipeline files are missing: pipeline.yml, and vars.yml"
+
+  fi
+  popd >/dev/null 2>&1
+}
+
+# --- --- ---
+
+if [ "$#" -ne 2 ]; then
+  echo "Usage: $0 <CONCOURSE_TARGET> <PIPELINE>"
+  echo ""
+
+  # Usage help, part 1, show available concourse targets
+  if hash jq 2>/dev/null && hash spruce 2>/dev/null; then
+    echo -e "Available targets:"
+    spruce json "$HOME/.flyrc" | jq --raw-output '.targets | keys[]' | while read -r target; do
+      echo -e "- $GREEN${target}$NC"
+    done
+    echo ""
+  fi
+
+  # Usage help, part 2, show available pipelines (directories under pipelines)
+  echo -e "Available pipelines:"
+  (cd "${BASEDIR}/pipelines" 2>/dev/null && ls -1) | while read -r item; do
+    echo -e "- $GREEN${item}$NC"
+  done
+  echo ""
+
+  exit 1
+fi
+
+echo -e '\n'
+
+echo "Info: Flying pipeline $2 in concourse target $1..."
+FlyPipeline "$1" "$2"
