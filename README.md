@@ -27,4 +27,12 @@ The pipelines must follow a simple contract in order to work with the convenienc
 You can find a pipeline example under `pipelines/hello-world`.
 
 ### Caveat
+
+#### LastPass
 In order to not have to explicitly specify each secret by key in the `fly` command, we use the _Notes_  section of one secret as a YAML and store the required secrets in there as one block. This keeps the `fly` command simple and allows for an easy way to add more secrets, however this also means that everybody has to use one LastPass site entry. The usage of CredHub would be preferred if possible in the future.
+
+#### The containerization tag
+
+In the existing concourse deployment, there are currently 2 workers with a tag by the name `containerization`. This is intended so that this 2 workers will host all the `cf-containerization` workload.
+
+In order for your pipelines to be directed to these set of workers, you need to make use of the `tag` step modifier, please refer to the [tag documentation](https://concourse-ci.org/tags-step-modifier.html)

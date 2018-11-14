@@ -3,6 +3,7 @@ jobs:
 - name: hello-world
   plan:
   - task: hello-inline
+    tags: [containerization]
     config:
       platform: linux
       image_resource:
@@ -22,6 +23,7 @@ jobs:
           echo "Hello, ${GREETING}!"
 
   - task: hello-script
+    tags: [containerization]
     config:
       platform: linux
       image_resource:
