@@ -1,0 +1,24 @@
+resources:
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+    paths:
+    - dockerfiles
+- name: docker.go-tools
+  type: docker-image
+  source:
+    repository: ((docker-organization))/go-tools
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+jobs:
+- name: go-tools
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+  - put: docker.go-tools
+    params:
+      build: ci/dockerfiles/go-tools
