@@ -11,9 +11,7 @@ service docker status
 trap 'service docker stop' EXIT
 sleep 10
 
-#
-# WIP: need to define where exactly to push the images, our current IBM container registry will not have enough quota for amount of images.
-# echo "${REGISTRY_PASSWORD_RW}" | docker login --username "${REGISTRY_USERNAME}" --password-stdin "${REGISTRY_ENDPOINT}"
+echo "${DOCKER_TEAM_PASSWORD_RW}" | docker login --username "${DOCKER_TEAM_USERNAME}" --password-stdin
 
 pushd scf-pub-github-repo
 source .envrc
@@ -38,12 +36,11 @@ echo "[INFO] fissile version: $(fissile version)"
 SCF_VERSION="$(git describe --tags)"
 
 make docker-deps
-#
-# WIP: need to define where exactly to push the images, our current IBM container registry will not have enough quota for amount of images.
+
 # export FISSILE_DOCKER_REGISTRY="${REGISTRY_ENDPOINT}"
-# export FISSILE_DOCKER_USERNAME="${REGISTRY_USERNAME}"
-# export FISSILE_DOCKER_PASSWORD="${REGISTRY_PASSWORD_RO}"
-# export FISSILE_DOCKER_ORGANIZATION="${REGISTRY_NAMESPACE}"
+export FISSILE_DOCKER_USERNAME="${DOCKER_TEAM_USERNAME}"
+export FISSILE_DOCKER_PASSWORD="${DOCKER_TEAM_PASSWORD_RW}"
+export FISSILE_DOCKER_ORGANIZATION="${REGISTRY_NAMESPACE}"
 
 make releases \
   compile \
@@ -62,9 +59,8 @@ pushd ${HELM_TMP_DIR}
 tar -czf ${TARGET_TGZ} helm kube
 popd
 
-#
-# WIP: need to define where exactly to push the images, our current IBM container registry will not have enough quota for amount of images.
-# echo "Pushing Docker images ..."
-# docker images --format "{{.Repository}}:{{.Tag}}" | grep "${REGISTRY_ENDPOINT}/${REGISTRY_NAMESPACE}" | while read -r DOCKER_IMAGE_AND_TAG; do
-#   docker push "${DOCKER_IMAGE_AND_TAG}"
-# done
+echo "Pushing Docker images ..."
+docker images --format "{{.Repository}}:{{.Tag}}" | grep "${REGISTRY_NAMESPACE}/" | while read -r DOCKER_IMAGE_AND_TAG; do
+  docker push "${DOCKER_IMAGE_AND_TAG}"
+done
+  
