@@ -6,7 +6,7 @@ resources:
   check_every: 60m
   source:
     uri: https://github.com/SUSE/scf.git
-    branch: 2.14.3
+    branch: 2.14.5
     git_config:
     - name: submodule.fetchJobs
       value: 128

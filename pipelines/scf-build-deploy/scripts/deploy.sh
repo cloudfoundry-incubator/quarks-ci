@@ -16,7 +16,7 @@ releases:
   chart_location: charts/helm/uaa
   overrides:
     secrets:
-      UAA_ADMIN_CLIENT_SECRET: MyUaaAdminClientSecret
+      UAA_ADMIN_CLIENT_SECRET: foobar
     env:
       DOMAIN: (( shell bx cs cluster-get --cluster ${CLUSTER_NAME} --json | jq --raw-output .ingressHostname ))
     kube:
@@ -32,7 +32,7 @@ releases:
   overrides:
     secrets:
       CLUSTER_ADMIN_PASSWORD: changeme
-      UAA_ADMIN_CLIENT_SECRET: MyUaaAdminClientSecret
+      UAA_ADMIN_CLIENT_SECRET: foobar
       UAA_CA_CERT: (( shell kubectl --namespace uaa get pods --output json | jq --raw-output ".items[].spec.containers[] | select(.name == \"uaa\") | .env[] | select(.name == \"INTERNAL_CA_CERT\") | [ .valueFrom.secretKeyRef.name, .valueFrom.secretKeyRef.key ] | @tsv" | while read -r SECRET_NAME SECRET_KEY; do kubectl --namespace uaa get secret "${SECRET_NAME}" --output json | jq --raw-output ".data[\"${SECRET_KEY}\"]" | base64 -d; done ))
     env:
       DOMAIN: (( shell bx cs cluster-get --cluster ${CLUSTER_NAME} --json | jq --raw-output .ingressHostname ))
