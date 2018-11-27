@@ -7,52 +7,157 @@ BASEDIR="$(cd "$(dirname "$0")" && pwd)"
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+GetSystemName() {
+  case "$(uname)" in
+    Darwin)
+      echo "darwin"
+      ;;
+
+    Linux)
+      # shellcheck disable=SC1091
+      source /etc/os-release
+      echo "${ID_LIKE:-$ID}"
+      ;;
+
+    *)
+      echo "unknown"
+      ;;
+  esac
+}
+
+CheckPreReqs() {
+  for TOOL in jq spruce fly lpass; do
+    if ! hash "${TOOL}" 2>/dev/null; then
+      echo -e "Required prerequisite \\033[1m${TOOL}\\033[0m is not installed. Unable to proceed.\\n"
+
+      case "$(GetSystemName)" in
+        darwin)
+          cat <<'EOF'
+Install suggestions:
+- jq, the lightweight and flexible command-line JSON processor:
+  brew install jq
+
+- spruce, general purpose YAML & JSON merging tool:
+  brew install starkandwayne/cf/spruce
+
+- fly, concourse command line tool:
+  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=darwin' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  
+- lpass, LastPass command line tool:
+  brew install lastpass-cli
+
+EOF
+          ;;
+
+        debian)
+          cat <<'EOF'
+Install suggestions:
+- jq, the lightweight and flexible command-line JSON processor, and curl, command line tool for transferring data with URLs:
+  sudo apt-get install -y jq curl
+
+- spruce, general purpose YAML & JSON merging tool:
+  curl --silent --location "https://github.com/geofffranks/spruce/releases/download/$(curl --silent --location "https://api.github.com/repos/geofffranks/spruce/releases/latest" | jq --raw-output .tag_name)/spruce-linux-amd64" --output /usr/local/bin/spruce && chmod a+rx /usr/local/bin/spruce
+
+- fly, concourse command line tool:
+  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  
+- lpass, LastPass command line tool:
+  apt-get update >/dev/null && \
+  apt-get --no-install-recommends -yqq install \
+    bash-completion \
+    build-essential \
+    cmake \
+    libcurl3  \
+    libcurl3-openssl-dev  \
+    libssl1.0 \
+    libssl1.0-dev \
+    libxml2 \
+    libxml2-dev  \
+    pkg-config \
+    ca-certificates \
+    xclip \
+    git-core && \
+  git clone https://github.com/lastpass/lastpass-cli /tmp/lpass && \
+  make -C /tmp/lpass install && \
+  rm -rf /tmp/lpass
+
+EOF
+          ;;
+
+        suse)
+          cat <<'EOF'
+Install suggestions:
+- jq, the lightweight and flexible command-line JSON processor, and curl, command line tool for transferring data with URLs:
+  zypper install -y jq curl
+
+- spruce, general purpose YAML & JSON merging tool:
+  curl --silent --location "https://github.com/geofffranks/spruce/releases/download/$(curl --silent --location "https://api.github.com/repos/geofffranks/spruce/releases/latest" | jq --raw-output .tag_name)/spruce-linux-amd64" --output /usr/local/bin/spruce && chmod a+rx /usr/local/bin/spruce
+
+- fly, concourse command line tool:
+  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  
+- lpass, LastPass command line tool:
+  zypper install -y -t pattern devel_C_C++ && \
+  zypper install -y make cmake gcc gcc-c++ libxml2-devel libopenssl-devel libcurl-devel && \
+  git clone https://github.com/lastpass/lastpass-cli /tmp/lpass && \
+  make -C /tmp/lpass install && \
+  rm -rf /tmp/lpass
+
+EOF
+          ;;
+
+        unknown)
+          echo "Sorry, we do not have any install suggestions for your platform. Feel free to PR it."
+          ;;
+      esac
+
+      exit 1
+    fi
+  done
+}
+
 PipelineInfo() {
   local -r PIPELINE=$1
   local -r TARGET=$2
 
-  if hash spruce 2>/dev/null; then
-    if hash jq 2>/dev/null; then
-      CONCOURSE_URL=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].api")
-      TEAM_NAME=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].team")
-      API_PIPELINE_PATH="${CONCOURSE_URL}/api/v1/teams/${TEAM_NAME}/pipelines"
+  CONCOURSE_URL=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].api")
+  TEAM_NAME=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].team")
+  API_PIPELINE_PATH="${CONCOURSE_URL}/api/v1/teams/${TEAM_NAME}/pipelines"
 
-      TOKEN=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].token.value")
-      if [[ ${TOKEN} == "null" ]]; then
-        echo "Not able to retrieve the token, skipping info section"
-        return
-      fi
-
-      PIPELINE_EXISTS=$(curl --silent --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}")
-      if [[ -z ${PIPELINE_EXISTS} ]]; then
-        echo "Pipeline is not deployed."
-        return
-      fi
-
-      ALL_GROUPS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r '.groups[]?.name')
-      PIPELINE_STATUS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r .paused)
-      PIPELINE_RESOURCES=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}/resources" | jq '. | length')
-
-      echo -e "Displaying some insights of the $GREEN${PIPELINE}$NC pipeline:"
-      echo -e ""
-      echo -e "Paused: $GREEN${PIPELINE_STATUS}$NC"
-      echo -e "Resources: $GREEN${PIPELINE_RESOURCES}$NC"
-
-      if [ "$ALL_GROUPS" != "" ]; then
-        echo -e "Groups: "
-        for GROUP in $ALL_GROUPS; do
-          echo -e "  ---->" "$GREEN${GROUP}$NC"
-        done
-      fi
-
-      CONCOURSE_URL=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].api")
-      TEAM_NAME=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].team")
-      echo
-      echo "On a Mac with iTerm2, just press 'Cmd' and click on the link to open a browser tab with the pipeline:"
-      echo -e '\033[4;94m'"${CONCOURSE_URL}/teams/${TEAM_NAME}/pipelines/${PIPELINE}"'\033[0m'
-      echo
-    fi
+  TOKEN=$(spruce json "$HOME/.flyrc" | jq -r ".targets[\"$TARGET\"].token.value")
+  if [[ ${TOKEN} == "null" ]]; then
+    echo "Not able to retrieve the token, skipping info section"
+    return
   fi
+
+  PIPELINE_EXISTS=$(curl --silent --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}")
+  if [[ -z ${PIPELINE_EXISTS} ]]; then
+    echo "Pipeline is not deployed."
+    return
+  fi
+
+  ALL_GROUPS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r '.groups[]?.name')
+  PIPELINE_STATUS=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}" | jq -r .paused)
+  PIPELINE_RESOURCES=$(curl -s --header "Authorization: Bearer $TOKEN" -X GET "${API_PIPELINE_PATH}/${PIPELINE}/resources" | jq '. | length')
+
+  echo -e "Displaying some insights of the $GREEN${PIPELINE}$NC pipeline:"
+  echo -e ""
+  echo -e "Paused: $GREEN${PIPELINE_STATUS}$NC"
+  echo -e "Resources: $GREEN${PIPELINE_RESOURCES}$NC"
+
+  if [ "$ALL_GROUPS" != "" ]; then
+    echo -e "Groups: "
+    for GROUP in $ALL_GROUPS; do
+      echo -e "  ---->" "$GREEN${GROUP}$NC"
+    done
+  fi
+
+  CONCOURSE_URL=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].api")
+  TEAM_NAME=$(spruce json "${HOME}"/.flyrc | jq -r ".targets[\"${TARGET}\"].team")
+  echo
+  echo "On a Mac with iTerm2, just press 'Cmd' and click on the link to open a browser tab with the pipeline:"
+  echo -e '\033[4;94m'"${CONCOURSE_URL}/teams/${TEAM_NAME}/pipelines/${PIPELINE}"'\033[0m'
+  echo
 }
 
 FlyPipeline() {
@@ -76,18 +181,18 @@ FlyPipeline() {
 
 # --- --- ---
 
+CheckPreReqs
+
 if [ "$#" -ne 2 ]; then
   echo "Usage: $0 <CONCOURSE_TARGET> <PIPELINE>"
   echo ""
 
   # Usage help, part 1, show available concourse targets
-  if hash jq 2>/dev/null && hash spruce 2>/dev/null; then
-    echo -e "Available targets:"
-    spruce json "$HOME/.flyrc" | jq --raw-output '.targets | keys[]' | while read -r target; do
-      echo -e "- $GREEN${target}$NC"
-    done
-    echo ""
-  fi
+  echo -e "Available targets:"
+  spruce json "$HOME/.flyrc" | jq --raw-output '.targets | keys[]' | while read -r target; do
+    echo -e "- $GREEN${target}$NC"
+  done
+  echo ""
 
   # Usage help, part 2, show available pipelines (directories under pipelines)
   echo -e "Available pipelines:"
