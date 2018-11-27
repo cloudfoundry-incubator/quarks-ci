@@ -7,10 +7,28 @@ To fly one of the pipelines, a couple pre-req tools are required on your local m
 - [`fly`](https://concourse-ci.org/fly.html) to set the pipeline
 - [`lpass`](https://github.com/lastpass/lastpass-cli) to retrieve secrets from the LastPass shared folder
 
+Run `fly-pipeline` to get installation suggestions for your respective platform.
+
+
 ## Set a concourse pipeline
 The convenience script `fly-pipeline` allows you to set your pipeline into an existing concourse server. Run it without any arguments to get a list of configured targets and available pipelines.
 
-_Note:_ Make sure you are logged in the concourse target, e.g `fly -t TARGET login`.
+_First time users:_ You only need to do this once.
+- Setup Concourse target to be used:
+  ```
+  fly --target flintstone login \
+      --concourse-url=https://flintstone.ci.cf-app.com \
+      --team-name=containerization
+  ```
+- Setup LassPass command line client:
+  ```
+  lpass login <your-lastpass-user>
+  ```
+
+_Note:_ Make sure you are logged in the Concourse target:
+```
+fly --target flintstone login
+```
 
 _Example:_
 ```
