@@ -1,0 +1,115 @@
+---
+resources:
+- name: scf-pub-github-repo
+  tags: [containerization]
+  type: git
+  check_every: 60m
+  source:
+    uri: https://github.com/SUSE/scf.git
+    branch: 2.14.5
+    git_config:
+    - name: submodule.fetchJobs
+      value: 128
+
+- name: scf-helm-charts
+  tags: [containerization]
+  type: s3
+  check_every: 5m
+  source:
+    disable_ssl: true
+    bucket: unique-bbuccket
+    endpoint: ((cos-endpoint))
+    regexp: scf-(.*)-helm.tar.gz
+    access_key_id: ((cos-access-key-id))
+    secret_access_key: ((cos-secret-access-key))
+
+jobs:
+- name: scf-build
+  plan:
+  - get: scf-pub-github-repo
+    tags: [containerization]
+    trigger: true
+    params: { submodules: all }
+  - task: scf-build
+    tags: [containerization]
+    privileged: true
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: havener/build-environment
+          tag: latest
+      inputs:
+      - name: scf-pub-github-repo
+      outputs:
+      - name: helm-chart-store
+      params:
+        # REGISTRY_ENDPOINT: "registry.hub.docker.com"
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - (( file "scripts/build.sh" ))
+  - put: scf-helm-charts
+    tags: [containerization]
+    attempts: 5
+    params:
+      file: helm-chart-store/scf-*-helm.tar.gz
+
+- name: scf-deploy
+  plan:
+  - get: scf-helm-charts
+    tags: [containerization]
+    passed: [scf-build]
+    trigger: true
+  - task: scf-deploy
+    tags: [containerization]
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: havener/alpine-havener
+          tag: latest
+      inputs:
+      - name: scf-helm-charts
+      params:
+        BX_API: api.eu-gb.bluemix.net
+        BX_API_KEY: ((ibmcloud.key-value))
+        CLUSTER_NAME: pebbles01
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - (( file "scripts/deploy.sh" ))
+
+- name: scf-test
+  plan:
+  - get: scf-helm-charts
+    tags: [containerization]
+    passed: [scf-deploy]
+    trigger: true
+  - task: scf-test
+    tags: [containerization]
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: havener/alpine-havener
+          tag: latest
+      inputs:
+      - name: scf-helm-charts
+      params:
+        BX_API: api.eu-gb.bluemix.net
+        BX_API_KEY: ((ibmcloud.key-value))
+        CLUSTER_NAME: pebbles01
+      run:
+        path: /bin/bash
+        args:
+        - -c
+        - (( file "scripts/test.sh" ))
