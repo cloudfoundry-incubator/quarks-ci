@@ -50,7 +50,7 @@ releases:
 EOF
 
 havener purge --non-interactive uaa cf
-havener deploy --config armada-deploy.yml
+havener deploy --config armada-deploy.yml --timeout 80
 
 CF_NAMESPACE=cf
 BASE_SECRET="$(kubectl --namespace "${CF_NAMESPACE}" get cm secrets-config --output json | jq --raw-output '.data["current-secrets-name"]')"

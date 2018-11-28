@@ -6,7 +6,7 @@ resources:
   check_every: 60m
   source:
     uri: https://github.com/SUSE/scf.git
-    branch: 2.14.5
+    branch: 2.13.3
     git_config:
     - name: submodule.fetchJobs
       value: 128
@@ -74,7 +74,7 @@ jobs:
         type: docker-image
         source:
           repository: havener/alpine-havener
-          tag: latest
+          tag: v0.6-alpha
       inputs:
       - name: scf-helm-charts
       params:
@@ -101,7 +101,7 @@ jobs:
         type: docker-image
         source:
           repository: havener/alpine-havener
-          tag: latest
+          tag: v0.6-alpha
       inputs:
       - name: scf-helm-charts
       params:

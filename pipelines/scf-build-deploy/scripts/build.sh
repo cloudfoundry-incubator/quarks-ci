@@ -21,16 +21,32 @@ source .envrc
 REQUIRED_FISSILE_VERSION=$(source ./bin/common/versions.sh && echo "${FISSILE_VERSION}")
 REQUIRED_FISSILE_COMMIT_SHA="$(grep -Eo '[A-Za-z0-9]{7}$' <<<"${REQUIRED_FISSILE_VERSION}")"
 echo "Required fissile version: ${REQUIRED_FISSILE_VERSION}"
+
+# Add workaround, because latest stable scf version(2.13.3) needs to use old fissile git
+# repo
 pushd "$(mktemp -d)" >/dev/null
 ( mkdir -p src && \
   export GOPATH=$PWD && \
   export PATH="$PATH:$GOPATH/bin" && \
-  go get -d code.cloudfoundry.org/fissile || true && \
-  cd $GOPATH/src/code.cloudfoundry.org/fissile && \
+  git clone https://github.com/SUSE/fissile $GOPATH/src/github.com/SUSE/fissile && \
+  cd $GOPATH/src/github.com/SUSE/fissile && \
+  perl -pi -e "s/github.com\/golang\/lint\/golint/golang.org\/x\/lint\/golint/g" make/tools && \
   git checkout "${REQUIRED_FISSILE_COMMIT_SHA}" && \
   make tools docker-deps build && \
   cp -p build/linux-amd64/fissile /usr/local/bin/fissile )
 popd >/dev/null
+
+# pushd "$(mktemp -d)" >/dev/null
+# ( mkdir -p src && \
+#   export GOPATH=$PWD && \
+#   export PATH="$PATH:$GOPATH/bin" && \
+#   go get -d code.cloudfoundry.org/fissile || true && \
+#   cd $GOPATH/src/code.cloudfoundry.org/fissile && \
+#   git checkout "${REQUIRED_FISSILE_COMMIT_SHA}" && \
+#   make tools docker-deps build && \
+#   cp -p build/linux-amd64/fissile /usr/local/bin/fissile )
+# popd >/dev/null
+
 echo "[INFO] fissile version: $(fissile version)"
 
 SCF_VERSION="$(git describe --tags)"
