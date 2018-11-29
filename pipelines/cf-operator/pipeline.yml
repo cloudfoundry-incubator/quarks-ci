@@ -1,0 +1,46 @@
+resources:
+- name: src
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((src-repo))
+    branch: master
+
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+- name: docker.cf-operator
+  type: docker-image
+  source:
+    repository: ((docker-organization))/cf-operator
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+
+jobs:
+- name: build
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      trigger: true
+  - task: vet
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/vet.yml
+  - task: lint
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/lint.yml
+  - task: test
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/test.yml
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build.yml
+  - put: docker.cf-operator
+    params:
+      build: docker/
+      dockerfile: docker/build/Dockerfile
+      tag: docker/tag

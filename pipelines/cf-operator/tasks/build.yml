@@ -1,0 +1,15 @@
+---
+platform: linux
+image_resource:
+ type: docker-image
+ source:
+   repository: cfcontainerization/go-tools
+   tag: latest
+inputs:
+- name: src
+  path: src/code.cloudfoundry.org/cf-operator
+- name: ci
+outputs:
+- name: docker
+run:
+  path: ci/pipelines/cf-operator/tasks/build.sh
