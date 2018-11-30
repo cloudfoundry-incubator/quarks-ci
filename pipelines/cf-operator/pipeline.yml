@@ -5,7 +5,6 @@ resources:
   source:
     uri: ((src-repo))
     branch: master
-
 - name: ci
   type: git
   tags: [containerization]
@@ -14,10 +13,21 @@ resources:
     branch: ((ci-branch))
 - name: docker.cf-operator
   type: docker-image
+  tags: [containerization]
   source:
     repository: ((docker-organization))/cf-operator
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: s3.helm-charts
+  type: s3
+  tags: [containerization]
+  source:
+    access_key_id: ((cos-access-key-id))
+    secret_access_key: ((cos-secret-access-key))
+    bucket: operator-helm-charts
+    endpoint: ((cos-endpoint))
+    disable_ssl: true
+    regexp: cf-operator-(.*).zip
 
 jobs:
 - name: build
@@ -44,3 +54,20 @@ jobs:
       build: docker/
       dockerfile: docker/build/Dockerfile
       tag: docker/tag
+
+- name: build-helm
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+      passed: [build]
+    - get: src
+      trigger: true
+      passed: [build]
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build-helm.yml
+  - put: s3.helm-charts
+    params:
+      file: helm-chart/cf-operator-*.zip
+      acl: public-read
