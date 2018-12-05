@@ -51,7 +51,7 @@ jobs:
     file: ci/pipelines/cf-operator/tasks/build.yml
   - put: docker.cf-operator
     params:
-      build: docker/
+      build: docker/build
       dockerfile: docker/build/Dockerfile
       tag: docker/tag
 
