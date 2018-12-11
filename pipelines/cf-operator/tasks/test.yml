@@ -9,5 +9,7 @@ inputs:
 - name: src
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
+caches:
+- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/cf-operator/tasks/test.sh
