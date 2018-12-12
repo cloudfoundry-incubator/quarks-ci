@@ -11,5 +11,7 @@ inputs:
 - name: ci
 outputs:
 - name: docker
+caches:
+- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/cf-operator/tasks/build.sh
