@@ -1,0 +1,159 @@
+resource_types:
+- name: pull-request
+  type: docker-image
+  source:
+    repository: teliaoss/github-pr-resource
+- name: status
+  type: docker-image
+  source:
+    repository: resource/github-status
+    tag: release
+
+resources:
+- name: src
+  type: pull-request
+  tags: [containerization]
+  source:
+    repository: ((pr-repo))
+    access_token: ((github.access-token))
+- name: status
+  type: status
+  source:
+    access_token: ((github.access-token))
+    repo: ((pr-repo))
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+
+jobs:
+- name: vet
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      trigger: true
+  - put: status
+    params:
+      context: vet
+      description: go vet check
+      path: src
+      state: pending
+  - do:
+    - task: vet
+      tags: [containerization]
+      file: ci/pipelines/cf-operator/tasks/vet.yml
+    on_failure:
+      put: status
+      params:
+        context: vet
+        description: go vet check
+        path: src
+        state: failure
+    on_success:
+      put: status
+      params:
+        context: vet
+        description: go vet check
+        path: src
+        state: success
+
+- name: lint
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      trigger: true
+  - put: status
+    params:
+      context: lint
+      description: lint check
+      path: src
+      state: pending
+  - do:
+    - task: lint
+      tags: [containerization]
+      file: ci/pipelines/cf-operator/tasks/lint.yml
+    on_failure:
+      put: status
+      params:
+        context: lint
+        description: go lint check
+        path: src
+        state: failure
+    on_success:
+      put: status
+      params:
+        context: lint
+        description: go lint check
+        path: src
+        state: success
+
+- name: test
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      trigger: true
+  - put: status
+    params:
+      context: test
+      description: go test check
+      path: src
+      state: pending
+  - do:
+    - task: test
+      tags: [containerization]
+      file: ci/pipelines/cf-operator/tasks/test.yml
+    on_failure:
+      put: status
+      params:
+        context: test
+        description: go test check
+        path: src
+        state: failure
+    on_success:
+      put: status
+      params:
+        context: test
+        decription: go test check
+        path: src
+        state: success
+
+- name: build
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      trigger: true
+  - put: status
+    params:
+      context: build
+      description: go build check
+      path: src
+      state: pending
+  - do:
+    - task: build
+      tags: [containerization]
+      file: ci/pipelines/cf-operator/tasks/build.yml
+    on_failure:
+      put: status
+      params:
+        context: build
+        description: go build check
+        path: src
+        state: failure
+    on_success:
+      put: status
+      params:
+        context: build
+        decription: go build check
+        path: src
+        state: success
+
