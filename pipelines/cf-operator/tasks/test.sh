@@ -5,4 +5,5 @@ export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
 export GO111MODULE=on
 
-make -C src/code.cloudfoundry.org/cf-operator test-unit
+cd src/code.cloudfoundry.org/cf-operator
+make test-unit
