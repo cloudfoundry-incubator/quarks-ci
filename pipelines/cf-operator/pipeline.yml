@@ -22,11 +22,9 @@ resources:
   type: s3
   tags: [containerization]
   source:
-    access_key_id: ((cos-access-key-id))
-    secret_access_key: ((cos-secret-access-key))
-    bucket: operator-helm-charts
-    endpoint: ((cos-endpoint))
-    disable_ssl: true
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
     regexp: cf-operator-(.*).zip
 
 jobs:
@@ -69,4 +67,3 @@ jobs:
   - put: s3.helm-charts
     params:
       file: helm-chart/cf-operator-*.zip
-      acl: public-read
