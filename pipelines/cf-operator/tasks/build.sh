@@ -12,4 +12,5 @@ popd
 
 set -ex
 make -C src/code.cloudfoundry.org/cf-operator build
+cp src/code.cloudfoundry.org/cf-operator/binaries/cf-operator binaries/cf-operator-$VERSION_TAG
 echo $VERSION_TAG > docker/tag

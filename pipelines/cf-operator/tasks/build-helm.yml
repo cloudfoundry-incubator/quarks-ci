@@ -10,7 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
 outputs:
-- name: helm-chart
+- name: helm-charts
 caches:
 - path: pkg/mod # Persist go modules cache
 run:

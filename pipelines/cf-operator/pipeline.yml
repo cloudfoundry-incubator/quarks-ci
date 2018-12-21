@@ -18,6 +18,14 @@ resources:
     repository: ((docker-organization))/cf-operator
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: s3.cf-operator
+  type: s3
+  tags: [containerization]
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: binaries/cf-operator-(.*)
 - name: s3.helm-charts
   type: s3
   tags: [containerization]
@@ -25,7 +33,7 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: cf-operator-(.*).zip
+    regexp: helm-charts/cf-operator-(.*).zip
 
 jobs:
 - name: build
@@ -47,10 +55,14 @@ jobs:
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
-  - put: docker.cf-operator
-    params:
-      build: src
-      tag: docker/tag
+  - do:
+    - put: s3.cf-operator
+      params:
+        file: binaries/cf-operator-*
+    - put: docker.cf-operator
+      params:
+        build: src
+        tag: docker/tag
 
 - name: build-helm
   plan:
@@ -66,4 +78,4 @@ jobs:
     file: ci/pipelines/cf-operator/tasks/build-helm.yml
   - put: s3.helm-charts
     params:
-      file: helm-chart/cf-operator-*.zip
+      file: helm-charts/cf-operator-*.zip

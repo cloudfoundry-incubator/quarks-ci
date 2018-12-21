@@ -10,6 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
 outputs:
+- name: binaries
 - name: docker
 caches:
 - path: pkg/mod # Persist go modules cache
