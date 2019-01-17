@@ -23,5 +23,6 @@ FINAL_NAME=${REGISTRY_NAMESPACE}/${RELEASE_NAME}-release:${STEMCELL_VERSION}-${V
 
 s3.fissile-linux/fissile build release-images --stemcell=${STEMCELL} --name=${RELEASE_NAME} --version=${VERSION} --sha1=$(cat release/sha1) --url=$(cat release/url)
 
-docker tag fissile-${RELEASE_NAME}:${VERSION} ${FINAL_NAME}
+BUILT_IMAGE_ID=$(docker images | egrep ^fissile | awk '{print $3}')
+docker tag ${BUILT_IMAGE_ID} ${FINAL_NAME}
 docker push ${FINAL_NAME}

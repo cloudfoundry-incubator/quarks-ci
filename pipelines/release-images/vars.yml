@@ -1,5 +1,5 @@
 ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci
-ci-branch: aduffeck/release-images
+ci-branch: aduffeck/more-release-images
 docker-organization: cfcontainerization
 s3-bucket: cf-opensusefs2
 stemcell: splatform/fissile-stemcell-opensuse:42.3-18.g267f524-30.45

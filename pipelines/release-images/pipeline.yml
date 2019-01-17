@@ -1,9 +1,13 @@
 <%
-cloudfoundry_releases = %w(uaa cf-mysql capi cf-networking)
-incubator_releases = %w(bpm)
+cloudfoundry_releases = %w(cf-mysql capi cf-networking cf-smoke-tests cf-syslog-drain cflinuxfs2 cflinuxfs3 diego garden-runc loggregator nats statsd-injector uaa loggregator-agent log-cache bosh-dns-aliases)
+incubator_releases = %w(bpm cf-routing)
+bosh_packages_releases = %w(cf-cli)
+pivotal_cf_releases = %w(credhub)
 
 releases = cloudfoundry_releases.map { |r| { organization: "cloudfoundry", name: r } }
 releases += incubator_releases.map { |r| { organization: "cloudfoundry-incubator", name: r } }
+releases += bosh_packages_releases.map { |r| { organization: "bosh-packages", name: r } }
+releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r } }
 %>
 resources:
 - name: ci
@@ -33,7 +37,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: <%= release[:name] %>-release
       trigger: true
       params:
