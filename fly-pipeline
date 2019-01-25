@@ -42,7 +42,7 @@ Install suggestions:
 
 - fly, concourse command line tool:
   curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=darwin' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
-  
+
 - lpass, LastPass command line tool:
   brew install lastpass-cli
 
@@ -60,7 +60,7 @@ Install suggestions:
 
 - fly, concourse command line tool:
   curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
-  
+
 - lpass, LastPass command line tool:
   apt-get update >/dev/null && \
   apt-get --no-install-recommends -yqq install \
@@ -95,7 +95,7 @@ Install suggestions:
 
 - fly, concourse command line tool:
   curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
-  
+
 - lpass, LastPass command line tool:
   zypper install -y -t pattern devel_C_C++ && \
   zypper install -y make cmake gcc gcc-c++ libxml2-devel libopenssl-devel libcurl-devel && \
@@ -168,7 +168,7 @@ FlyPipeline() {
   if [ -f "pipeline.yml" ] && [ -f "vars.yml" ]; then
     fly --target "${target}" set-pipeline \
       --pipeline="${pipeline}" \
-      --config=<(spruce merge "pipeline.yml") \
+      --config=<(spruce merge <(erb "pipeline.yml")) \
       --load-vars-from="vars.yml" \
       --load-vars-from=<(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" --notes)
     PipelineInfo "$pipeline" "$target"

@@ -1,0 +1,72 @@
+<%
+cloudfoundry_releases = %w(cf-mysql capi cf-networking cf-smoke-tests cf-syslog-drain cflinuxfs2 cflinuxfs3 diego garden-runc loggregator nats statsd-injector uaa loggregator-agent log-cache bosh-dns-aliases)
+incubator_releases = %w(bpm cf-routing)
+bosh_packages_releases = %w(cf-cli)
+pivotal_cf_releases = %w(credhub)
+
+releases = cloudfoundry_releases.map { |r| { organization: "cloudfoundry", name: r } }
+releases += incubator_releases.map { |r| { organization: "cloudfoundry-incubator", name: r } }
+releases += bosh_packages_releases.map { |r| { organization: "bosh-packages", name: r } }
+releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r } }
+%>
+resources:
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+<% releases.each do |release| %>
+- name: <%= release[:name] %>-release
+  type: bosh-io-release
+  tags: [containerization]
+  source:
+    repository: <%= release[:organization] %>/<%= release[:name] %>-release
+<% end %>
+- name: s3.fissile-linux
+  type: s3
+  tags: [containerization]
+  source:
+    bucket: ((s3-bucket))
+    private: true
+    regexp: fissile/checks/fissile-(.*)\.tgz
+
+- name: s3.fissile-stemcell-opensuse-version
+  type: s3
+  tags: [containerization]
+  source:
+    bucket: ((versions-s3-bucket))
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+
+jobs:
+<% releases.each do |release| %>
+- name: build-<%= release[:name] %>
+  plan:
+  - aggregate:
+    - get: ci
+  - aggregate:
+    - get: s3.fissile-stemcell-opensuse-version
+      trigger: true
+    - get: <%= release[:name] %>-release
+      trigger: true
+      params:
+        tarball: false
+    - get: s3.fissile-linux
+      trigger: true
+  - do:
+    - task: build
+      privileged: true
+      input_mapping:
+        release: <%= release[:name] %>-release
+        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+      tags: [containerization]
+      params:
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        RELEASE_NAME: <%= release[:name] %>
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+      file: ci/pipelines/release-images/tasks/build.yml
+<% end %>
