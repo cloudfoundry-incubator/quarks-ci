@@ -10,3 +10,5 @@ ENV PATH $GOPATH/bin:$PATH
 RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/onsi/ginkgo/ginkgo
 RUN go get github.com/onsi/gomega/...
+
+RUN zypper -n install --no-recommends kubectl
