@@ -110,6 +110,14 @@ jobs:
     - task: test
       tags: [containerization]
       file: ci/pipelines/cf-operator/tasks/test.yml
+    - task: test-integration
+      tags: [containerization]
+      params:
+        ibmcloud_apikey: ((ibmcloud.key-value))
+        ibmcloud_server: ((ibmcloud.server))
+        ibmcloud_region: ((ibmcloud.region))
+        ibmcloud_cluster: ((ibmcloud.cluster))
+      file: ci/pipelines/cf-operator/tasks/test-integration.yml
     on_failure:
       put: status
       params:

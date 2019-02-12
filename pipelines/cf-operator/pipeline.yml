@@ -36,7 +36,7 @@ resources:
     regexp: helm-charts/cf-operator-(.*).zip
 
 jobs:
-- name: build
+- name: test
   plan:
   - aggregate:
     - get: ci
@@ -49,9 +49,26 @@ jobs:
   - task: lint
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/lint.yml
-  - task: test
+  - task: test-unit
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/test.yml
+  - task: test-integration
+    tags: [containerization]
+    params:
+      ibmcloud_apikey: ((ibmcloud.key-value))
+      ibmcloud_server: ((ibmcloud.server))
+      ibmcloud_region: ((ibmcloud.region))
+      ibmcloud_cluster: ((ibmcloud.cluster))
+    file: ci/pipelines/cf-operator/tasks/test-integration.yml
+
+- name: build
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+    - get: src
+      passed: [test]
+      trigger: true
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
