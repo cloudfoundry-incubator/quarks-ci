@@ -1,0 +1,65 @@
+resources:
+- name: src
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((src-repo))
+    branch: master
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+- name: 12h
+  type: time
+  source:
+    interval: 12h
+
+jobs:
+- name: test
+  plan:
+  - aggregate:
+    - get: ci
+    - get: src
+    - get: 12h
+      trigger: true
+  - task: vet
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/vet.yml
+  - task: lint
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/lint.yml
+  - task: test-unit
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/test.yml
+  - task: test-integration
+    tags: [containerization]
+    params:
+      ibmcloud_apikey: ((ibmcloud.key-value))
+      ibmcloud_server: ((ibmcloud.server))
+      ibmcloud_region: ((ibmcloud.region))
+      ibmcloud_cluster: ((ibmcloud.cluster))
+    file: ci/pipelines/cf-operator/tasks/test-integration.yml
+
+- name: build
+  plan:
+  - aggregate:
+    - get: ci
+    - get: src
+    - get: 12h
+      trigger: true
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build.yml
+
+- name: build-helm
+  plan:
+  - aggregate:
+    - get: ci
+    - get: src
+    - get: 12h
+      trigger: true
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build-helm.yml
