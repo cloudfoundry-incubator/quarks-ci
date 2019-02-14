@@ -65,6 +65,7 @@ jobs:
   plan:
   - aggregate:
     - get: ci
+      passed: [test]
       trigger: true
     - get: src
       passed: [test]
