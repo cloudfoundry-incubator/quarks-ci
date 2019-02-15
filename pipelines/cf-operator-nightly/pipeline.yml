@@ -18,6 +18,8 @@ resources:
 
 jobs:
 - name: test
+  serial: true
+  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
@@ -43,6 +45,8 @@ jobs:
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
 
 - name: build
+  serial: true
+  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
