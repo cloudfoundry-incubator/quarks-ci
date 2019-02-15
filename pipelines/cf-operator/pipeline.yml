@@ -40,7 +40,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
   - task: vet
@@ -65,8 +64,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      passed: [test]
-      trigger: true
     - get: src
       passed: [test]
       trigger: true
@@ -86,8 +83,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
-      passed: [build]
     - get: src
       trigger: true
       passed: [build]
