@@ -11,29 +11,10 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
-- name: docker.cf-operator
-  type: docker-image
-  tags: [containerization]
+- name: 12h
+  type: time
   source:
-    repository: ((docker-organization))/cf-operator
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
-- name: s3.cf-operator
-  type: s3
-  tags: [containerization]
-  source:
-    access_key_id: ((s3.accessKey))
-    secret_access_key: ((s3.secretKey))
-    bucket: ((s3.bucketName))
-    regexp: binaries/cf-operator-(.*)
-- name: s3.helm-charts
-  type: s3
-  tags: [containerization]
-  source:
-    access_key_id: ((s3.accessKey))
-    secret_access_key: ((s3.secretKey))
-    bucket: ((s3.bucketName))
-    regexp: helm-charts/cf-operator-(.*).zip
+    interval: 12h
 
 jobs:
 - name: test
@@ -43,6 +24,7 @@ jobs:
   - aggregate:
     - get: ci
     - get: src
+    - get: 12h
       trigger: true
   - task: vet
     tags: [containerization]
@@ -69,31 +51,19 @@ jobs:
   - aggregate:
     - get: ci
     - get: src
-      passed: [test]
+    - get: 12h
       trigger: true
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
-  - do:
-    - put: s3.cf-operator
-      params:
-        file: binaries/cf-operator-*
-    - put: docker.cf-operator
-      params:
-        build: src
-        tag: docker/tag
 
 - name: build-helm
-  serial: true
   plan:
   - aggregate:
     - get: ci
     - get: src
+    - get: 12h
       trigger: true
-      passed: [build]
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build-helm.yml
-  - put: s3.helm-charts
-    params:
-      file: helm-charts/cf-operator-*.zip

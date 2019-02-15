@@ -2,7 +2,6 @@
 platform: linux
 image_resource:
  type: docker-image
- # we could use a smaller image
  source:
    repository: cfcontainerization/go-tools
    tag: latest
@@ -10,7 +9,7 @@ inputs:
 - name: src
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
-outputs:
-- name: helm-charts
+caches:
+- path: pkg/mod # Persist go modules cache
 run:
-  path: ci/pipelines/cf-operator/tasks/build-helm.sh
+  path: ci/pipelines/cf-operator/tasks/test-integration.sh
