@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eux
+set -eu
 
 export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
