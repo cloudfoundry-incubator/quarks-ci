@@ -19,12 +19,9 @@ VERSION=$(cat release/version)
 # Prepare stemcell
 STEMCELL_NAME=${STEMCELL_REPOSITORY}:$(cat s3.stemcell-version/*-version)
 docker pull ${STEMCELL_NAME}
-STEMCELL_VERSION=${STEMCELL_NAME#*fissile-stemcell-}
-STEMCELL_VERSION=${STEMCELL_VERSION/:/-}
-FINAL_NAME=${REGISTRY_NAMESPACE}/${RELEASE_NAME}-release:${STEMCELL_VERSION}-${VERSION}
 
 s3.fissile-linux/fissile build release-images --stemcell=${STEMCELL_NAME} --name=${RELEASE_NAME} --version=${VERSION} --sha1=$(cat release/sha1) --url=$(cat release/url)
 
-BUILT_IMAGE_ID=$(docker images | egrep ^fissile | awk '{print $3}')
-docker tag ${BUILT_IMAGE_ID} ${FINAL_NAME}
-docker push ${FINAL_NAME}
+BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | egrep ^fissile)
+docker tag ${BUILT_IMAGE} ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
+docker push ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
