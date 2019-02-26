@@ -35,7 +35,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
   - put: status
@@ -69,7 +68,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
   - put: status
@@ -103,7 +101,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
   - put: status
@@ -145,7 +142,6 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
   - put: status
