@@ -29,27 +29,13 @@ resources:
     branch: ((ci-branch))
 
 jobs:
-- name: cache
-  plan:
-  - aggregate:
-    - get: ci
-      trigger: true
-    - get: src
-      trigger: true
-  - do:
-    - task: gomodules
-      tags: [containerization]
-      file: ci/pipelines/cf-operator/tasks/gomodules.yml
-
 - name: vet
   serial: true
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
-      passed: [cache]
   - put: status
     params:
       context: vet
@@ -80,10 +66,8 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
-      passed: [cache]
   - put: status
     params:
       context: lint
@@ -114,10 +98,8 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
-      passed: [cache]
   - put: status
     params:
       context: test
@@ -156,10 +138,8 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      trigger: true
     - get: src
       trigger: true
-      passed: [cache]
   - put: status
     params:
       context: build
