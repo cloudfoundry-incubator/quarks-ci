@@ -5,7 +5,7 @@ RUN zypper -n install --no-recommends make git docker zip curl gzip gcc
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 
-RUN curl -fsL https://dl.google.com/go/go1.12rc1.linux-amd64.tar.gz | tar -xz -C /opt && \
+RUN curl -fsL https://dl.google.com/go/go1.12.linux-amd64.tar.gz | tar -xz -C /opt && \
     update-alternatives --install "/usr/bin/go" "go" "/opt/go/bin/go" 1 && \
     update-alternatives --install "/usr/bin/gofmt" "gofmt" "/opt/go/bin/gofmt" 1
 
