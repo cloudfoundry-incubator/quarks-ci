@@ -31,7 +31,6 @@ resources:
 jobs:
 - name: vet
   serial: true
-  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
@@ -64,7 +63,6 @@ jobs:
 
 - name: lint
   serial: true
-  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
@@ -97,7 +95,6 @@ jobs:
 
 - name: test
   serial: true
-  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
@@ -138,7 +135,6 @@ jobs:
 
 - name: build
   serial: true
-  serial_groups: [go-cache]
   plan:
   - aggregate:
     - get: ci
