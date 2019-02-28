@@ -27,6 +27,13 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
+- name: docker.cf-operator-ci
+  type: docker-image
+  tags: [containerization]
+  source:
+    repository: ((docker-organization))/cf-operator-ci
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 
 jobs:
 - name: vet
@@ -106,6 +113,13 @@ jobs:
       description: go test check
       path: src
       state: pending
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build.yml
+  - put: docker.cf-operator-ci
+    params:
+      build: src
+      tag: docker/tag
   - do:
     - task: test
       tags: [containerization]
