@@ -1,3 +1,4 @@
 pr-repo: cloudfoundry-incubator/cf-operator
 ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci
 ci-branch: master
+docker-organization: cfcontainerization
