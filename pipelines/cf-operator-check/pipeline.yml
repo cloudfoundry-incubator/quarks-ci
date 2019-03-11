@@ -131,6 +131,7 @@ jobs:
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
         ibmcloud_cluster: ((ibmcloud.cluster))
+        sshtunnel_key: ((sshtunnel_key))
       file: ci/pipelines/cf-operator/tasks/test-integration.yml
     on_failure:
       put: status
