@@ -78,14 +78,15 @@ while ! (kubectl get pods --namespace ${TEST_NAMESPACE} | grep Running); do
 done
 
 # Wait for service/load balancer to be ready
-external_ip=""
-while [ -z ${external_ip} ]; do
-  external_ip=$(kubectl get svc ${TUNNEL_NAME} --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}" --namespace=${TEST_NAMESPACE})
-  [ -z "${external_ip}" ] && (echo "Waiting for end point..."; sleep 5)
+OPERATOR_WEBHOOK_HOST=""
+while [ -z ${OPERATOR_WEBHOOK_HOST} ]; do
+  OPERATOR_WEBHOOK_HOST=$(kubectl get svc ${TUNNEL_NAME} --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}" --namespace=${TEST_NAMESPACE})
+  [ -z "${OPERATOR_WEBHOOK_HOST}" ] && (echo "Waiting for end point..."; sleep 5)
 done
-echo "End point: ${external_ip}"
+echo "End point: ${OPERATOR_WEBHOOK_HOST}"
+export OPERATOR_WEBHOOK_HOST
 
 # Set up SSH tunnel which makes the local webhook server available in the kubernetes cluster
-ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R ${external_ip}:${OPERATOR_WEBHOOK_PORT}:localhost:${OPERATOR_WEBHOOK_PORT} $external_ip
+ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R ${OPERATOR_WEBHOOK_HOST}:${OPERATOR_WEBHOOK_PORT}:localhost:${OPERATOR_WEBHOOK_PORT} $OPERATOR_WEBHOOK_HOST
 
 make -C src/code.cloudfoundry.org/cf-operator test-integration
