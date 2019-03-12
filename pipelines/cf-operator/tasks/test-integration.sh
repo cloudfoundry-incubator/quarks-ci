@@ -4,8 +4,8 @@ set -eu
 export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
 export GO111MODULE=on
-export WEBHOOK_SERVER_PORT=$(( ( RANDOM % 62000 )  + 2000 ))
-export TUNNEL_NAME="tunnelpod-${WEBHOOK_SERVER_PORT}"
+export OPERATOR_WEBHOOK_PORT=$(( ( RANDOM % 62000 )  + 2000 ))
+export TUNNEL_NAME="tunnelpod-${OPERATOR_WEBHOOK_PORT}"
 
 TEST_NAMESPACE="test$(date +%s)"
 export TEST_NAMESPACE
@@ -45,7 +45,7 @@ spec:
         image: cfcontainerization/ci-tunnel
         ports:
         - containerPort: 22
-        - containerPort: ${WEBHOOK_SERVER_PORT}
+        - containerPort: ${OPERATOR_WEBHOOK_PORT}
 ---
 apiVersion: v1
 kind: Service
@@ -56,7 +56,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: ${WEBHOOK_SERVER_PORT}
+  - port: ${OPERATOR_WEBHOOK_PORT}
     protocol: TCP
     name: http
   - port: 22
@@ -86,6 +86,6 @@ done
 echo "End point: ${external_ip}"
 
 # Set up SSH tunnel which makes the local webhook server available in the kubernetes cluster
-ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R ${external_ip}:${WEBHOOK_SERVER_PORT}:localhost:${WEBHOOK_SERVER_PORT} $external_ip
+ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R ${external_ip}:${OPERATOR_WEBHOOK_PORT}:localhost:${OPERATOR_WEBHOOK_PORT} $external_ip
 
 make -C src/code.cloudfoundry.org/cf-operator test-integration
