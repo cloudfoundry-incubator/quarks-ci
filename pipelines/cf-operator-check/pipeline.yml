@@ -13,6 +13,7 @@ resources:
 - name: src
   type: pull-request
   tags: [containerization]
+  webhook_token: ((github.webhook-token))
   source:
     repository: ((pr-repo))
     access_token: ((github.access-token))
