@@ -52,6 +52,15 @@ jobs:
   - task: test-unit
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/test.yml
+
+- name: test-integration
+  serial: true
+  plan:
+  - aggregate:
+    - get: ci
+    - get: src
+      trigger: true
+      passed: [test]
   - task: test-integration
     tags: [containerization]
     params:
@@ -68,7 +77,7 @@ jobs:
   - aggregate:
     - get: ci
     - get: src
-      passed: [test]
+      passed: [test-integration]
       trigger: true
   - task: build
     tags: [containerization]
