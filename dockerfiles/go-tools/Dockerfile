@@ -1,6 +1,6 @@
 FROM opensuse/leap:15
 
-RUN zypper -n install --no-recommends make git docker zip curl gzip gcc
+RUN zypper -n install --no-recommends make git docker zip curl gzip gcc ruby
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
@@ -20,3 +20,5 @@ RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
     bx plugin install container-registry -r Bluemix && \
     bx config --usage-stats-collect false && \
     bx config --check-version false
+
+RUN gem install bosh-template
