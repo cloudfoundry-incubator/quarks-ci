@@ -10,7 +10,7 @@ export TUNNEL_NAME="tunnel-${OPERATOR_WEBHOOK_PORT}"
 
 echo "Starting ngrok tunnel"
 ngrok authtoken ${ngrok_token}
-ngrok tcp ${OPERATOR_WEBHOOK_PORT} > /dev/null &
+ngrok tcp ${OPERATOR_WEBHOOK_PORT} &
 
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
