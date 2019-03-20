@@ -13,6 +13,7 @@ export TUNNEL_NAME="tunnelpod-${OPERATOR_WEBHOOK_PORT}"
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
   echo "Cleaning up"
+  set +e
   kubectl delete mutatingwebhookconfiguration "cf-operator-mutating-hook-${TEST_NAMESPACE}"
   kubectl delete ns --wait=false --grace-period=60 "${TEST_NAMESPACE}"
   pidof ssh | xargs kill
