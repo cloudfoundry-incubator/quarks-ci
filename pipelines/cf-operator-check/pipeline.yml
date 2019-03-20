@@ -35,6 +35,14 @@ resources:
     repository: ((docker-organization))/cf-operator-ci
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: docker.cf-operator
+  type: docker-image
+  tags: [containerization]
+  source:
+    repository: ((docker-organization))/((docker-repo))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+
 
 jobs:
 - name: vet
@@ -135,7 +143,8 @@ jobs:
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
-        OPERATOR_TEST_STORAGE_CLASS: hostpath-containerization
+        OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+        DOCKER_IMAGE_REPOSITORY: ((docker-repo))
       file: ci/pipelines/cf-operator/tasks/test-integration.yml
     on_failure:
       put: status
@@ -169,6 +178,10 @@ jobs:
     - task: build
       tags: [containerization]
       file: ci/pipelines/cf-operator/tasks/build.yml
+    - put: docker.cf-operator
+      params:
+        build: src
+        tag: docker/tag
     on_failure:
       put: status
       params:
