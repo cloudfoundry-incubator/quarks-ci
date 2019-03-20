@@ -3,13 +3,6 @@ FROM opensuse/leap:15
 RUN zypper -n install --no-recommends make git docker zip curl gzip gcc ruby vim jq unzip bind-utils
 
 ADD https://github.com/SUSE/kctl/releases/download/v0.0.12/kctl-linux-amd64 /usr/bin/k
-ADD https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip /tmp/ngrok.zip
-
-RUN cd /tmp && \
-    unzip ngrok.zip && \
-    mv ngrok /usr/bin/ && \
-    chmod +x /usr/bin/ngrok && \
-    chmod +x /usr/bin/k
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH

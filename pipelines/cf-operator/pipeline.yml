@@ -68,7 +68,6 @@ jobs:
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud.cluster))
-      ngrok_token: ((ngrok_token))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
 
 - name: build
