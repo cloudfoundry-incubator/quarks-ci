@@ -8,24 +8,25 @@ export OPERATOR_WEBHOOK_PORT=443
 export TEST_NAMESPACE="test$(date +%s)"
 export TUNNEL_NAME="tunnel-${OPERATOR_WEBHOOK_PORT}"
 
-# Start ngrok tunnel
+echo "Starting ngrok tunnel"
 ngrok authtoken ${ngrok_token}
 ngrok tcp ${OPERATOR_WEBHOOK_PORT} > /dev/null &
 
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
+  echo "Cleaning up"
   kill $(pgrep ngrok)
   kubectl delete mutatingwebhookconfiguration cf-operator-mutating-hook-${TEST_NAMESPACE}
   kubectl delete ns ${TEST_NAMESPACE}
 }
 trap cleanup EXIT
 
-# Setup bluemix access
+echo "Seting up bluemix access"
 ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
-# Create temporary namespace
+echo "Seting up bluemix access"
 kubectl create namespace "$TEST_NAMESPACE"
 
 NGROK_HOST=""
@@ -37,6 +38,7 @@ done
 export NGROK_IP=$(host ${NGROK_HOST} | awk '/has address/ { print $4 }')
 echo "End point: ${NGROK_HOST}:${NGROK_PORT}"
 
+echo "Creating webhook kube service"
 cat <<EOF | kubectl create -f - --namespace=${TEST_NAMESPACE}
 apiVersion: v1
 kind: Service
@@ -61,5 +63,8 @@ subsets:
       - port: ${NGROK_PORT}
 EOF
 
+echo "Setting webhook host IP"
 export OPERATOR_WEBHOOK_HOST=$(kubectl get service -n "$TEST_NAMESPACE" webhook -o json | jq -r .spec.clusterIP)
+
+echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
