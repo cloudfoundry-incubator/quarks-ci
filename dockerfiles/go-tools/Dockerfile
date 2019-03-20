@@ -22,7 +22,7 @@ RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/onsi/ginkgo/ginkgo
 RUN go get github.com/onsi/gomega/...
 
-RUN zypper -n install --no-recommends kubectl
+RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl; mv kubectl /usr/local/bin; chmod +x /usr/local/bin/kubectl
 
 RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
     bx plugin install container-service -r Bluemix && \
