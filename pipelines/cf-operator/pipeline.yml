@@ -68,6 +68,9 @@ jobs:
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud.cluster))
+      ssh_server_ip: ((ssh-server.ip))
+      ssh_server_user: ((ssh-server.user))
+      ssh_server_key: ((ssh-server.key))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
 
 - name: build
