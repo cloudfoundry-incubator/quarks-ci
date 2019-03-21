@@ -18,6 +18,13 @@ resources:
     repository: ((docker-organization))/cf-operator
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: docker.cf-operator-rc
+  type: docker-image
+  tags: [containerization]
+  source:
+    repository: ((docker-organization))/((docker-candidate-repo))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 - name: s3.cf-operator
   type: s3
   tags: [containerization]
@@ -53,6 +60,23 @@ jobs:
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/test.yml
 
+- name: build
+  serial: true
+  plan:
+  - aggregate:
+    - get: ci
+    - get: src
+      passed: [test]
+      trigger: true
+  - task: build
+    tags: [containerization]
+    file: ci/pipelines/cf-operator/tasks/build.yml
+  - do:
+    - put: docker.cf-operator-rc
+      params:
+        build: src
+        tag: docker/tag
+
 - name: test-integration
   serial: true
   plan:
@@ -60,7 +84,7 @@ jobs:
     - get: ci
     - get: src
       trigger: true
-      passed: [test]
+      passed: [build]
   - task: test-integration
     tags: [containerization]
     params:
@@ -71,11 +95,11 @@ jobs:
       ssh_server_ip: ((ssh-server.ip))
       ssh_server_user: ((ssh-server.user))
       ssh_server_key: ((ssh-server.key))
-      OPERATOR_TEST_STORAGE_CLASS: hostpath-containerization
+      OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+      DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
 
-- name: build
-  serial: true
+- name: publish
   plan:
   - aggregate:
     - get: ci
@@ -89,19 +113,22 @@ jobs:
     - put: s3.cf-operator
       params:
         file: binaries/cf-operator-*
+    - get: docker.cf-operator-rc
+      params:
+        save: true
+        tag: docker/tag
     - put: docker.cf-operator
       params:
-        build: src
+        load: docker.cf-operator-rc
         tag: docker/tag
 
 - name: build-helm
-  serial: true
   plan:
   - aggregate:
     - get: ci
     - get: src
       trigger: true
-      passed: [build]
+      passed: [test-integration]
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build-helm.yml

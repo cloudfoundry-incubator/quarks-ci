@@ -11,6 +11,13 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
+- name: docker.cf-operator-rc
+  type: docker-image
+  tags: [containerization]
+  source:
+    repository: ((docker-organization))/((docker-candidate-repo))
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 - name: 12h
   type: time
   source:
@@ -23,6 +30,8 @@ jobs:
   - aggregate:
     - get: ci
     - get: src
+      passed: [build]
+      trigger: true
     - get: 12h
       trigger: true
   - task: vet
@@ -44,7 +53,8 @@ jobs:
       ssh_server_ip: ((ssh-server.ip))
       ssh_server_user: ((ssh-server.user))
       ssh_server_key: ((ssh-server.key))
-      OPERATOR_TEST_STORAGE_CLASS: hostpath-containerization
+      OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+      DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
 
 - name: build
@@ -58,6 +68,10 @@ jobs:
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
+  - put: docker.cf-operator-rc
+    params:
+      build: src
+      tag: docker/tag
 
 - name: build-helm
   plan:
