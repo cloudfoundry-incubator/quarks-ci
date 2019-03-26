@@ -25,7 +25,7 @@ ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
-echo "Seting up bluemix access"
+echo "Creating namespace"
 kubectl create namespace "$TEST_NAMESPACE"
 
 echo "Seting up SSH tunnel for webhook"
