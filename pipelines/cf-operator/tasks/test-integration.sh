@@ -55,3 +55,9 @@ export OPERATOR_WEBHOOK_HOST="$ssh_server_ip"
 
 echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
+
+echo "Running e2e tests"
+# fix SSL path
+kube_path=$(dirname "$KUBECONFIG")
+sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
+make -C src/code.cloudfoundry.org/cf-operator test-e2e

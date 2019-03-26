@@ -76,6 +76,7 @@ jobs:
       params:
         build: src
         tag: docker/tag
+        tag_as_latest: true
 
 - name: test-integration
   serial: true
