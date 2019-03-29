@@ -22,6 +22,6 @@ docker pull ${STEMCELL_NAME}
 
 s3.fissile-linux/fissile build release-images --stemcell=${STEMCELL_NAME} --name=${RELEASE_NAME} --version=${VERSION} --sha1=$(cat release/sha1) --url=$(cat release/url)
 
-BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | egrep ^fissile)
+BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "$RELEASE_NAME")
 docker tag ${BUILT_IMAGE} ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
 docker push ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
