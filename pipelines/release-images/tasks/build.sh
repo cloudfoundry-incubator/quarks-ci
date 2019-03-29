@@ -17,11 +17,11 @@ popd
 VERSION=$(cat release/version)
 
 # Prepare stemcell
-STEMCELL_NAME=${STEMCELL_REPOSITORY}:$(cat s3.stemcell-version/*-version)
-docker pull ${STEMCELL_NAME}
+STEMCELL_NAME="${STEMCELL_REPOSITORY}:$(cat s3.stemcell-version/*-version)"
+docker pull "${STEMCELL_NAME}"
 
-s3.fissile-linux/fissile build release-images --stemcell=${STEMCELL_NAME} --name=${RELEASE_NAME} --version=${VERSION} --sha1=$(cat release/sha1) --url=$(cat release/url)
+s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --name="${RELEASE_NAME}" --version="${VERSION}" --sha1="$(cat release/sha1)" --url="$(cat release/url)"
 
-BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep "$RELEASE_NAME")
-docker tag ${BUILT_IMAGE} ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
-docker push ${REGISTRY_NAMESPACE}/${BUILT_IMAGE}
+BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "$STEMCELL_REPOSITORY" | head -1)
+docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
+docker push "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
