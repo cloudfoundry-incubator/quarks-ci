@@ -14,6 +14,8 @@ RUN curl -fsL https://dl.google.com/go/go1.12.linux-amd64.tar.gz | tar -xz -C /o
 RUN go get -u golang.org/x/lint/golint
 RUN go get github.com/onsi/ginkgo/ginkgo
 RUN go get github.com/onsi/gomega/...
+RUN go get github.com/mattn/goveralls
+RUN go get github.com/philwinder/gocoverage
 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl; mv kubectl /usr/local/bin; chmod +x /usr/local/bin/kubectl
 
