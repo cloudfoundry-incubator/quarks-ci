@@ -53,15 +53,9 @@ jobs:
       ssh_server_ip: ((ssh-server.ip))
       ssh_server_user: ((ssh-server.user))
       ssh_server_key: ((ssh-server.key))
-      COVERALLS_TOKEN: ((coveralls-token))
       OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
       DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
-  - task: coverage
-    tags: [containerization]
-    params:
-      COVERALLS_TOKEN: ((coveralls-token))
-    file: ci/pipelines/cf-operator/tasks/coverage.yml
 
 - name: build
   serial: true
