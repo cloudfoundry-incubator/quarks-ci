@@ -7,7 +7,7 @@ ADD https://github.com/SUSE/kctl/releases/download/v0.0.12/kctl-linux-amd64 /usr
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 
-RUN curl -fsL https://dl.google.com/go/go1.12.linux-amd64.tar.gz | tar -xz -C /opt && \
+RUN curl -fsL https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz | tar -xz -C /opt && \
     update-alternatives --install "/usr/bin/go" "go" "/opt/go/bin/go" 1 && \
     update-alternatives --install "/usr/bin/gofmt" "gofmt" "/opt/go/bin/gofmt" 1
 
