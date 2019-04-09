@@ -6,7 +6,12 @@ export GOPATH=$PWD
 export GO111MODULE=on
 export TEST_NAMESPACE="test$(date +%s)"
 
-version=$(cat s3.build-number/version)
+version=
+
+if [ -f s3.build-number/version ]; then
+  version=$(cat s3.build-number/version)
+fi
+
 export GOVER_FILE=gover-${version}-integration.coverprofile
 
 # Random port to support parallelism with different webhook servers

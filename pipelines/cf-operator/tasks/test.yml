@@ -10,6 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
 - name: s3.build-number
+  optional: true
 outputs:
 - name: code-coverage
 caches:
