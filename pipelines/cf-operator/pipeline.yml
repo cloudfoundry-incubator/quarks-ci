@@ -102,6 +102,8 @@ jobs:
       trigger: true
     - get: s3.build-number
       passed: [test]
+    - get: s3.code-coverage-unit
+      passed: [test]
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
@@ -121,6 +123,8 @@ jobs:
       trigger: true
       passed: [build]
     - get: s3.build-number
+      passed: [build]
+    - get: s3.code-coverage-unit
       passed: [build]
   - task: test-integration
     tags: [containerization]
@@ -150,11 +154,9 @@ jobs:
     - get: s3.build-number
       passed: [test-integration]
   - get: s3.code-coverage-unit
-    params:
-      version: s3.build-number/version
+    passed: [test-integration]
   - get: s3.code-coverage-integration
-    params:
-      version: s3.build-number/version
+    passed: [test-integration]
   - task: coverage
     tags: [containerization]
     params:
