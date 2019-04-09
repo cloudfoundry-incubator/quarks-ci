@@ -32,13 +32,6 @@ resources:
   type: docker-image
   tags: [containerization]
   source:
-    repository: ((docker-organization))/cf-operator-ci
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
-- name: docker.cf-operator
-  type: docker-image
-  tags: [containerization]
-  source:
     repository: ((docker-organization))/((docker-repo))
     username: ((dockerhub.username))
     password: ((dockerhub.password))
@@ -178,7 +171,7 @@ jobs:
     - task: build
       tags: [containerization]
       file: ci/pipelines/cf-operator/tasks/build.yml
-    - put: docker.cf-operator
+    - put: docker.cf-operator-ci
       params:
         build: src
         tag: docker/tag
