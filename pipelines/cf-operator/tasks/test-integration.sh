@@ -6,6 +6,9 @@ export GOPATH=$PWD
 export GO111MODULE=on
 export TEST_NAMESPACE="test$(date +%s)"
 
+version=$(cat s3.build-number/version)
+export GOVER_FILE=gover-${version}-integration.coverprofile
+
 # Random port to support parallelism with different webhook servers
 export OPERATOR_WEBHOOK_PORT=$(( ( RANDOM % 62000 )  + 2000 ))
 export TUNNEL_NAME="tunnelpod-${OPERATOR_WEBHOOK_PORT}"
@@ -61,3 +64,5 @@ echo "Running e2e tests"
 kube_path=$(dirname "$KUBECONFIG")
 sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
 make -C src/code.cloudfoundry.org/cf-operator test-e2e
+
+cp src/code.cloudfoundry.org/cf-operator/code-coverage/gover-*.coverprofile code-coverage/

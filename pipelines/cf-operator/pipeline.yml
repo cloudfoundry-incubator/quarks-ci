@@ -41,6 +41,32 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: helm-charts/cf-operator-(.*).zip
+- name: s3.build-number
+  type: semver
+  source:
+    driver: s3
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    key: code-coverage/version
+    initial_version: 0.0.0
+- name: s3.code-coverage-unit
+  type: s3
+  tags: [containerization]
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: code-coverage/gover-(.*)-unit.coverprofile
+- name: s3.code-coverage-integration
+  type: s3
+  tags: [containerization]
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: code-coverage/gover-(.*)-integration.coverprofile
+
 
 jobs:
 - name: test
@@ -50,6 +76,9 @@ jobs:
     - get: ci
     - get: src
       trigger: true
+  - put: s3.build-number
+    params:
+      bump: patch
   - task: vet
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/vet.yml
@@ -59,6 +88,9 @@ jobs:
   - task: test-unit
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/test.yml
+  - put: s3.code-coverage
+    params:
+      file: code-coverage/gover-*-unit.coverprofile
 
 - name: build
   serial: true
@@ -68,6 +100,8 @@ jobs:
     - get: src
       passed: [test]
       trigger: true
+    - get: s3.build-number
+      passed: [test]
   - task: build
     tags: [containerization]
     file: ci/pipelines/cf-operator/tasks/build.yml
@@ -86,6 +120,8 @@ jobs:
     - get: src
       trigger: true
       passed: [build]
+    - get: s3.build-number
+      passed: [build]
   - task: test-integration
     tags: [containerization]
     params:
@@ -99,6 +135,9 @@ jobs:
       OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
       DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
     file: ci/pipelines/cf-operator/tasks/test-integration.yml
+  - put: s3.code-coverage-unit
+    params:
+      file: code-coverage/gover-*-integration.coverprofile
 
 - name: coverage
   serial: true
@@ -108,11 +147,20 @@ jobs:
     - get: src
       trigger: true
       passed: [test-integration]
+    - get: s3.build-number
+      passed: [test-integration]
+  - get: s3.code-coverage-unit
+    params:
+      version: s3.build-number/version
+  - get: s3.code-coverage-integration
+    params:
+      version: s3.build-number/version
   - task: coverage
     tags: [containerization]
     params:
       COVERALLS_TOKEN: ((coveralls-token))
     file: ci/pipelines/cf-operator/tasks/coverage.yml
+
 
 - name: publish
   plan:

@@ -9,6 +9,8 @@ inputs:
 - name: src
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
+- name: s3.code-coverage-unit
+- name: s3.code-coverage-integration
 caches:
 - path: pkg/mod # Persist go modules cache
 run:
