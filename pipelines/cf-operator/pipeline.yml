@@ -186,6 +186,7 @@ jobs:
       params:
         load: docker.cf-operator-rc
         tag: docker/tag
+        tag_as_latest: true
 
 - name: build-helm
   plan:
