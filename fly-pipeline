@@ -168,7 +168,7 @@ FlyPipeline() {
   if [ -f "pipeline.yml" ] && [ -f "vars.yml" ]; then
     fly --target "${target}" set-pipeline \
       --pipeline="${pipeline}" \
-      --config=<(spruce merge <(erb "pipeline.yml")) \
+      --config=<(erb "pipeline.yml") \
       --load-vars-from="vars.yml" \
       --load-vars-from=<(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" --notes)
     PipelineInfo "$pipeline" "$target"
