@@ -36,13 +36,13 @@ jobs:
       trigger: true
   - task: vet
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/vet.yml
+    file: ci/pipelines/tasks/vet.yml
   - task: lint
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/lint.yml
+    file: ci/pipelines/tasks/lint.yml
   - task: test-unit
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/test.yml
+    file: ci/pipelines/tasks/test.yml
   - task: test-integration
     tags: [containerization]
     params:
@@ -55,7 +55,7 @@ jobs:
       ssh_server_key: ((ssh-server.key))
       OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
       DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
-    file: ci/pipelines/cf-operator/tasks/test-integration.yml
+    file: ci/pipelines/tasks/test-integration.yml
 
 - name: build
   serial: true
@@ -67,7 +67,7 @@ jobs:
       trigger: true
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build.yml
+    file: ci/pipelines/tasks/build.yml
   - put: docker.cf-operator-rc
     params:
       build: src
@@ -82,4 +82,4 @@ jobs:
       trigger: true
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build-helm.yml
+    file: ci/pipelines/tasks/build-helm.yml

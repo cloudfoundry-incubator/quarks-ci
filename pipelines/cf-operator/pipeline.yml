@@ -81,13 +81,13 @@ jobs:
       bump: patch
   - task: vet
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/vet.yml
+    file: ci/pipelines/tasks/vet.yml
   - task: lint
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/lint.yml
+    file: ci/pipelines/tasks/lint.yml
   - task: test-unit
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/test.yml
+    file: ci/pipelines/tasks/test.yml
   - put: s3.code-coverage-unit
     params:
       file: code-coverage/gover-*-unit.coverprofile
@@ -106,7 +106,7 @@ jobs:
       passed: [test]
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build.yml
+    file: ci/pipelines/tasks/build.yml
   - do:
     - put: docker.cf-operator-rc
       params:
@@ -138,7 +138,7 @@ jobs:
       ssh_server_key: ((ssh-server.key))
       OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
       DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
-    file: ci/pipelines/cf-operator/tasks/test-integration.yml
+    file: ci/pipelines/tasks/test-integration.yml
   - put: s3.code-coverage-integration
     params:
       file: code-coverage/gover-*-integration.coverprofile
@@ -173,7 +173,7 @@ jobs:
       trigger: true
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build.yml
+    file: ci/pipelines/tasks/build.yml
   - do:
     - put: s3.cf-operator
       params:
@@ -197,7 +197,7 @@ jobs:
       passed: [test-integration]
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build-helm.yml
+    file: ci/pipelines/tasks/build-helm.yml
   - put: s3.helm-charts
     params:
       file: helm-charts/cf-operator-*.zip
