@@ -12,4 +12,4 @@ inputs:
 caches:
 - path: pkg/mod # Persist go modules cache
 run:
-  path: ci/pipelines/cf-operator/tasks/lint.sh
+  path: ci/pipelines/tasks/lint.sh

@@ -13,4 +13,4 @@ inputs:
 outputs:
 - name: helm-charts
 run:
-  path: ci/pipelines/cf-operator/tasks/build-helm.sh
+  path: ci/pipelines/tasks/build-helm.sh
