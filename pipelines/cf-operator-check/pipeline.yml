@@ -54,7 +54,7 @@ jobs:
   - do:
     - task: vet
       tags: [containerization]
-      file: ci/pipelines/cf-operator/tasks/vet.yml
+      file: ci/pipelines/tasks/vet.yml
     on_failure:
       put: status
       params:
@@ -86,7 +86,7 @@ jobs:
   - do:
     - task: lint
       tags: [containerization]
-      file: ci/pipelines/cf-operator/tasks/lint.yml
+      file: ci/pipelines/tasks/lint.yml
     on_failure:
       put: status
       params:
@@ -117,7 +117,7 @@ jobs:
       state: pending
   - task: build
     tags: [containerization]
-    file: ci/pipelines/cf-operator/tasks/build.yml
+    file: ci/pipelines/tasks/build.yml
   - put: docker.cf-operator-ci
     params:
       build: src
@@ -125,7 +125,7 @@ jobs:
   - do:
     - task: test
       tags: [containerization]
-      file: ci/pipelines/cf-operator/tasks/test.yml
+      file: ci/pipelines/tasks/test.yml
     - task: test-integration
       tags: [containerization]
       params:
@@ -138,7 +138,7 @@ jobs:
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         DOCKER_IMAGE_REPOSITORY: ((docker-repo))
-      file: ci/pipelines/cf-operator/tasks/test-integration.yml
+      file: ci/pipelines/tasks/test-integration.yml
     on_failure:
       put: status
       params:
@@ -170,7 +170,7 @@ jobs:
   - do:
     - task: build
       tags: [containerization]
-      file: ci/pipelines/cf-operator/tasks/build.yml
+      file: ci/pipelines/tasks/build.yml
     - put: docker.cf-operator-ci
       params:
         build: src
