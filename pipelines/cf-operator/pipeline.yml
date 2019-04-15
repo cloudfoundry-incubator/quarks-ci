@@ -88,6 +88,8 @@ jobs:
   - task: test-unit
     tags: [containerization]
     file: ci/pipelines/tasks/test.yml
+    params:
+      COVERAGE: true
   - put: s3.code-coverage-unit
     params:
       file: code-coverage/gover-*-unit.coverprofile
@@ -138,6 +140,7 @@ jobs:
       ssh_server_key: ((ssh-server.key))
       OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
       DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+      COVERAGE: true
     file: ci/pipelines/tasks/test-integration.yml
   - put: s3.code-coverage-integration
     params:
