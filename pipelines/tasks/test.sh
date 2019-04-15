@@ -14,4 +14,4 @@ export GOVER_FILE=gover-${version}-unit.coverprofile
 
 make -C src/code.cloudfoundry.org/cf-operator test-unit
 
-find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs cp -t code-coverage/
+find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs -r cp -t code-coverage/

@@ -70,4 +70,4 @@ kube_path=$(dirname "$KUBECONFIG")
 sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
 make -C src/code.cloudfoundry.org/cf-operator test-e2e
 
-find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs cp -t code-coverage/
+find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs -r cp -t code-coverage/
