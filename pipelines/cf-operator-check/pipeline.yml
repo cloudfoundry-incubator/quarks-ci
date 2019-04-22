@@ -122,6 +122,7 @@ jobs:
     params:
       build: src
       tag: docker/tag
+      tag_as_latest: true
   - do:
     - task: test
       tags: [containerization]
@@ -175,6 +176,7 @@ jobs:
       params:
         build: src
         tag: docker/tag
+        tag_as_latest: true
     on_failure:
       put: status
       params:
