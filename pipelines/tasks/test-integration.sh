@@ -58,7 +58,7 @@ subsets:
     ports:
       - port: ${CF_OPERATOR_WEBHOOK_PORT}
 EOF
-export CF_OPERATOR_WEBHOOK_HOST="$ssh_server_ip"
+export CF_OPERATOR_WEBHOOK_SERVICE_HOST="$ssh_server_ip"
 
 
 echo "Running integration tests"
