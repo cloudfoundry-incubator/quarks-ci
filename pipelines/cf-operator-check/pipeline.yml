@@ -103,7 +103,7 @@ jobs:
         state: success
 
 - name: test
-  serial: true
+  max_in_flight: 3
   plan:
   - aggregate:
     - get: ci
