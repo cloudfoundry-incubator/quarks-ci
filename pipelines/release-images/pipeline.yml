@@ -1,6 +1,6 @@
 <%
 cloudfoundry_releases = %w(cf-mysql capi cf-networking cf-smoke-tests cf-syslog-drain cflinuxfs2 cflinuxfs3 diego garden-runc loggregator nats statsd-injector uaa loggregator-agent log-cache bosh-dns-aliases)
-incubator_releases = %w(bpm cf-routing)
+incubator_releases = %w(bpm cf-routing pxc)
 bosh_packages_releases = %w(cf-cli)
 pivotal_cf_releases = %w(credhub)
 
