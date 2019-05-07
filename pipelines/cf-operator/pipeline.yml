@@ -202,3 +202,4 @@ jobs:
   - put: s3.helm-charts
     params:
       file: helm-charts/cf-operator-*.zip
+      acl: public-read
