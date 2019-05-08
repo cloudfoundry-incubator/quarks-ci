@@ -11,4 +11,4 @@ popd
 
 set -ex
 make -C src/code.cloudfoundry.org/cf-operator helm
-cp src/code.cloudfoundry.org/cf-operator/helm/cf-operator*.zip helm-charts/
+cp src/code.cloudfoundry.org/cf-operator/helm/cf-operator*.tgz helm-charts/

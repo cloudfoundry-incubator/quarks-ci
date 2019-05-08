@@ -40,7 +40,7 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: helm-charts/cf-operator-(.*).zip
+    regexp: helm-charts/cf-operator-(.*).tgz
 - name: s3.build-number
   type: semver
   source:
@@ -201,5 +201,5 @@ jobs:
     file: ci/pipelines/tasks/build-helm.yml
   - put: s3.helm-charts
     params:
-      file: helm-charts/cf-operator-*.zip
+      file: helm-charts/cf-operator-*.tgz
       acl: public-read
