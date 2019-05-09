@@ -43,6 +43,7 @@ resources:
     regexp: helm-charts/cf-operator-(.*).tgz
 - name: s3.build-number
   type: semver
+  tags: [containerization]
   source:
     driver: s3
     access_key_id: ((s3.accessKey))
@@ -77,6 +78,7 @@ jobs:
     - get: src
       trigger: true
   - put: s3.build-number
+    tags: [containerization]
     params:
       bump: patch
   - task: vet
@@ -91,6 +93,7 @@ jobs:
     params:
       COVERAGE: true
   - put: s3.code-coverage-unit
+    tags: [containerization]
     params:
       file: code-coverage/gover-*-unit.coverprofile
 
@@ -142,6 +145,7 @@ jobs:
       COVERAGE: true
     file: ci/pipelines/tasks/test-integration.yml
   - put: s3.code-coverage-integration
+    tags: [containerization]
     params:
       file: code-coverage/gover-*-integration.coverprofile
 
@@ -178,6 +182,7 @@ jobs:
     file: ci/pipelines/tasks/build.yml
   - do:
     - put: s3.cf-operator
+      tags: [containerization]
       params:
         file: binaries/cf-operator-*
     - get: docker.cf-operator-rc
@@ -200,6 +205,7 @@ jobs:
     tags: [containerization]
     file: ci/pipelines/tasks/build-helm.yml
   - put: s3.helm-charts
+    tags: [containerization]
     params:
       file: helm-charts/cf-operator-*.tgz
       acl: public-read
