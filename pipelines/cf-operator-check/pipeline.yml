@@ -19,6 +19,7 @@ resources:
     access_token: ((github.access-token))
 - name: status
   type: status
+  tags: [containerization]
   source:
     access_token: ((github.access-token))
     repo: ((pr-repo))
@@ -46,6 +47,7 @@ jobs:
     - get: src
       trigger: true
   - put: status
+    tags: [containerization]
     params:
       context: vet
       description: go vet check
@@ -57,6 +59,7 @@ jobs:
       file: ci/pipelines/tasks/vet.yml
     on_failure:
       put: status
+      tags: [containerization]
       params:
         context: vet
         description: go vet check
@@ -64,6 +67,7 @@ jobs:
         state: failure
     on_success:
       put: status
+      tags: [containerization]
       params:
         context: vet
         description: go vet check
@@ -78,6 +82,7 @@ jobs:
     - get: src
       trigger: true
   - put: status
+    tags: [containerization]
     params:
       context: lint
       description: lint check
@@ -89,6 +94,7 @@ jobs:
       file: ci/pipelines/tasks/lint.yml
     on_failure:
       put: status
+      tags: [containerization]
       params:
         context: lint
         description: go lint check
@@ -96,6 +102,7 @@ jobs:
         state: failure
     on_success:
       put: status
+      tags: [containerization]
       params:
         context: lint
         description: go lint check
@@ -110,6 +117,7 @@ jobs:
     - get: src
       trigger: true
   - put: status
+    tags: [containerization]
     params:
       context: test
       description: go test check
@@ -141,6 +149,7 @@ jobs:
       file: ci/pipelines/tasks/test-integration.yml
     on_failure:
       put: status
+      tags: [containerization]
       params:
         context: test
         description: go test check
@@ -148,6 +157,7 @@ jobs:
         state: failure
     on_success:
       put: status
+      tags: [containerization]
       params:
         context: test
         decription: go test check
@@ -162,6 +172,7 @@ jobs:
     - get: src
       trigger: true
   - put: status
+    tags: [containerization]
     params:
       context: build
       description: go build check
@@ -177,6 +188,7 @@ jobs:
         tag: docker/tag
     on_failure:
       put: status
+      tags: [containerization]
       params:
         context: build
         description: go build check
@@ -184,6 +196,7 @@ jobs:
         state: failure
     on_success:
       put: status
+      tags: [containerization]
       params:
         context: build
         decription: go build check
