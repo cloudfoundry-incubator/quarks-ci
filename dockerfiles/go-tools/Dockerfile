@@ -26,3 +26,9 @@ RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
     bx config --check-version false
 
 RUN gem install bosh-template
+
+ENV HELM_VERSION="v2.13.1"
+ENV HELM_URL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
+RUN curl --progress-bar --location ${HELM_URL} | tar -xzf - -C /tmp linux-amd64/helm && \
+    mv /tmp/linux-amd64/helm /usr/bin/helm && \
+    rm -rf /tmp/linux-amd64/
