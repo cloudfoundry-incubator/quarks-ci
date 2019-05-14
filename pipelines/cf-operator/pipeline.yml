@@ -11,13 +11,6 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
-- name: docker.cf-operator
-  type: docker-image
-  tags: [containerization]
-  source:
-    repository: ((docker-organization))/cf-operator
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
 - name: docker.cf-operator-rc
   type: docker-image
   tags: [containerization]
@@ -180,19 +173,19 @@ jobs:
   - task: build
     tags: [containerization]
     file: ci/pipelines/tasks/build.yml
-  - do:
-    - put: s3.cf-operator
-      tags: [containerization]
-      params:
-        file: binaries/cf-operator-*
-    - get: docker.cf-operator-rc
-      params:
-        save: true
-        tag: docker/tag
-    - put: docker.cf-operator
-      params:
-        load: docker.cf-operator-rc
-        tag: docker/tag
+  - task: publish
+    tags: [containerization]
+    privileged: true
+    file: ci/pipelines/cf-operator/tasks/publish.yml
+    params:
+      repository: ((docker-organization))/cf-operator
+      candidate_repository: ((docker-organization))/((docker-candidate-repo))
+      username: ((dockerhub.username))
+      password: ((dockerhub.password))
+  - put: s3.cf-operator
+    tags: [containerization]
+    params:
+      file: binaries/cf-operator-*
 
 - name: build-helm
   plan:
