@@ -123,20 +123,32 @@ jobs:
       passed: [build]
     - get: s3.code-coverage-unit
       passed: [build]
-  - task: test-integration
-    tags: [containerization]
-    params:
-      ibmcloud_apikey: ((ibmcloud.key-value))
-      ibmcloud_server: ((ibmcloud.server))
-      ibmcloud_region: ((ibmcloud.region))
-      ibmcloud_cluster: ((ibmcloud.cluster))
-      ssh_server_ip: ((ssh-server.ip))
-      ssh_server_user: ((ssh-server.user))
-      ssh_server_key: ((ssh-server.key))
-      OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
-      DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
-      COVERAGE: true
-    file: ci/pipelines/tasks/test-integration.yml
+  - aggregate:
+    - task: test-integration
+      tags: [containerization]
+      params:
+        ibmcloud_apikey: ((ibmcloud.key-value))
+        ibmcloud_server: ((ibmcloud.server))
+        ibmcloud_region: ((ibmcloud.region))
+        ibmcloud_cluster: ((ibmcloud.cluster))
+        ssh_server_ip: ((ssh-server.ip))
+        ssh_server_user: ((ssh-server.user))
+        ssh_server_key: ((ssh-server.key))
+        OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+        DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+        COVERAGE: true
+      file: ci/pipelines/tasks/test-integration.yml
+    - task: test-helm-e2e
+      tags: [containerization]
+      params:
+        ibmcloud_apikey: ((ibmcloud.key-value))
+        ibmcloud_server: ((ibmcloud.server))
+        ibmcloud_region: ((ibmcloud.region))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
+        ssh_server_ip: ((ssh-server.ip))
+        ssh_server_user: ((ssh-server.user))
+        ssh_server_key: ((ssh-server.key))
+      file: ci/pipelines/tasks/test-helm-e2e.yml
   - put: s3.code-coverage-integration
     tags: [containerization]
     params:
