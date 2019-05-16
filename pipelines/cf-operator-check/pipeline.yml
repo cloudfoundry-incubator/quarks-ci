@@ -158,6 +158,7 @@ jobs:
           ssh_server_ip: ((ssh-server.ip))
           ssh_server_user: ((ssh-server.user))
           ssh_server_key: ((ssh-server.key))
+          DOCKER_IMAGE_REPOSITORY: ((docker-repo))
         file: ci/pipelines/tasks/test-helm-e2e.yml
     on_failure:
       put: status
