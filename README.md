@@ -54,3 +54,8 @@ In order to not have to explicitly specify each secret by key in the `fly` comma
 In the existing concourse deployment, there are currently 2 workers with a tag by the name `containerization`. This is intended so that this 2 workers will host all the `cf-containerization` workload.
 
 In order for your pipelines to be directed to these set of workers, you need to make use of the `tag` step modifier, please refer to the [tag documentation](https://concourse-ci.org/tags-step-modifier.html)
+
+
+## Hostpath Volume Provisioning
+
+Hostpath NFS volume provisioning is enabled in flintstone concourse-ci as it takes very less time for provisioning volumes and tests can be faster due to this. The [gist](https://gist.github.com/viovanov/f31529bc1575e3358bf6bb1de9fa495b) has the config that is used for enabling this.
