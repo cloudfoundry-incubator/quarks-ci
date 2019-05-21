@@ -33,6 +33,8 @@ ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
+echo "Running integration tests in the ${ibmcloud_cluster} cluster."
+
 echo "Creating namespace"
 kubectl create namespace "$TEST_NAMESPACE"
 

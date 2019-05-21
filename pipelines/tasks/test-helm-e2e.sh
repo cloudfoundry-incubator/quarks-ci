@@ -23,8 +23,12 @@ ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
+echo "Running e2e tests in the ${ibmcloud_cluster} cluster."
+
 echo "Creating namespace"
 kubectl create namespace "$TEST_NAMESPACE"
+
+echo "The cf-operator will be installed into the ${TEST_NAMESPACE} namespace."
 
 echo "Seting up SSH tunnel for webhook"
 cat <<EOF > identity
