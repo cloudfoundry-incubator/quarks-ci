@@ -57,18 +57,18 @@ jobs:
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
       file: ci/pipelines/tasks/test-integration.yml
-    # - task: test-helm-e2e
-    #   tags: [containerization]
-    #   params:
-    #     ibmcloud_apikey: ((ibmcloud.key-value))
-    #     ibmcloud_server: ((ibmcloud.server))
-    #     ibmcloud_region: ((ibmcloud.region))
-    #     ibmcloud_cluster: ((ibmcloud.cluster-dino))
-    #     ssh_server_ip: ((ssh-server.ip))
-    #     ssh_server_user: ((ssh-server.user))
-    #     ssh_server_key: ((ssh-server.key))
-    #     DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
-    #   file: ci/pipelines/tasks/test-helm-e2e.yml
+    - task: test-helm-e2e
+      tags: [containerization]
+      params:
+        ibmcloud_apikey: ((ibmcloud.key-value))
+        ibmcloud_server: ((ibmcloud.server))
+        ibmcloud_region: ((ibmcloud.region))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
+        ssh_server_ip: ((ssh-server.ip))
+        ssh_server_user: ((ssh-server.user))
+        ssh_server_key: ((ssh-server.key))
+        DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+      file: ci/pipelines/tasks/test-helm-e2e.yml
 
 - name: build
   serial: true
