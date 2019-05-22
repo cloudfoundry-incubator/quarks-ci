@@ -67,6 +67,9 @@ echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
 
 echo "Running e2e CLI tests"
+# fix SSL path
+kube_path=$(dirname "$KUBECONFIG")
+sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
 make -C src/code.cloudfoundry.org/cf-operator test-cli-e2e
 
 find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs -r cp -t code-coverage/
