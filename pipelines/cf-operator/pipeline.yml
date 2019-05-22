@@ -4,7 +4,7 @@ resources:
   tags: [containerization]
   source:
     uri: ((src-repo))
-    branch: master
+    branch: ((src-branch))
 - name: ci
   type: git
   tags: [containerization]
