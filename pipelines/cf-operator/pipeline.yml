@@ -74,17 +74,18 @@ jobs:
     tags: [containerization]
     params:
       bump: patch
-  - task: vet
-    tags: [containerization]
-    file: ci/pipelines/tasks/vet.yml
-  - task: lint
-    tags: [containerization]
-    file: ci/pipelines/tasks/lint.yml
-  - task: test-unit
-    tags: [containerization]
-    file: ci/pipelines/tasks/test.yml
-    params:
-      COVERAGE: true
+  - aggregate:
+    - task: vet
+      tags: [containerization]
+      file: ci/pipelines/tasks/vet.yml
+    - task: lint
+      tags: [containerization]
+      file: ci/pipelines/tasks/lint.yml
+    - task: test-unit
+      tags: [containerization]
+      file: ci/pipelines/tasks/test.yml
+      params:
+        COVERAGE: true
   - put: s3.code-coverage-unit
     tags: [containerization]
     params:
