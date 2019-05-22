@@ -3,6 +3,7 @@ FROM opensuse/leap:15
 RUN zypper -n install --no-recommends make git docker zip curl gzip gcc ruby vim jq unzip bind-utils
 
 ADD https://github.com/SUSE/kctl/releases/download/v0.0.12/kctl-linux-amd64 /usr/bin/k
+RUN chmod +x /usr/bin/k
 
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
