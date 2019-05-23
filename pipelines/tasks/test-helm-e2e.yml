@@ -9,6 +9,8 @@ inputs:
 - name: src
   path: src/code.cloudfoundry.org/cf-operator
 - name: ci
+outputs:
+- name: env_dumps
 caches:
 - path: pkg/mod # Persist go modules cache
 run:
