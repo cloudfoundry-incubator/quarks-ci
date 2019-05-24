@@ -29,7 +29,7 @@ resources:
   source:
     bucket: ((s3-bucket))
     private: true
-    regexp: fissile/checks/fissile-(.*)\.tgz
+    regexp: fissile/develop/fissile-(.*)\.tgz
 
 - name: s3.fissile-stemcell-opensuse-version
   type: s3
