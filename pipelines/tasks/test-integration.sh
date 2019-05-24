@@ -23,8 +23,18 @@ if [ -f s3.build-number/version ]; then
 fi
 export GOVER_FILE=gover-${version}-integration.coverprofile
 
+upload_debug_info() {
+  if ls /tmp/env_dumps/* &> /dev/null; then
+    TARBALL_NAME="env_dump-$(date +"%s").tar.gz"
+    echo "Env dumps will be uploaded as ${TARBALL_NAME}"
+    tar cfzv env_dumps/${TARBALL_NAME} -C /tmp/env_dumps/ .
+  fi
+}
+
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
+  upload_debug_info
+
   echo "Cleaning up"
   set +e
   kubectl get mutatingwebhookconfiguration -oname | \
@@ -32,6 +42,7 @@ cleanup () {
     xargs -n 1 kubectl delete
   pidof ssh | xargs kill
 }
+
 trap cleanup EXIT
 
 echo "Seting up bluemix access"
