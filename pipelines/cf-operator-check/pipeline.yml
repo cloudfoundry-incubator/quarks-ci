@@ -10,7 +10,7 @@ resource_types:
     tag: release
 
 resources:
-- name: src
+- name: pr-src
   type: pull-request
   tags: [containerization]
   webhook_token: ((github.webhook-token))
@@ -52,14 +52,17 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: src
+    - get: pr-src
       trigger: true
+  - task: vendorize-src
+    tags: [containerization]
+    file: ci/pipelines/cf-operator-check/tasks/vendor-src.yml
   - put: status
     tags: [containerization]
     params:
       context: vet
       description: go vet check
-      path: src
+      path: pr-src
       state: pending
   - do:
     - task: vet
@@ -71,7 +74,7 @@ jobs:
       params:
         context: vet
         description: go vet check
-        path: src
+        path: pr-src
         state: failure
     on_success:
       put: status
@@ -79,7 +82,7 @@ jobs:
       params:
         context: vet
         description: go vet check
-        path: src
+        path: pr-src
         state: success
 
 - name: lint
@@ -87,14 +90,14 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: src
+    - get: pr-src
       trigger: true
   - put: status
     tags: [containerization]
     params:
       context: lint
       description: lint check
-      path: src
+      path: pr-src
       state: pending
   - do:
     - task: lint
@@ -106,7 +109,7 @@ jobs:
       params:
         context: lint
         description: go lint check
-        path: src
+        path: pr-src
         state: failure
     on_success:
       put: status
@@ -114,7 +117,7 @@ jobs:
       params:
         context: lint
         description: go lint check
-        path: src
+        path: pr-src
         state: success
 
 - name: test
@@ -122,14 +125,17 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: src
+    - get: pr-src
       trigger: true
+  - task: vendorize-src
+    tags: [containerization]
+    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     tags: [containerization]
     params:
       context: test
       description: go test check
-      path: src
+      path: pr-src
       state: pending
   - task: build
     tags: [containerization]
@@ -171,7 +177,7 @@ jobs:
         params:
           context: test
           description: go test check
-          path: src
+          path: pr-src
           state: failure
     on_success:
       put: status
@@ -179,7 +185,7 @@ jobs:
       params:
         context: test
         decription: go test check
-        path: src
+        path: pr-src
         state: success
 
 - name: build
@@ -187,14 +193,17 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: src
+    - get: pr-src
       trigger: true
+  - task: vendorize-src
+    tags: [containerization]
+    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     tags: [containerization]
     params:
       context: build
       description: go build check
-      path: src
+      path: pr-src
       state: pending
   - do:
     - task: build
@@ -212,7 +221,7 @@ jobs:
       params:
         context: build
         description: go build check
-        path: src
+        path: pr-src
         state: failure
     on_success:
       put: status
@@ -220,5 +229,5 @@ jobs:
       params:
         context: build
         decription: go build check
-        path: src
+        path: pr-src
         state: success
