@@ -130,22 +130,50 @@ jobs:
   - task: vendorize-src
     tags: [containerization]
     file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
-  - put: status
-    tags: [containerization]
-    params:
-      context: test
-      description: go test check
-      path: pr-src
-      state: pending
-  - task: build
-    tags: [containerization]
-    file: ci/pipelines/tasks/build.yml
-  - put: docker.cf-operator-ci
-    params:
-      build: src
-      build_args:
-        GO111MODULE: 'off'
-      tag: docker/tag
+
+  - aggregate:
+    - put: status
+      tags: [containerization]
+      params:
+        context: build
+        description: go build check
+        path: pr-src
+        state: pending
+    - put: status
+      tags: [containerization]
+      params:
+        context: test
+        description: go test check
+        path: pr-src
+        state: pending
+
+  - do:
+    - task: build
+      tags: [containerization]
+      file: ci/pipelines/tasks/build.yml
+    - put: docker.cf-operator-ci
+      params:
+        build: src
+        build_args:
+          GO111MODULE: 'off'
+        tag: docker/tag
+    on_failure:
+      put: status
+      tags: [containerization]
+      params:
+        context: build
+        description: go build check
+        path: pr-src
+        state: failure
+    on_success:
+      put: status
+      tags: [containerization]
+      params:
+        context: build
+        decription: go build check
+        path: pr-src
+        state: success
+
   - do:
     - task: test
       tags: [containerization]
@@ -185,49 +213,5 @@ jobs:
       params:
         context: test
         decription: go test check
-        path: pr-src
-        state: success
-
-- name: build
-  serial: true
-  plan:
-  - aggregate:
-    - get: ci
-    - get: pr-src
-      trigger: true
-  - task: vendorize-src
-    tags: [containerization]
-    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
-  - put: status
-    tags: [containerization]
-    params:
-      context: build
-      description: go build check
-      path: pr-src
-      state: pending
-  - do:
-    - task: build
-      tags: [containerization]
-      file: ci/pipelines/tasks/build.yml
-    - put: docker.cf-operator-ci
-      params:
-        build: src
-        build_args:
-          GO111MODULE: 'off'
-        tag: docker/tag
-    on_failure:
-      put: status
-      tags: [containerization]
-      params:
-        context: build
-        description: go build check
-        path: pr-src
-        state: failure
-    on_success:
-      put: status
-      tags: [containerization]
-      params:
-        context: build
-        decription: go build check
         path: pr-src
         state: success
