@@ -137,6 +137,8 @@ jobs:
   - put: docker.cf-operator-ci
     params:
       build: src
+      build_args:
+        GO111MODULE: 'off'
       tag: docker/tag
   - do:
     - task: test
@@ -201,6 +203,8 @@ jobs:
     - put: docker.cf-operator-ci
       params:
         build: src
+        build_args:
+          GO111MODULE: 'off'
         tag: docker/tag
     on_failure:
       put: status
