@@ -56,7 +56,7 @@ jobs:
       trigger: true
   - task: vendorize-src
     tags: [containerization]
-    file: ci/pipelines/cf-operator-check/tasks/vendor-src.yml
+    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     tags: [containerization]
     params:
