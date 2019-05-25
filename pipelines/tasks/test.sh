@@ -3,7 +3,6 @@ set -ex
 
 export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
-export GO111MODULE=on
 
 version=
 

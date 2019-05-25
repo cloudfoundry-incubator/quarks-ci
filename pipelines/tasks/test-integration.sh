@@ -13,7 +13,6 @@ set -eu
 
 export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
-export GO111MODULE=on
 export TEST_NAMESPACE="test$(date +%s)"
 
 ## File used for coverage reporting
