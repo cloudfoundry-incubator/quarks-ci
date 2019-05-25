@@ -92,6 +92,9 @@ jobs:
     - get: ci
     - get: pr-src
       trigger: true
+  - task: vendorize-src
+    tags: [containerization]
+    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     tags: [containerization]
     params:
