@@ -58,8 +58,4 @@ In order for your pipelines to be directed to these set of workers, you need to 
 
 ## Hostpath Volume Provisioning
 
-We use a local path provisioner for volumes in flintstone concourse-ci as it takes less time.
-Tests are quicker and more reliable because of this.
-
-Installation instructions here: https://github.com/rancher/local-path-provisioner
-
+Hostpath NFS volume provisioning is enabled in flintstone concourse-ci as it takes very less time for provisioning volumes and tests can be faster due to this. The [gist](https://gist.github.com/viovanov/f31529bc1575e3358bf6bb1de9fa495b) has the config that is used for enabling this.
