@@ -9,8 +9,18 @@ export TEST_NAMESPACE="test$(date +%s)"
 export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 62000 )  + 2000 ))
 export TUNNEL_NAME="tunnelpod-${CF_OPERATOR_WEBHOOK_SERVICE_PORT}"
 
+upload_debug_info() {
+  if ls /tmp/env_dumps/* &> /dev/null; then
+    TARBALL_NAME="env_dump-$(date +"%s").tar.gz"
+    echo "Env dumps will be uploaded as ${TARBALL_NAME}"
+    tar cfzv env_dumps/${TARBALL_NAME} -C /tmp/env_dumps/ .
+  fi
+}
+
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
+  upload_debug_info
+
   echo "Cleaning up"
   kubectl delete ns --wait=false --grace-period=60 "${TEST_NAMESPACE}"
   pidof ssh | xargs kill
