@@ -150,6 +150,13 @@ jobs:
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           COVERAGE: true
         file: ci/pipelines/tasks/test-integration.yml
+        on_failure:
+          do:
+          - put: s3.env-dump
+            tags: [containerization]
+            params:
+              file: env_dumps/env_dump-*.tar.gz
+              acl: public-read
       - task: test-helm-e2e
         tags: [containerization]
         params:
@@ -162,13 +169,13 @@ jobs:
           ssh_server_key: ((ssh-server.key))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
         file: ci/pipelines/tasks/test-helm-e2e.yml
-    on_failure:
-      do:
-      - put: s3.env-dump
-        tags: [containerization]
-        params:
-          file: env_dumps/env_dump-*.tar.gz
-          acl: public-read
+        on_failure:
+          do:
+          - put: s3.env-dump
+            tags: [containerization]
+            params:
+              file: env_dumps/env_dump-*.tar.gz
+              acl: public-read
   - put: s3.code-coverage-integration
     tags: [containerization]
     params:
