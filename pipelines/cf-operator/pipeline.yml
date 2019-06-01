@@ -157,6 +157,9 @@ jobs:
             params:
               file: env_dumps/env_dump-*.tar.gz
               acl: public-read
+      - task: build
+        tags: [containerization]
+        file: ci/pipelines/tasks/build-helm.yml
       - task: test-helm-e2e
         tags: [containerization]
         params:
