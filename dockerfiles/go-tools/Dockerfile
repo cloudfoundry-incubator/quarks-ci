@@ -1,6 +1,4 @@
-FROM opensuse/leap:15
-
-RUN zypper -n install --no-recommends make git docker zip curl gzip gcc ruby vim jq unzip bind-utils
+FROM cfcontainerization/base-ci:latest
 
 ADD https://github.com/SUSE/kctl/releases/download/v0.0.12/kctl-linux-amd64 /usr/bin/k
 RUN chmod +x /usr/bin/k
