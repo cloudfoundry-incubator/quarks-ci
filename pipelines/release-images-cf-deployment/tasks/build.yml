@@ -3,7 +3,7 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: thulioassis/fissile-cf-deployment-ci
+    repository: cfcontainerization/base-ci 
     tag: latest
 inputs:
 - name: ci
