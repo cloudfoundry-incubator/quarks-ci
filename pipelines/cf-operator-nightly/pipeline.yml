@@ -24,6 +24,16 @@ resources:
     interval: 12h
 
 jobs:
+- name: clean-ns
+  serial: true
+  plan:
+  - aggregate:
+    - get: ci
+    - get: 12h
+      trigger: true
+  - task: clean-ns
+    tags: [containerization]
+    file: ci/pipelines/tasks/clean-ns.yml
 - name: test
   serial: true
   plan:
@@ -75,6 +85,7 @@ jobs:
   plan:
   - aggregate:
     - get: ci
+      passed: [clean-ns]
     - get: src
     - get: 12h
       trigger: true
@@ -92,6 +103,7 @@ jobs:
   plan:
   - aggregate:
     - get: ci
+      passed: [clean-ns]
     - get: src
     - get: 12h
       trigger: true
