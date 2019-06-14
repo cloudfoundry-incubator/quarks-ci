@@ -33,6 +33,11 @@ jobs:
       trigger: true
   - task: clean-ns
     tags: [containerization]
+    params:
+      ibmcloud_apikey: ((ibmcloud.key-value))
+      ibmcloud_server: ((ibmcloud.server))
+      ibmcloud_region: ((ibmcloud.region))
+      ibmcloud_cluster: ((ibmcloud.cluster))
     file: ci/pipelines/tasks/clean-ns.yml
 - name: test
   serial: true
@@ -73,7 +78,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster-dino))
+        ibmcloud_cluster: ((ibmcloud.cluster))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
