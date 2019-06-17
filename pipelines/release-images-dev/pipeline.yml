@@ -1,0 +1,93 @@
+<% releases = %w(cf-operator-testing-release) %>
+resources:
+- name: ci
+  type: git
+  tags: [containerization]
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+    paths: [bosh-releases/*]
+- name: s3.fissile-linux
+  type: s3
+  tags: [containerization]
+  source:
+    bucket: ((s3-bucket))
+    private: true
+    regexp: fissile/develop/fissile-(.*)\.tgz
+- name: s3.fissile-stemcell-opensuse-version
+  type: s3
+  tags: [containerization]
+  source:
+    bucket: ((versions-s3-bucket))
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+<% releases.each do |release| %>
+- name: s3.final-release-<%= release %>
+  type: s3
+  tags: [containerization]
+  source:
+    bucket: ((versions-s3-bucket))
+    regexp: <%= release %>-release-(.*).tgz
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+<% end %>
+
+jobs:
+<% releases.each do |release| %>
+- name: build-<%= release %>-release
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+  - aggregate:
+    - get: s3.fissile-stemcell-opensuse-version
+      trigger: true
+    - get: s3.fissile-linux
+      trigger: true
+  - do:
+    - task: build
+      input_mapping:
+        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+      tags: [containerization]
+      params:
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        RELEASE_NAME: <%= release %>
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+        ACCESS_KEY_ID: ((s3.accessKey))
+        SECRET_ACCESS_KEY: ((s3.secretKey))
+      file: ci/pipelines/release-images-dev/tasks/build_final_release.yml
+    - put: s3.final-release-<%= release %>
+      tags: [containerization]
+      params:
+        file: release_tarball_dir/<%= release %>-release-*.tgz
+        acl: public-read
+- name: build-<%= release %>-image
+  plan:
+  - aggregate:
+    - get: ci
+  - aggregate:
+    - get: s3.final-release-<%= release %>
+      passed: [build-<%= release %>-release]
+      trigger: true
+    - get: s3.fissile-stemcell-opensuse-version
+      trigger: true
+    - get: s3.fissile-linux
+      trigger: true
+  - do:
+    - task: build
+      privileged: true
+      input_mapping:
+        release: s3.final-release-<%= release %>
+        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+      tags: [containerization]
+      params:
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        RELEASE_NAME: <%= release %>
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+      file: ci/pipelines/release-images-dev/tasks/build.yml
+<% end %>

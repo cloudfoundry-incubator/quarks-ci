@@ -1,0 +1,5 @@
+check process sleep
+  with pidfile /var/vcap/sys/run/bpm/drain_watch/sleep.pid
+  start program "/var/vcap/jobs/bpm/bin/bpm start drain_watch"
+  stop program "/var/vcap/jobs/bpm/bin/bpm stop drain_watch"
+  group vcap

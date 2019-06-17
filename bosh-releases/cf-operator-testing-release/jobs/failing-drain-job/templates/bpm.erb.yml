@@ -1,0 +1,7 @@
+---
+processes:
+- name: drain_watch
+  executable: /bin/bash
+  args:
+  - -c
+  - "while true; do ls -l /tmp/drain_logs; sleep 3; done"

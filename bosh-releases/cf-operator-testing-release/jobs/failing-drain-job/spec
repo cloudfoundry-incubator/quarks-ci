@@ -1,0 +1,10 @@
+---
+name: failing-drain-job
+
+templates:
+  bpm.erb.yml: config/bpm.yml
+  drain.sh: bin/drain/drain.sh
+
+packages: []
+
+properties: {}

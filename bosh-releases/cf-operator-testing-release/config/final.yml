@@ -1,0 +1,5 @@
+name: cf-operator-testing
+blobstore:
+  provider: local
+  options:
+    blobstore_path: /tmp/blobs
