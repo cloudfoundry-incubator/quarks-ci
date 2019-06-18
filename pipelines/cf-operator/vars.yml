@@ -1,6 +1,6 @@
 src-repo: https://github.com/cloudfoundry-incubator/cf-operator
 src-branch: master
-ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci
+ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci.git
 ci-branch: master
 docker-organization: cfcontainerization
 docker-candidate-repo: cf-operator-candidate
