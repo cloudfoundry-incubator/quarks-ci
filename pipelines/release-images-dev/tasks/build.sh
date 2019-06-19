@@ -20,7 +20,6 @@ VERSION=$(cat release/version)
 STEMCELL_NAME="${STEMCELL_REPOSITORY}:$(cat s3.stemcell-version/*-version)"
 docker pull "${STEMCELL_NAME}"
 
-release_path="ci/bosh-releases/${release}"
 sha1=$(sha1sum release/*.tgz | awk '{print $1}')
 s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --name="${RELEASE_NAME}" --version="${VERSION}" --sha1="$sha1" --url="$(cat release/url)"
 
