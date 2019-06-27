@@ -52,7 +52,7 @@ echo "Running integration tests in the ${ibmcloud_cluster} cluster."
 
 ## Set up SSH tunnels to make our webhook server available to k8s
 echo "Seting up SSH tunnel for webhook"
-cat <<EOF > identity
+cat <<EOF > /tmp/cf-operator-tunnel-identity
 $ssh_server_key
 EOF
 chmod 0600 identity
@@ -70,7 +70,7 @@ for i in $(seq 1 "$NODES"); do
   kubectl create namespace "$namespace"
 
   # GatewayPorts option needs to be enabled on ssh server
-  ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R "$ssh_server_ip:$port:localhost:$port" "$ssh_server_user@$ssh_server_ip"
+  ssh -fNT -i /tmp/cf-operator-tunnel-identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R "$ssh_server_ip:$port:localhost:$port" "$ssh_server_user@$ssh_server_ip"
 
   cat <<EOF | kubectl create -f- --namespace="$namespace"
 ---
