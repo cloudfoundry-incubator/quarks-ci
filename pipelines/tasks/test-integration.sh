@@ -55,7 +55,7 @@ echo "Seting up SSH tunnel for webhook"
 cat <<EOF > /tmp/cf-operator-tunnel-identity
 $ssh_server_key
 EOF
-chmod 0600 identity
+chmod 0600 /tmp/cf-operator-tunnel-identity
 
 # Random base port to support parallelism with different webhook servers
 export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 61000 )  + 2000 ))
