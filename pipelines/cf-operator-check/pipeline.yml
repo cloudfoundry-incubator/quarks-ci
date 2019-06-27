@@ -173,7 +173,7 @@ jobs:
       tags: [containerization]
       params:
         context: build
-        decription: go build check
+        description: go build check
         path: pr-src
         state: success
 
@@ -194,7 +194,7 @@ jobs:
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-repo))
-          NODES: 6
+          NODES: 3
         file: ci/pipelines/tasks/test-integration.yml
     on_failure:
       do:
@@ -215,6 +215,6 @@ jobs:
       tags: [containerization]
       params:
         context: test
-        decription: go test check
+        description: go test check
         path: pr-src
         state: success
