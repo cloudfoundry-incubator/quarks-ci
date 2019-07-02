@@ -2,7 +2,6 @@
 resources:
 - name: sample-resource
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((cos-access-key-id))
     secret_access_key: ((cos-secret-access-key))
@@ -16,9 +15,7 @@ jobs:
 - name: hello-world
   plan:
   - get: sample-resource
-    tags: [containerization]
   - task: hello-inline
-    tags: [containerization]
     config:
       platform: linux
       image_resource:
@@ -37,7 +34,6 @@ jobs:
 
           echo "Hello, ${GREETING}!"
   - task: hello-inline-with-resource
-    tags: [containerization]
     config:
       platform: linux
       image_resource:
@@ -58,7 +54,6 @@ jobs:
           tar -xzf sample-resource/hello-world.tar.gz
           cat hello-world.yml
   - task: hello-script
-    tags: [containerization]
     config:
       platform: linux
       image_resource:

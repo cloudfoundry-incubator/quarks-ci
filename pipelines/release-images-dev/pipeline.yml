@@ -2,21 +2,18 @@
 resources:
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
     paths: [bosh-releases/*]
 - name: s3.fissile-linux
   type: s3
-  tags: [containerization]
   source:
     bucket: ((s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-opensuse-version
   type: s3
-  tags: [containerization]
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
@@ -25,7 +22,6 @@ resources:
 <% releases.each do |release| %>
 - name: s3.final-release-<%= release %>
   type: s3
-  tags: [containerization]
   source:
     bucket: ((versions-s3-bucket))
     regexp: <%= release %>-release-(.*).tgz
@@ -49,7 +45,6 @@ jobs:
     - task: build
       input_mapping:
         s3.stemcell-version: s3.fissile-stemcell-opensuse-version
-      tags: [containerization]
       params:
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
         RELEASE_NAME: <%= release %>
@@ -60,7 +55,6 @@ jobs:
         SECRET_ACCESS_KEY: ((s3.secretKey))
       file: ci/pipelines/release-images-dev/tasks/build_final_release.yml
     - put: s3.final-release-<%= release %>
-      tags: [containerization]
       params:
         file: release_tarball_dir/<%= release %>-release-*.tgz
         acl: public-read
@@ -82,7 +76,6 @@ jobs:
       input_mapping:
         release: s3.final-release-<%= release %>
         s3.stemcell-version: s3.fissile-stemcell-opensuse-version
-      tags: [containerization]
       params:
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
         RELEASE_NAME: <%= release %>

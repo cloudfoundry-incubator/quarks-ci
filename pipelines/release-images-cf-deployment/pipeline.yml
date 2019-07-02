@@ -7,20 +7,17 @@ cf_deployment_tags = %w(v7.11.0 v8.0.0 v8.1.0 v9.0.0 v9.2.0)
 resources:
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
 - name: docker-image-resource
   type: git
-  tags: [containerization]
   source:
     uri: ((docker-image-resource-repo))
     branch: ((docker-image-resource-branch))
 <% cf_deployment_tags.each do |cf_deployment_tag| %>
 - name: cf-deployment-<%= cf_deployment_tag %>
   type: git
-  tags: [containerization]
   source:
     uri: ((cf-deployment-repo))
     branch: ((cf-deployment-branch))
@@ -28,14 +25,12 @@ resources:
 <% end %>
 - name: s3.fissile-linux
   type: s3
-  tags: [containerization]
   source:
     bucket: ((s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-opensuse-version
   type: s3
-  tags: [containerization]
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
@@ -60,7 +55,6 @@ jobs:
       input_mapping:
         s3.stemcell-version: s3.fissile-stemcell-opensuse-version
         cf-deployment: cf-deployment-<%= cf_deployment_tag %>
-      tags: [containerization]
       params:
         STEMCELL_OS: ((stemcell-os))
         STEMCELL_REPOSITORY: ((stemcell-repository))
