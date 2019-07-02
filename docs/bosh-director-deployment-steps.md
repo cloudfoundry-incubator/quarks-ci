@@ -18,6 +18,7 @@ _**Note**_:  Softlayer is the IaaS used in IBM, where most of the IBM Cloud infr
 - Clone of [cloudfoundry/bits-service-private-config](https://github.com/cloudfoundry/bits-service-private-config)
     - _**Note**_: This is the repo where all private information is stored. For both BOSH director and Concourse
     deployment.
+- Spruce [binary](https://github.com/geofffranks/spruce/releases)
 - An specific customize BOSH cli. Required for the Softlayer CPI, to read an specific VM IP.
     ```bash
     # For Linux
@@ -35,7 +36,7 @@ _**Note**_:  Softlayer is the IaaS used in IBM, where most of the IBM Cloud infr
 - Run the `create_vm_sl.sh` script(_**Note**_: If you already have a director VM, do NOT run this script):
     ```bash
     $ pushd ~/workspace/bosh-softlayer-cpi-release/docs
-    $ ./create_vm_sl.sh -h director-green -d bits.ams -c 4 -m 8192 -hb true -dc <dc> -uv <public_vlan> -iv <private_vlan> -u <account_user> -k <account_api_key>  > director-state.json
+    $ ./create_vm_sl.sh -h director-green -d bits.ams -c 4 -m 8192 -hb true -dc <dc> -uv <public_vlan> -iv <private_vlan> -u flintstone@cloudfoundry.org  -k <account_api_key>  > director-state.json
     $ popd
     ```
 - The `director-state.json`, contains a VM `CID` and `IP` we will require to add this values later into a JSON file.
@@ -73,11 +74,11 @@ we can grab some CPI logs, in case we require to debug the task.
         -o ~/workspace/bosh-deployment/misc/powerdns.yml \
         -o ~/workspace/bosh-deployment/jumpbox-user.yml \
         -v internal_ip=<IP_OF_NEW_VM> \
-        -v sl_username=<SL_USERNAME> \
+        -v sl_username=flintstone@cloudfoundry.org \
         -v sl_api_key=<SL_APIKEY>\
-        -v sl_datacenter=<SL_DC> \
-        -v sl_vlan_private=<VLAN_PRIVATE> \
-        -v sl_vlan_public=<VLAN_PUBLIC> \
+        -v sl_datacenter=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.director."dc"') \
+        -v sl_vlan_private=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.director."privatevlan"') \
+        -v sl_vlan_public=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.director."publicvlan"') \
         -v sl_vm_name_prefix=director-green \
         -v sl_vm_domain=bits.ams \
         -v dns_recursor_ip=8.8.8.8 \
