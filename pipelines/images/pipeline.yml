@@ -1,7 +1,6 @@
 resources:
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))

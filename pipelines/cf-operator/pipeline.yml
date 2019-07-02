@@ -1,26 +1,22 @@
 resources:
 - name: src
   type: git
-  tags: [containerization]
   source:
     uri: ((src-repo))
     branch: ((src-branch))
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
 - name: docker.cf-operator-rc
   type: docker-image
-  tags: [containerization]
   source:
     repository: ((docker-organization))/((docker-candidate-repo))
     username: ((dockerhub.username))
     password: ((dockerhub.password))
 - name: s3.cf-operator
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -28,7 +24,6 @@ resources:
     regexp: binaries/cf-operator-(.*)
 - name: s3.helm-charts
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -36,7 +31,6 @@ resources:
     regexp: helm-charts/cf-operator-(.*).tgz
 - name: s3.build-number
   type: semver
-  tags: [containerization]
   source:
     driver: s3
     access_key_id: ((s3.accessKey))
@@ -46,7 +40,6 @@ resources:
     initial_version: 0.0.0
 - name: s3.code-coverage-unit
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -54,7 +47,6 @@ resources:
     regexp: code-coverage/gover-(.*)-unit.coverprofile
 - name: s3.code-coverage-integration
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -62,7 +54,6 @@ resources:
     regexp: code-coverage/gover-(.*)-integration.coverprofile
 - name: s3.env-dump
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -79,23 +70,18 @@ jobs:
     - get: src
       trigger: true
   - put: s3.build-number
-    tags: [containerization]
     params:
       bump: patch
   - aggregate:
     - task: vet
-      tags: [containerization]
       file: ci/pipelines/tasks/vet.yml
     - task: lint
-      tags: [containerization]
       file: ci/pipelines/tasks/lint.yml
     - task: test-unit
-      tags: [containerization]
       file: ci/pipelines/tasks/test.yml
       params:
         COVERAGE: true
   - put: s3.code-coverage-unit
-    tags: [containerization]
     params:
       file: code-coverage/gover-*-unit.coverprofile
 
@@ -112,7 +98,6 @@ jobs:
     - get: s3.code-coverage-unit
       passed: [test]
   - task: build
-    tags: [containerization]
     file: ci/pipelines/tasks/build.yml
   - do:
     - put: docker.cf-operator-rc
@@ -137,7 +122,6 @@ jobs:
   - do:
     - aggregate:
       - task: test-integration
-        tags: [containerization]
         params:
           ibmcloud_apikey: ((ibmcloud.key-value))
           ibmcloud_server: ((ibmcloud.server))
@@ -153,12 +137,10 @@ jobs:
         on_failure:
           do:
           - put: s3.env-dump
-            tags: [containerization]
             params:
               file: env_dumps/env_dump-*.tar.gz
               acl: public-read
       - task: test-helm-e2e
-        tags: [containerization]
         params:
           ibmcloud_apikey: ((ibmcloud.key-value))
           ibmcloud_server: ((ibmcloud.server))
@@ -172,12 +154,10 @@ jobs:
         on_failure:
           do:
           - put: s3.env-dump
-            tags: [containerization]
             params:
               file: env_dumps/env_dump-*.tar.gz
               acl: public-read
   - put: s3.code-coverage-integration
-    tags: [containerization]
     params:
       file: code-coverage/gover-*-integration.coverprofile
 
@@ -196,7 +176,6 @@ jobs:
   - get: s3.code-coverage-integration
     passed: [test-integration]
   - task: coverage
-    tags: [containerization]
     params:
       COVERALLS_TOKEN: ((coveralls-token))
     file: ci/pipelines/cf-operator/tasks/coverage.yml
@@ -210,10 +189,8 @@ jobs:
       passed: [test-integration]
       trigger: true
   - task: build
-    tags: [containerization]
     file: ci/pipelines/tasks/build.yml
   - task: publish
-    tags: [containerization]
     privileged: true
     file: ci/pipelines/cf-operator/tasks/publish.yml
     params:
@@ -222,7 +199,6 @@ jobs:
       username: ((dockerhub.username))
       password: ((dockerhub.password))
   - put: s3.cf-operator
-    tags: [containerization]
     params:
       file: binaries/cf-operator-*
 
@@ -234,10 +210,8 @@ jobs:
       trigger: true
       passed: [test-integration]
   - task: build
-    tags: [containerization]
     file: ci/pipelines/tasks/build-helm.yml
   - put: s3.helm-charts
-    tags: [containerization]
     params:
       file: helm-charts/cf-operator-*.tgz
       acl: public-read

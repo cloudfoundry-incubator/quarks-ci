@@ -1,7 +1,6 @@
 ---
 resources:
 - name: scf-pub-github-repo
-  tags: [containerization]
   type: git
   check_every: 60m
   source:
@@ -12,7 +11,6 @@ resources:
       value: 128
 
 - name: scf-helm-charts
-  tags: [containerization]
   type: s3
   check_every: 5m
   source:
@@ -27,11 +25,9 @@ jobs:
 - name: scf-build
   plan:
   - get: scf-pub-github-repo
-    tags: [containerization]
     trigger: true
     params: { submodules: all }
   - task: scf-build
-    tags: [containerization]
     privileged: true
     config:
       platform: linux
@@ -55,7 +51,6 @@ jobs:
         - -c
         - (( file "scripts/build.sh" ))
   - put: scf-helm-charts
-    tags: [containerization]
     attempts: 5
     params:
       file: helm-chart-store/scf-*-helm.tar.gz
@@ -63,11 +58,9 @@ jobs:
 - name: scf-deploy
   plan:
   - get: scf-helm-charts
-    tags: [containerization]
     passed: [scf-build]
     trigger: true
   - task: scf-deploy
-    tags: [containerization]
     config:
       platform: linux
       image_resource:
@@ -90,11 +83,9 @@ jobs:
 - name: scf-test
   plan:
   - get: scf-helm-charts
-    tags: [containerization]
     passed: [scf-deploy]
     trigger: true
   - task: scf-test
-    tags: [containerization]
     config:
       platform: linux
       image_resource:

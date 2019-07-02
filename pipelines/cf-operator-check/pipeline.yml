@@ -12,33 +12,28 @@ resource_types:
 resources:
 - name: pr-src
   type: pull-request
-  tags: [containerization]
   webhook_token: ((github.webhook-token))
   source:
     repository: ((pr-repo))
     access_token: ((github.access-token))
 - name: status
   type: status
-  tags: [containerization]
   source:
     access_token: ((github.access-token))
     repo: ((pr-repo))
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
 - name: docker.cf-operator-ci
   type: docker-image
-  tags: [containerization]
   source:
     repository: ((docker-organization))/((docker-repo))
     username: ((dockerhub.username))
     password: ((dockerhub.password))
 - name: s3.env-dump
   type: s3
-  tags: [containerization]
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -55,10 +50,8 @@ jobs:
     - get: pr-src
       trigger: true
   - task: vendorize-src
-    tags: [containerization]
     file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
-    tags: [containerization]
     params:
       context: vet
       description: go vet check
@@ -66,11 +59,9 @@ jobs:
       state: pending
   - do:
     - task: vet
-      tags: [containerization]
       file: ci/pipelines/tasks/vet.yml
     on_failure:
       put: status
-      tags: [containerization]
       params:
         context: vet
         description: go vet check
@@ -78,7 +69,6 @@ jobs:
         state: failure
     on_success:
       put: status
-      tags: [containerization]
       params:
         context: vet
         description: go vet check
@@ -93,10 +83,8 @@ jobs:
     - get: pr-src
       trigger: true
   - task: vendorize-src
-    tags: [containerization]
     file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
-    tags: [containerization]
     params:
       context: lint
       description: lint check
@@ -104,11 +92,9 @@ jobs:
       state: pending
   - do:
     - task: lint
-      tags: [containerization]
       file: ci/pipelines/tasks/lint.yml
     on_failure:
       put: status
-      tags: [containerization]
       params:
         context: lint
         description: go lint check
@@ -116,7 +102,6 @@ jobs:
         state: failure
     on_success:
       put: status
-      tags: [containerization]
       params:
         context: lint
         description: go lint check
@@ -131,19 +116,16 @@ jobs:
     - get: pr-src
       trigger: true
   - task: vendorize-src
-    tags: [containerization]
     file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
 
   - aggregate:
     - put: status
-      tags: [containerization]
       params:
         context: build
         description: go build check
         path: pr-src
         state: pending
     - put: status
-      tags: [containerization]
       params:
         context: test
         description: go test check
@@ -152,7 +134,6 @@ jobs:
 
   - do:
     - task: build
-      tags: [containerization]
       file: ci/pipelines/tasks/build.yml
     - put: docker.cf-operator-ci
       params:
@@ -162,7 +143,6 @@ jobs:
         tag: docker/tag
     on_failure:
       put: status
-      tags: [containerization]
       params:
         context: build
         description: go build check
@@ -170,7 +150,6 @@ jobs:
         state: failure
     on_success:
       put: status
-      tags: [containerization]
       params:
         context: build
         description: go build check
@@ -179,11 +158,9 @@ jobs:
 
   - do:
     - task: test
-      tags: [containerization]
       file: ci/pipelines/tasks/test.yml
     - aggregate:
       - task: test-integration
-        tags: [containerization]
         params:
           ibmcloud_apikey: ((ibmcloud.key-value))
           ibmcloud_server: ((ibmcloud.server))
@@ -194,17 +171,15 @@ jobs:
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-repo))
-          NODES: 3
+          NODES: 6
         file: ci/pipelines/tasks/test-integration.yml
     on_failure:
       do:
       - put: s3.env-dump
-        tags: [containerization]
         params:
           file: env_dumps/env_dump-*.tar.gz
           acl: public-read
       - put: status
-        tags: [containerization]
         params:
           context: test
           description: go test check
@@ -212,7 +187,6 @@ jobs:
           state: failure
     on_success:
       put: status
-      tags: [containerization]
       params:
         context: test
         description: go test check

@@ -12,20 +12,17 @@ releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r 
 resources:
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
 <% releases.each do |release| %>
 - name: <%= release[:name] %>-release
   type: bosh-io-release
-  tags: [containerization]
   source:
     repository: <%= release[:organization] %>/<%= release[:name] %>-release
 <% end %>
 - name: s3.fissile-linux
   type: s3
-  tags: [containerization]
   source:
     bucket: ((s3-bucket))
     private: true
@@ -33,7 +30,6 @@ resources:
 
 - name: s3.fissile-stemcell-opensuse-version
   type: s3
-  tags: [containerization]
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
@@ -61,7 +57,6 @@ jobs:
       input_mapping:
         release: <%= release[:name] %>-release
         s3.stemcell-version: s3.fissile-stemcell-opensuse-version
-      tags: [containerization]
       params:
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
         RELEASE_NAME: <%= release[:name] %>

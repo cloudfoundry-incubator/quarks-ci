@@ -1,19 +1,16 @@
 resources:
 - name: src
   type: git
-  tags: [containerization]
   source:
     uri: ((src-repo))
     branch: master
 - name: ci
   type: git
-  tags: [containerization]
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
 - name: docker.cf-operator-rc
   type: docker-image
-  tags: [containerization]
   source:
     repository: ((docker-organization))/((docker-candidate-repo))
     username: ((dockerhub.username))
@@ -32,7 +29,6 @@ jobs:
     - get: 12h
       trigger: true
   - task: clean-ns
-    tags: [containerization]
     params:
       ibmcloud_apikey: ((ibmcloud.key-value))
       ibmcloud_server: ((ibmcloud.server))
@@ -50,17 +46,13 @@ jobs:
     - get: 12h
       trigger: true
   - task: vet
-    tags: [containerization]
     file: ci/pipelines/tasks/vet.yml
   - task: lint
-    tags: [containerization]
     file: ci/pipelines/tasks/lint.yml
   - task: test-unit
-    tags: [containerization]
     file: ci/pipelines/tasks/test.yml
   - aggregate:
     - task: test-integration
-      tags: [containerization]
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
@@ -73,7 +65,6 @@ jobs:
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
-      tags: [containerization]
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
@@ -95,7 +86,6 @@ jobs:
     - get: 12h
       trigger: true
   - task: build
-    tags: [containerization]
     file: ci/pipelines/tasks/build.yml
   - put: docker.cf-operator-rc
     params:
@@ -113,5 +103,4 @@ jobs:
     - get: 12h
       trigger: true
   - task: build
-    tags: [containerization]
     file: ci/pipelines/tasks/build-helm.yml
