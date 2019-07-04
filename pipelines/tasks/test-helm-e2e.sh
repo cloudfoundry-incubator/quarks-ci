@@ -30,6 +30,7 @@ trap cleanup EXIT
 echo "Seting up bluemix access"
 ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
+export BLUEMIX_CS_TIMEOUT=500
 eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
 echo "Running e2e tests in the ${ibmcloud_cluster} cluster."

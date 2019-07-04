@@ -4,13 +4,14 @@ set -euo pipefail
 
 echo "Seting up bluemix access"
 ibmcloud logout
-ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey" -r eu-gb
+ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
+ibmcloud cs  region-set "$ibmcloud_region"
 
 echo "Running in cluster: ${ibmcloud_cluster}"
 
-eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
+export BLUEMIX_CS_TIMEOUT=500
 
-echo "Done exporting KUBECONFIG"
+eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 
 CURRENT_DATE=$(date '+%Y-%m-%d')
 export CURRENT_DATE
