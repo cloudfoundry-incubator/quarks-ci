@@ -33,7 +33,7 @@ jobs:
       ibmcloud_apikey: ((ibmcloud.key-value))
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
-      ibmcloud_cluster: ((ibmcloud.cluster))
+      ibmcloud_cluster: ((ibmcloud.cluster-dino))
     file: ci/pipelines/tasks/clean-ns.yml
 - name: test
   serial: true
@@ -57,7 +57,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
@@ -69,7 +69,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
