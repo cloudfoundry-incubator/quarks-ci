@@ -28,7 +28,7 @@ else
       eval "$(kubectl -n "${DELETE_NS}" get ejob --no-headers | awk '{print "kubectl patch ejob -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
 
       echo "Going to delete namespace: ${DELETE_NS}"
-      kubectl delete ns "${DELETE_NS}"
+      kubectl delete ns "${DELETE_NS}" --timeout=60s --force --grace-period=0
       echo ""
   done
 fi
