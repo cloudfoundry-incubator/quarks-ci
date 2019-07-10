@@ -22,13 +22,13 @@ if [ -z "${NS_LIST}" ]; then
   echo "Currently no namespaces, older than 1 day. Nothing to delete"
 else
   for DELETE_NS in ${NS_LIST}; do 
-      echo "Going to patch ests, bdpl and ejob resources in the namespace: ${DELETE_NS}"
-      eval "$(kubectl -n "${DELETE_NS}" get ests --no-headers | awk '{print "kubectl patch ests -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
-      eval "$(kubectl -n "${DELETE_NS}" get bdpl --no-headers | awk '{print "kubectl patch bdpl -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
-      eval "$(kubectl -n "${DELETE_NS}" get ejob --no-headers | awk '{print "kubectl patch ejob -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
+      # echo "Going to patch ests, bdpl and ejob resources in the namespace: ${DELETE_NS}"
+      # eval "$(kubectl -n "${DELETE_NS}" get ests --no-headers | awk '{print "kubectl patch ests -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
+      # eval "$(kubectl -n "${DELETE_NS}" get bdpl --no-headers | awk '{print "kubectl patch bdpl -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
+      # eval "$(kubectl -n "${DELETE_NS}" get ejob --no-headers | awk '{print "kubectl patch ejob -n ${DELETE_NS} " $1 " --patch '\''{\"metadata\": { \"finalizers\": null }}'\'' --type merge"}')"
 
       echo "Going to delete namespace: ${DELETE_NS}"
-      kubectl delete ns "${DELETE_NS}"
+      kubectl delete ns "${DELETE_NS}" --timeout=60s --force --grace-period=0
       echo ""
   done
 fi
