@@ -59,7 +59,7 @@ EOF
 chmod 0600 /tmp/cf-operator-tunnel-identity
 
 # Random base port to support parallelism with different webhook servers
-export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 61000 )  + 2000 ))
+export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 59000 )  + 4000 ))
 export CF_OPERATOR_WEBHOOK_SERVICE_HOST="$ssh_server_ip"
 export NODES=${NODES:-5}
 
@@ -89,7 +89,7 @@ done
 
 echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
-find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs -r cp -t code-coverage/
+find src/code.cloudfoundry.org/cf-operator/code-coverage -name "gover-*.coverprofile" -print0 | xargs -0 -r cp -t code-coverage/
 
 echo "Running e2e CLI tests"
 # fix relative SSL path in KUBECONFIG

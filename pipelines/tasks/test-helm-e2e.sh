@@ -6,7 +6,7 @@ export GOPATH=$PWD
 export TEST_NAMESPACE="test$(date +%s)"
 
 # Random port to support parallelism with different webhook servers
-export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 62000 )  + 2000 ))
+export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 2000 )  + 2000 ))
 export TUNNEL_NAME="tunnelpod-${CF_OPERATOR_WEBHOOK_SERVICE_PORT}"
 
 upload_debug_info() {
