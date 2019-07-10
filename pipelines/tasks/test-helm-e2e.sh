@@ -70,3 +70,4 @@ echo "Running e2e tests with helm"
 kube_path=$(dirname "$KUBECONFIG")
 sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
+make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e-storage

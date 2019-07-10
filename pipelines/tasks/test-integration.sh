@@ -89,6 +89,10 @@ done
 
 echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
+
+echo "Running integration storage tests"
+make -C src/code.cloudfoundry.org/cf-operator test-integration-storage
+
 find src/code.cloudfoundry.org/cf-operator/code-coverage -name "gover-*.coverprofile" -print0 | xargs -0 -r cp -t code-coverage/
 
 echo "Running e2e CLI tests"
