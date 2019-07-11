@@ -30,9 +30,6 @@ upload_debug_info() {
 ## Make sure to cleanup the tunnel pod and service
 cleanup () {
   upload_debug_info
-
-  echo "Cleaning up"
-  kubectl delete ns --wait=false --grace-period=60 "${TEST_NAMESPACE}"
   pidof ssh | xargs kill
 }
 trap cleanup EXIT
@@ -84,4 +81,5 @@ echo "--------------------------------------------------------------------------
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
 
 echo "--------------------------------------------------------------------------------"
+export TEST_NAMESPACE="test-storage$(date +%s)"
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e-storage
