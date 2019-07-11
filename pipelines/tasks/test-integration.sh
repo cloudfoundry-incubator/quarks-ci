@@ -90,14 +90,17 @@ subsets:
 EOF
 done
 
+echo "--------------------------------------------------------------------------------"
 echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
 
+echo "--------------------------------------------------------------------------------"
 echo "Running integration storage tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration-storage
 
 find src/code.cloudfoundry.org/cf-operator/code-coverage -name "gover-*.coverprofile" -print0 | xargs -0 -r cp -t code-coverage/
 
+echo "--------------------------------------------------------------------------------"
 echo "Running e2e CLI tests"
 # fix relative SSL path in KUBECONFIG
 kube_path=$(dirname "$KUBECONFIG")
