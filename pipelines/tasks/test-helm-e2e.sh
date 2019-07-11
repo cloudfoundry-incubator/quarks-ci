@@ -1,6 +1,16 @@
 #!/usr/bin/env sh
 set -eu
 
+: "${ibmcloud_apikey:?}"
+: "${ibmcloud_server:?}"
+: "${ibmcloud_region:?}"
+: "${ibmcloud_cluster:?}"
+: "${ssh_server_ip:?}"
+: "${ssh_server_user:?}"
+: "${ssh_server_key:?}"
+: "${OPERATOR_TEST_STORAGE_CLASS:?}"
+: "${DOCKER_IMAGE_REPOSITORY:?}"
+
 export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
 export TEST_NAMESPACE="test$(date +%s)"
@@ -69,5 +79,9 @@ echo "Running e2e tests with helm"
 # fix SSL path
 kube_path=$(dirname "$KUBECONFIG")
 sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
+
+echo "--------------------------------------------------------------------------------"
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
+
+echo "--------------------------------------------------------------------------------"
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e-storage
