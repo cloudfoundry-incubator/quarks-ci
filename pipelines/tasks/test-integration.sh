@@ -38,7 +38,10 @@ cleanup () {
   set +e
   kubectl get mutatingwebhookconfiguration -oname | \
     grep "$TEST_NAMESPACE" | \
-    xargs -n 1 kubectl delete
+    xargs -r -n 10 kubectl delete
+  kubectl get validatingwebhookconfiguration -oname | \
+    grep "$TEST_NAMESPACE" | \
+    xargs -r -n 10 kubectl delete
   pidof ssh | xargs kill
 }
 
