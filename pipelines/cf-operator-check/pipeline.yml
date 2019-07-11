@@ -182,7 +182,7 @@ jobs:
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
-        DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+        DOCKER_IMAGE_REPOSITORY: ((docker-repo))
       file: ci/pipelines/tasks/test-helm-e2e.yml
     on_failure:
       do:
