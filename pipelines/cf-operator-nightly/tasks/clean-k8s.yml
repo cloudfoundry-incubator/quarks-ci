@@ -11,4 +11,4 @@ outputs:
 - name: code-coverage
 - name: env_dumps
 run:
-  path: ci/pipelines/tasks/clean-ns.sh
+  path: ci/pipelines/cf-operator-nightly/tasks/clean-k8s.sh
