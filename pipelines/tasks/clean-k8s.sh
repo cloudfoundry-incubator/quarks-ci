@@ -28,7 +28,7 @@ delete_old() {
   if [ -z "$list" ]; then
     echo "Currently no $res, older than 4 hours. Nothing to delete"
   else
-    echo $list | xargs -r -n 50 kubectl delete --wait=false $res
+    echo $list | xargs -r -n 50 kubectl delete --wait=false --timeout=60s $res
   fi
 }
 
