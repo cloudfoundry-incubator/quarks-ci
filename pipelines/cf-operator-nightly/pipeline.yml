@@ -21,20 +21,20 @@ resources:
     interval: 12h
 
 jobs:
-- name: clean-ns
+- name: clean-k8s
   serial: true
   plan:
   - aggregate:
     - get: ci
     - get: 12h
       trigger: true
-  - task: clean-ns
+  - task: clean-k8s
     params:
       ibmcloud_apikey: ((ibmcloud.key-value))
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud.cluster-dino))
-    file: ci/pipelines/tasks/clean-ns.yml
+    file: ci/pipelines/tasks/clean-k8s.yml
 - name: test
   serial: true
   plan:
@@ -82,7 +82,7 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      passed: [clean-ns]
+      passed: [clean-k8s]
     - get: src
     - get: 12h
       trigger: true
@@ -99,7 +99,7 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-      passed: [clean-ns]
+      passed: [clean-k8s]
     - get: src
     - get: 12h
       trigger: true
