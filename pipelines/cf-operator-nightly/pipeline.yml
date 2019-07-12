@@ -34,7 +34,7 @@ jobs:
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud.cluster-dino))
-    file: ci/pipelines/tasks/clean-k8s.yml
+    file: ci/pipelines/cf-operator-nightly/tasks/clean-k8s.yml
 - name: test
   serial: true
   plan:
