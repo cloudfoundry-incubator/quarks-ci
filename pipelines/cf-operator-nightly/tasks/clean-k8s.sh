@@ -34,7 +34,7 @@ delete_old() {
 
 delete_old namespace
 delete_old validatingwebhookconfigurations
-delete_old mutatingwebhookconfiguraitons
+delete_old mutatingwebhookconfigurations
 
 export LC_TIME=C
 export LC_DATE=C
