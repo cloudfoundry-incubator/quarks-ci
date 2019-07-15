@@ -13,7 +13,7 @@ echo "$password" | docker login --username "$username" --password-stdin
 # Determine version
 VERSION_TAG=$(cat docker/tag)
 
-echo "building for $VERSION_TAG"
+echo "publishing $VERSION_TAG docker image"
 
 CANDIDATE="$candidate_repository:$VERSION_TAG"
 RELEASE="$repository:$VERSION_TAG"
