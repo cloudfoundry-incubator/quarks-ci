@@ -212,17 +212,17 @@ jobs:
       trigger: true
 
   - in_parallel:
-    - task: docker
-      privileged: true
-      file: ci/pipelines/cf-operator/tasks/publish.yml
-      params:
-        repository: ((docker-organization))/cf-operator
-        candidate_repository: ((docker-organization))/((docker-candidate-repo))
-        username: ((dockerhub.username))
-        password: ((dockerhub.password))
     - do:
       - task: build
         file: ci/pipelines/tasks/build.yml
+      - task: docker
+        privileged: true
+        file: ci/pipelines/cf-operator/tasks/publish.yml
+        params:
+          repository: ((docker-organization))/cf-operator
+          candidate_repository: ((docker-organization))/((docker-candidate-repo))
+          username: ((dockerhub.username))
+          password: ((dockerhub.password))
       - put: s3.cf-operator
         params:
           file: binaries/cf-operator-*
