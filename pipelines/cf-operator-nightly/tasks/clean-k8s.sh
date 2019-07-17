@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-echo "Seting up bluemix access"
+echo "Setting up bluemix access"
 ibmcloud logout
 ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"

@@ -47,7 +47,7 @@ cleanup () {
 
 trap cleanup EXIT
 
-echo "Seting up bluemix access"
+echo "Setting up bluemix access"
 ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 export BLUEMIX_CS_TIMEOUT=500
@@ -55,7 +55,7 @@ eval $(ibmcloud cs cluster-config "$ibmcloud_cluster" --export)
 echo "Running integration tests in the ${ibmcloud_cluster} cluster."
 
 ## Set up SSH tunnels to make our webhook server available to k8s
-echo "Seting up SSH tunnel for webhook"
+echo "Setting up SSH tunnel for webhook"
 cat <<EOF > /tmp/cf-operator-tunnel-identity
 $ssh_server_key
 EOF
@@ -66,7 +66,7 @@ export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 59000 )  + 4000 ))
 export CF_OPERATOR_WEBHOOK_SERVICE_HOST="$ssh_server_ip"
 export NODES=${NODES:-5}
 
-echo "Seting up webhooks and namespaces on k8s"
+echo "Setting up webhooks and namespaces on k8s"
 for i in $(seq 1 "$NODES"); do
   port=$(( CF_OPERATOR_WEBHOOK_SERVICE_PORT + i ))
   namespace="${TEST_NAMESPACE}-${i}"
