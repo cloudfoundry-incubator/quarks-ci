@@ -34,7 +34,7 @@ cleanup () {
 }
 trap cleanup EXIT
 
-echo "Seting up bluemix access"
+echo "Setting up bluemix access"
 ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 ibmcloud cs  region-set "$ibmcloud_region"
 export BLUEMIX_CS_TIMEOUT=500
@@ -47,7 +47,7 @@ kubectl create namespace "$TEST_NAMESPACE"
 
 echo "The cf-operator will be installed into the ${TEST_NAMESPACE} namespace."
 
-echo "Seting up SSH tunnel for webhook"
+echo "Setting up SSH tunnel for webhook"
 cat <<EOF > identity
 $ssh_server_key
 EOF
@@ -56,7 +56,7 @@ chmod 0600 identity
 # GatewayPorts option needs to be enabled on ssh server
 ssh -fNT -i identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R "${ssh_server_ip}:${CF_OPERATOR_WEBHOOK_SERVICE_PORT}:localhost:${CF_OPERATOR_WEBHOOK_SERVICE_PORT}" "${ssh_server_user}@${ssh_server_ip}"
 
-echo "Seting up webhook on k8s"
+echo "Setting up webhook on k8s"
 cat <<EOF | kubectl create -f - --namespace=${TEST_NAMESPACE}
 ---
 kind: Endpoints
