@@ -32,6 +32,7 @@ delete_old() {
   fi
 }
 
+set +eo pipefail
 delete_old namespace
 delete_old validatingwebhookconfigurations
 delete_old mutatingwebhookconfigurations
@@ -39,5 +40,6 @@ delete_old mutatingwebhookconfigurations
 export LC_TIME=C
 export LC_DATE=C
 CURRENT_DATE="$(date '+%a %b %d')"
-set +e
 helm list | grep -v "$CURRENT_DATE" | tail -n +2 | awk '{print $1}' | xargs -r -n 1 helm delete
+
+exit 0
