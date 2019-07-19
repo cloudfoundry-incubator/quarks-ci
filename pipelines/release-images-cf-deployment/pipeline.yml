@@ -26,26 +26,27 @@ resources:
 - name: s3.fissile-linux
   type: s3
   source:
-    bucket: ((s3-bucket))
+    bucket: ((fissile-linux-s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
-- name: s3.fissile-stemcell-opensuse-version
+- name: s3.fissile-stemcell-version
   type: s3
   source:
-    bucket: ((versions-s3-bucket))
+    bucket: ((stemcell-versions-s3-bucket))
+    region_name: ((stemcell-s3-bucket-region))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
-    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
-
+    versioned_file: ((stemcell-version-file))
+    
 jobs:
 <% cf_deployment_tags.each do |cf_deployment_tag| %>
 - name: build-<%= cf_deployment_tag %>
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
     - get: docker-image-resource
     - get: cf-deployment-<%= cf_deployment_tag %>
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-version
       trigger: true
     - get: s3.fissile-linux
       trigger: true
@@ -53,12 +54,14 @@ jobs:
     - task: build
       privileged: true
       input_mapping:
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-version
         cf-deployment: cf-deployment-<%= cf_deployment_tag %>
       params:
         STEMCELL_OS: ((stemcell-os))
         STEMCELL_REPOSITORY: ((stemcell-repository))
+        STEMCELL_VERSIONED_FILE: ((stemcell-version-file))
         CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
+        DOCKER_REGISTRY: ((docker-registry))
         DOCKER_ORGANIZATION: ((docker-organization))
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))

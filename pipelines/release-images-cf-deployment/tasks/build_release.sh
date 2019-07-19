@@ -7,14 +7,17 @@ NC='\033[0m'
 
 function build_release() {
   cf_version="${1}"
-  docker_organization="${2}"
-  stemcell_os="${3}"
-  stemcell_version="${4}"
-  stemcell_image="${5}"
-  release_name="${6}"
-  release_url="${7}"
-  release_version="${8}"
-  release_sha1="${9}"
+  docker_registry="${2}"
+  docker_organization="${3}"
+  docker_username="${4}"
+  docker_password="${5}"
+  stemcell_os="${6}"
+  stemcell_version="${7}"
+  stemcell_image="${8}"
+  release_name="${9}"
+  release_url="${10}"
+  release_version="${11}"
+  release_sha1="${12}"
 
   stemcell_name="${stemcell_os}-${stemcell_version}"
 
@@ -33,6 +36,7 @@ function build_release() {
     --version="${release_version}" \
     --sha1="${release_sha1}" \
     --url="${release_url}" \
+    --docker-registry="${docker_registry}" \
     --docker-organization="${docker_organization}"
 
   # Check if there is an image already pushed for the release being built, otherwise push.
@@ -41,8 +45,9 @@ function build_release() {
   built_image_tag=$(echo "${built_image_filter}" | awk '{ printf $2 }')
   built_image="${built_image_repository}:${built_image_tag}"
   echo -e "Built image: ${GREEN}${built_image}${NC}"
-  if curl --head --fail "https://hub.docker.com/v2/repositories/${built_image_repository}/tags/${built_image_tag}/" 1> /dev/null 2> /dev/null; then
-    echo "Skipping push for ${GREEN}${built_image}${NC} as it is already present in the registry..."
+  docker_creds_string=""${docker_username}":"${docker_password}""
+  if curl --silent -u "${docker_creds_string}" "https://"${docker_registry}"/v2/"${docker_organization}"/"${release_name}"/manifests/"${built_image_tag}"" | jq '.errors[0].code' | grep -q null; then
+    echo -e "Skipping push for ${GREEN}${built_image}${NC} as it is already present in the registry..."
   else
     docker push "${built_image}"
   fi
