@@ -2,7 +2,7 @@
 # Setting up a BOSH director in Softlayer
 
 The current `https://ci.flintstone.cf.cloud.ibm.com/` server, runs as a bosh deployment inside 
-a bosh director in Softlyer.
+a bosh director in Softlayer.
 
 The following document, layout the requirements and steps that needs to be executed, in order to create a suitable
 director environment in an specific Softlayer account.
@@ -15,7 +15,7 @@ _**Note**_:  Softlayer is the IaaS used in IBM, where most of the IBM Cloud infr
 - Clone of [mattcui/bosh-deployment](https://ci.flintstone.cf.cloud.ibm.com/)(_**Note**_: using commit `0642d45cdcd2ccc82deccc547913721d5845f472`)
     - _**Note**_: This could also have worked with [official bosh deployment](https://github.com/cloudfoundry/bosh-deployment), but it was not used.
 - Clone of [cloudfoundry/bosh-softlayer-cpi-release](https://github.com/cloudfoundry/bosh-softlayer-cpi-release)
-- Clone of [cloudfoundry/bits-service-private-config](https://github.com/cloudfoundry/bits-service-private-config)
+- Clone of [cloudfoundry/quarks-private.git](https://github.com/cloudfoundry/quarks-private.git)
     - _**Note**_: This is the repo where all private information is stored. For both BOSH director and Concourse
     deployment.
 - Spruce [binary](https://github.com/geofffranks/spruce/releases)
@@ -46,9 +46,9 @@ _**Note**_:  Softlayer is the IaaS used in IBM, where most of the IBM Cloud infr
 The `bosh-green-state.json` file, is an state file that helps the `bosh create-env` command,
 to remember resources it creates in the IaaS, so that it can re-use or delete them later.
 
-- Move into the `cloudfoundry/bits-service-private-config`
+- Move into the `cloudfoundry/quarks-private.git`
     ```bash
-    $ pushd ~/workspace/bits-service-private-config/environments/softlayer/director
+    $ pushd ~/workspace/quarks-private/environments/softlayer/director
     ```
 - Modify the `bosh-green-state.json` file, by adding the following keys, with the values from the previous generated
 `director-state.json` file(_**Note**_: If you already have a director VM, do NOT modify anything in this file).
@@ -67,7 +67,7 @@ we can grab some CPI logs, in case we require to debug the task.
     ```
 - Run the BOSH interpolation
     ```bash
-    $ pushd ~/workspace/bits-service-private-config/environments/softlayer/director
+    $ pushd ~/workspace/quarks-private/environments/softlayer/director
     $ bosh interpolate ~/workspace/bosh-deployment/bosh.yml \
         --vars-store=green-vars.yml \
         -o ~/workspace/bosh-deployment/softlayer/cpi-dynamic.yml \
@@ -106,5 +106,5 @@ we can grab some CPI logs, in case we require to debug the task.
 Now that you have access to the green bosh director.
 
 ```bash
-$ bosh update-cloud-config ~/workspace/bits-service-private-config/environments/softlayer/cloud-config.yml
+$ bosh update-cloud-config ~/workspace/quarks-private/environments/softlayer/director/cloud-config.yml
 ```

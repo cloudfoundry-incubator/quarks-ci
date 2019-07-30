@@ -2,7 +2,7 @@
 
 
 ## Requirements
-- Clone of [cloudfoundry/bits-service-private-config](https://github.com/cloudfoundry/bits-service-private-config)
+- Clone of [cloudfoundry/quarks-private](https://github.com/cloudfoundry/quarks-private.git)
     - _**Note**_: This is the repo where all private information is stored. For both BOSH director and Concourse
 - Clone of [concourse/concourse-bosh-deployment](https://github.com/concourse/concourse-bosh-deployment.git)(_**Note**_: using commit `162d0ae0d086e2a6881807768a41abae068ebbb1`)
 - Spruce [binary](https://github.com/geofffranks/spruce/releases)
@@ -25,7 +25,7 @@ $ bosh upload-release https://bosh.io/d/github.com/concourse/concourse-bosh-rele
 ```bash
 pushd ~/workspace/concourse-bosh-deployment/cluster
 bosh -d concourse deploy concourse.yml \
---vars-store ~/workspace/bits-service-private-config/environments/softlayer/concourse/concourse-green-vars.yml \
+--vars-store ~/workspace/quarks-private/environments/softlayer/concourse/concourse-green-vars.yml \
 -l ../versions.yml \
 -o operations/scale.yml \
 -o ~/workspace/cf-operator-ci/operations/concourse-worker-quarks.yml \
@@ -46,7 +46,7 @@ bosh -d concourse deploy concourse.yml \
 --var db_persistent_disk_type=200GB \
 -o operations/external-postgres.yml \
 -o operations/external-postgres-tls.yml \
--l ~/workspace/bits-service-private-config/environments/softlayer/concourse/postgres_ca_cert.yml \
+-l ~/workspace/quarks-private/environments/softlayer/concourse/postgres_ca_cert.yml \
 --var postgres_host=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.concoursedb."host"') \
 --var postgres_port=17376 \
 --var postgres_role=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.concoursedb."user"')  \
