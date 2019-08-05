@@ -15,6 +15,7 @@ RUN go get github.com/onsi/ginkgo/ginkgo
 RUN go get github.com/onsi/gomega/...
 RUN go get github.com/rohitsakala/goveralls
 RUN go get github.com/modocache/gover
+RUN go get honnef.co/go/tools/cmd/staticcheck && cd $GOPATH/src/honnef.co/go/tools/cmd/staticcheck && git checkout 2019.2.2 && go get && go install
 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl; mv kubectl /usr/local/bin; chmod +x /usr/local/bin/kubectl
 

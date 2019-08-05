@@ -108,6 +108,39 @@ jobs:
         path: pr-src
         state: success
 
+- name: staticcheck
+  serial: true
+  plan:
+  - aggregate:
+    - get: ci
+    - get: pr-src
+      trigger: true
+  - task: vendorize-src
+    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
+  - put: status
+    params:
+      context: staticcheck
+      description: staticcheck code.cloudfoundry.org/cf-operator/...
+      path: pr-src
+      state: pending
+  - do:
+    - task: staticcheck
+      file: ci/pipelines/tasks/staticcheck.yml
+    on_failure:
+      put: status
+      params:
+        context: staticcheck
+        description: staticcheck code.cloudfoundry.org/cf-operator/...
+        path: pr-src
+        state: failure
+    on_success:
+      put: status
+      params:
+        context: staticcheck
+        description: staticcheck code.cloudfoundry.org/cf-operator/...
+        path: pr-src
+        state: success
+
 - name: test
   serial: true
   plan:
@@ -164,7 +197,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
@@ -177,7 +210,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster))
+        ibmcloud_cluster: ((ibmcloud.cluster-dino))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
