@@ -3,12 +3,17 @@ cloudfoundry_releases = %w(binary-buildpack dotnet-core-buildpack go-buildpack j
 incubator_releases = %w(bpm cf-routing pxc)
 bosh_packages_releases = %w(cf-cli)
 pivotal_cf_releases = %w(credhub)
+community_releases = %w(eirini-bosh)
 
 releases = cloudfoundry_releases.map { |r| { organization: "cloudfoundry", name: r } }
 releases += incubator_releases.map { |r| { organization: "cloudfoundry-incubator", name: r } }
+releases += community_releases.map { |r| { organization: "cloudfoundry-community", name: r } }
 releases += bosh_packages_releases.map { |r| { organization: "bosh-packages", name: r } }
 releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r } }
 %>
+# Some releases aren't available from bosh.io but only from s3
+<% s3_releases = [{ name: 'groot-btrfs', bucket: 'suse-final-releases' }] %>
+
 resources:
 - name: ci
   type: git
@@ -20,6 +25,13 @@ resources:
   type: bosh-io-release
   source:
     repository: <%= release[:organization] %>/<%= release[:name] %>-release
+<% end %>
+<% s3_releases.each do |release| %>
+- name: <%= release[:name] %>-release
+  type: s3
+  source:
+    bucket: <%= release[:bucket] %>
+    regexp: <%= release[:name] %>-release-(.*).tgz
 <% end %>
 - name: s3.fissile-linux
   type: s3
@@ -37,7 +49,7 @@ resources:
     versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
 
 jobs:
-<% releases.each do |release| %>
+<% (releases + s3_releases).each do |release| %>
 - name: build-<%= release[:name] %>
   plan:
   - aggregate:
