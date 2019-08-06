@@ -42,4 +42,16 @@ export LC_DATE=C
 CURRENT_DATE="$(date '+%a %b %d')"
 helm list | grep -v "$CURRENT_DATE" | tail -n +2 | awk '{print $1}' | xargs -r -n 1 helm delete
 
+if ! hash havener 2>/dev/null; then
+  echo "[Error] havener binary is not installed."
+  exit 1
+fi
+
+NODES_TO_NUKE=$(kubectl get nodes | grep -v NAME | awk '{print $1}' | tr '\n' ',' | sed 's/,$//')
+
+echo "Cleaning images in the following nodes: ${NODES_TO_NUKE}"
+
+havener node-exec --no-tty "$NODES_TO_NUKE" -- \
+  sh -c "crictl images | grep cf-operator | awk '{print \$3}' | xargs -r -n 1 crictl rmi 2> /dev/null"
+
 exit 0
