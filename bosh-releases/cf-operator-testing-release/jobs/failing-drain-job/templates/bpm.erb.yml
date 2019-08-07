@@ -4,4 +4,4 @@ processes:
   executable: /bin/bash
   args:
   - -c
-  - "ls -l /tmp/drain_logs; exit 0' TERM; read"
+  - "trap 'ls -l /tmp/drain_logs; exit 0' TERM; read"
