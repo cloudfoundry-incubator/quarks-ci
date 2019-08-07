@@ -4,4 +4,4 @@ processes:
   executable: /bin/bash
   args:
   - -c
-  - "while true; do ls -l /tmp/drain_logs; sleep 3; done"
+  - "ls -l /tmp/drain_logs; exit 0' TERM; read"
