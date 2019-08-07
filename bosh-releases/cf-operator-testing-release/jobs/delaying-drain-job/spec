@@ -4,6 +4,7 @@ name: delaying-drain-job
 templates:
   bpm.erb.yml: config/bpm.yml
   drain.sh: bin/drain/drain.sh
+  run.sh: bin/run
 
 packages: []
 
