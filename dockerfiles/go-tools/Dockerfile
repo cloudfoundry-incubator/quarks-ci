@@ -19,6 +19,8 @@ RUN go get honnef.co/go/tools/cmd/staticcheck && cd $GOPATH/src/honnef.co/go/too
 
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl; mv kubectl /usr/local/bin; chmod +x /usr/local/bin/kubectl
 
+RUN curl -sL https://raw.githubusercontent.com/homeport/havener/master/scripts/download-latest.sh | bash
+
 RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
     bx plugin install container-service -r Bluemix && \
     bx plugin install container-registry -r Bluemix && \
