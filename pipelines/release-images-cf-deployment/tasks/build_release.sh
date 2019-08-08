@@ -27,17 +27,17 @@ function build_release() {
   echo -e "  - Release URL:     ${GREEN}${release_url}${NC}"
   echo -e "  - Release SHA1:    ${GREEN}${release_sha1}${NC}"
 
-  # Dry run fissile just to print image name.
-  built_image="$(fissile build release-images \
-    --stemcell="${stemcell_image}" \
-    --name="${release_name}" \
-    --version="${release_version}" \
-    --sha1="${release_sha1}" \
-    --url="${release_url}" \
-    --docker-registry="${docker_registry}" \
-    --docker-organization="${docker_organization}" \
-    --dry-run | cut -d' ' -f3)"
+  build_args=(
+    --stemcell="${stemcell_image}"
+    --name="${release_name}"
+    --version="${release_version}"
+    --sha1="${release_sha1}"
+    --url="${release_url}"
+    --docker-registry="${docker_registry}"
+    --docker-organization="${docker_organization}"
+  )
 
+  built_image=$(fissile build release-images --dry-run "${build_args[@]}" | cut -d' ' -f3)
   built_image_tag="${built_image#*:}"
   docker_creds_string=""${docker_username}":"${docker_password}""
 
@@ -46,14 +46,7 @@ function build_release() {
     echo -e "Skipping push for ${GREEN}${built_image}${NC} as it is already present in the registry..."
   else
       # Build the release image.
-      fissile build release-images \
-        --stemcell="${stemcell_image}" \
-        --name="${release_name}" \
-        --version="${release_version}" \
-        --sha1="${release_sha1}" \
-        --url="${release_url}" \
-        --docker-registry="${docker_registry}" \
-        --docker-organization="${docker_organization}"
+      fissile build release-images "${build_args[@]}"
 
       echo -e "Built image: ${GREEN}${built_image}${NC}"
       docker push "${built_image}"
