@@ -60,6 +60,8 @@ jobs:
   - do:
     - task: vet
       file: ci/pipelines/tasks/vet.yml
+      params:
+        GOPROXY: ((goproxy))
     on_failure:
       put: status
       params:
@@ -93,6 +95,8 @@ jobs:
   - do:
     - task: lint
       file: ci/pipelines/tasks/lint.yml
+      params:
+        GOPROXY: ((goproxy))
     on_failure:
       put: status
       params:
@@ -126,6 +130,8 @@ jobs:
   - do:
     - task: staticcheck
       file: ci/pipelines/tasks/staticcheck.yml
+      params:
+        GOPROXY: ((goproxy))
     on_failure:
       put: status
       params:
@@ -150,7 +156,6 @@ jobs:
       trigger: true
   - task: vendorize-src
     file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
-
   - aggregate:
     - put: status
       params:
@@ -168,6 +173,8 @@ jobs:
   - do:
     - task: build
       file: ci/pipelines/tasks/build.yml
+      params:
+        GOPROXY: ((goproxy))
     - put: docker.cf-operator-ci
       params:
         build: src
@@ -203,6 +210,7 @@ jobs:
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         DOCKER_IMAGE_REPOSITORY: ((docker-repo))
+        GOPROXY: ((goproxy))
         NODES: 6
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
@@ -216,6 +224,7 @@ jobs:
         ssh_server_key: ((ssh-server.key))
         DOCKER_IMAGE_REPOSITORY: ((docker-repo))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+        GOPROXY: ((goproxy))
       file: ci/pipelines/tasks/test-helm-e2e.yml
     on_failure:
       in_parallel:
