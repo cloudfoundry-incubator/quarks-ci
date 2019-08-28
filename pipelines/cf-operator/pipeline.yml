@@ -132,8 +132,6 @@ jobs:
     - put: docker.cf-operator-rc
       params:
         build: src
-        build_args:
-          GO111MODULE: 'off'
         tag: docker/tag
 
 - name: test-integration

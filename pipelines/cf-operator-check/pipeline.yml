@@ -10,7 +10,7 @@ resource_types:
     tag: release
 
 resources:
-- name: pr-src
+- name: src
   type: pull-request
   webhook_token: ((github.webhook-token))
   source:
@@ -47,13 +47,13 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: pr-src
+    - get: src
       trigger: true
   - put: status
     params:
       context: vet
       description: go vet check
-      path: pr-src
+      path: src
       state: pending
   - do:
     - task: vet
@@ -65,14 +65,14 @@ jobs:
       params:
         context: vet
         description: go vet check
-        path: pr-src
+        path: src
         state: failure
     on_success:
       put: status
       params:
         context: vet
         description: go vet check
-        path: pr-src
+        path: src
         state: success
 
 - name: lint
@@ -80,13 +80,13 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: pr-src
+    - get: src
       trigger: true
   - put: status
     params:
       context: lint
       description: lint check
-      path: pr-src
+      path: src
       state: pending
   - do:
     - task: lint
@@ -98,14 +98,14 @@ jobs:
       params:
         context: lint
         description: go lint check
-        path: pr-src
+        path: src
         state: failure
     on_success:
       put: status
       params:
         context: lint
         description: go lint check
-        path: pr-src
+        path: src
         state: success
 
 - name: staticcheck
@@ -113,13 +113,13 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: pr-src
+    - get: src
       trigger: true
   - put: status
     params:
       context: staticcheck
       description: staticcheck code.cloudfoundry.org/cf-operator/...
-      path: pr-src
+      path: src
       state: pending
   - do:
     - task: staticcheck
@@ -131,14 +131,14 @@ jobs:
       params:
         context: staticcheck
         description: staticcheck code.cloudfoundry.org/cf-operator/...
-        path: pr-src
+        path: src
         state: failure
     on_success:
       put: status
       params:
         context: staticcheck
         description: staticcheck code.cloudfoundry.org/cf-operator/...
-        path: pr-src
+        path: src
         state: success
 
 - name: test
@@ -146,20 +146,20 @@ jobs:
   plan:
   - aggregate:
     - get: ci
-    - get: pr-src
+    - get: src
       trigger: true
   - aggregate:
     - put: status
       params:
         context: build
         description: go build check
-        path: pr-src
+        path: src
         state: pending
     - put: status
       params:
         context: test
         description: go test check
-        path: pr-src
+        path: src
         state: pending
 
   - do:
@@ -170,22 +170,20 @@ jobs:
     - put: docker.cf-operator-ci
       params:
         build: src
-        build_args:
-          GO111MODULE: 'off'
         tag: docker/tag
     on_failure:
       put: status
       params:
         context: build
         description: go build check
-        path: pr-src
+        path: src
         state: failure
     on_success:
       put: status
       params:
         context: build
         description: go build check
-        path: pr-src
+        path: src
         state: success
 
   - do:
@@ -228,12 +226,12 @@ jobs:
         params:
           context: test
           description: go test check
-          path: pr-src
+          path: src
           state: failure
     on_success:
       put: status
       params:
         context: test
         description: go test check
-        path: pr-src
+        path: src
         state: success
