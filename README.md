@@ -62,4 +62,4 @@ Hostpath NFS volume provisioning is enabled in flintstone concourse-ci as it tak
 
 ## GOPROXY
 
-We use [athens](https://github.com/gomods/athens) as a Go module proxy to speed up builds. It's deployed from as a helm chart in the `athens` namespace and it's URL is stored inthe lastpass store. See [the documentation](https://docs.gomods.io/install/install-on-kubernetes/) for details on how to install it.
+We use [athens](https://github.com/gomods/athens) as a Go module proxy to speed up builds. It's deployed from as a helm chart in the `athens` namespace and it's URL is stored in the lastpass store. See [the documentation](https://docs.gomods.io/install/install-on-kubernetes/) for details on how to install it.
