@@ -59,3 +59,7 @@ In order for your pipelines to be directed to these set of workers, you need to 
 ## Hostpath Volume Provisioning
 
 Hostpath NFS volume provisioning is enabled in flintstone concourse-ci as it takes very less time for provisioning volumes and tests can be faster due to this. The [gist](https://gist.github.com/viovanov/f31529bc1575e3358bf6bb1de9fa495b) has the config that is used for enabling this.
+
+## GOPROXY
+
+We use [athens](https://github.com/gomods/athens) as a Go module proxy to speed up builds. It's deployed from as a helm chart in the `athens` namespace and it's URL is stored in the lastpass store. See [the documentation](https://docs.gomods.io/install/install-on-kubernetes/) for details on how to install it.

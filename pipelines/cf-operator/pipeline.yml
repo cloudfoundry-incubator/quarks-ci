@@ -97,11 +97,16 @@ jobs:
   - in_parallel:
     - task: vet
       file: ci/pipelines/tasks/vet.yml
+      params:
+        GOPROXY: ((goproxy))
     - task: lint
       file: ci/pipelines/tasks/lint.yml
+      params:
+        GOPROXY: ((goproxy))
     - task: test-unit
       file: ci/pipelines/tasks/test.yml
       params:
+        GOPROXY: ((goproxy))
         COVERAGE: true
   - put: s3.code-coverage-unit
     params:
@@ -121,6 +126,8 @@ jobs:
       passed: [test]
   - task: build
     file: ci/pipelines/tasks/build.yml
+    params:
+      GOPROXY: ((goproxy))
   - do:
     - put: docker.cf-operator-rc
       params:
@@ -155,6 +162,7 @@ jobs:
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           COVERAGE: true
+          GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-integration.yml
         on_failure:
           do:
@@ -173,6 +181,7 @@ jobs:
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+          GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-helm-e2e.yml
         on_failure:
           do:
@@ -201,6 +210,7 @@ jobs:
   - task: coverage
     params:
       COVERALLS_TOKEN: ((coveralls-token))
+      GOPROXY: ((goproxy))
     file: ci/pipelines/cf-operator/tasks/coverage.yml
 
 - name: publish
@@ -215,6 +225,8 @@ jobs:
     - do:
       - task: build
         file: ci/pipelines/tasks/build.yml
+        params:
+          GOPROXY: ((goproxy))
       - task: docker
         privileged: true
         file: ci/pipelines/cf-operator/tasks/publish.yml
