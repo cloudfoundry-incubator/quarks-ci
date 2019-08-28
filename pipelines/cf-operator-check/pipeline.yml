@@ -49,8 +49,6 @@ jobs:
     - get: ci
     - get: pr-src
       trigger: true
-  - task: vendorize-src
-    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     params:
       context: vet
@@ -84,8 +82,6 @@ jobs:
     - get: ci
     - get: pr-src
       trigger: true
-  - task: vendorize-src
-    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     params:
       context: lint
@@ -119,8 +115,6 @@ jobs:
     - get: ci
     - get: pr-src
       trigger: true
-  - task: vendorize-src
-    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - put: status
     params:
       context: staticcheck
@@ -154,8 +148,6 @@ jobs:
     - get: ci
     - get: pr-src
       trigger: true
-  - task: vendorize-src
-    file: ci/pipelines/cf-operator-check/tasks/vendorize-src.yml
   - aggregate:
     - put: status
       params:
