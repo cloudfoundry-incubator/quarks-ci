@@ -91,6 +91,8 @@ jobs:
   - put: docker.cf-operator-rc
     params:
       build: src
+      build_args:
+        GOPROXY: ((goproxy))
       tag: docker/tag
 
 - name: build-helm
