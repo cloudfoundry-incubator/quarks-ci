@@ -40,7 +40,7 @@ delete_old mutatingwebhookconfigurations
 export LC_TIME=C
 export LC_DATE=C
 CURRENT_DATE="$(date '+%a %b %d')"
-helm list | grep -v "$CURRENT_DATE" | tail -n +2 | awk '{print $1}' | xargs -r -n 1 helm delete
+helm list | grep cf-operator | grep -v "$CURRENT_DATE" | tail -n +2 | awk '{print $1}' | xargs -r -n 1 helm delete --purge
 
 if ! hash havener 2>/dev/null; then
   echo "[Error] havener binary is not installed."
