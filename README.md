@@ -63,3 +63,11 @@ Hostpath NFS volume provisioning is enabled in flintstone concourse-ci as it tak
 ## GOPROXY
 
 We use [athens](https://github.com/gomods/athens) as a Go module proxy to speed up builds. It's deployed from as a helm chart in the `athens` namespace and it's URL is stored in the lastpass store. See [the documentation](https://docs.gomods.io/install/install-on-kubernetes/) for details on how to install it.
+
+We use the node port installation so we can use it from all clusters, the goproxy URL in lastpass is made from `$NODE_IP:$NODE_PORT`.
+
+```
+helm install gomods/athens-proxy -n athens --namespace athens --set service.type=NodePort
+export NODE_PORT=$(kubectl get --namespace athens -o jsonpath="{.spec.ports[0].nodePort}" services athens-athens-proxy)
+export NODE_IP=$(kubectl get nodes --namespace athens -o jsonpath="{.items[0].status.addresses[0].address}")
+```
