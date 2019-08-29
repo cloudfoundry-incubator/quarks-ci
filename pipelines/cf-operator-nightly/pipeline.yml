@@ -28,12 +28,19 @@ jobs:
     - get: ci
     - get: 12h
       trigger: true
-  - task: clean-k8s
+  - task: clean-dino-k8s
     params:
       ibmcloud_apikey: ((ibmcloud.key-value))
       ibmcloud_server: ((ibmcloud.server))
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud.cluster-dino))
+    file: ci/pipelines/cf-operator-nightly/tasks/clean-k8s.yml
+  - task: clean-k8s
+    params:
+      ibmcloud_apikey: ((ibmcloud.key-value))
+      ibmcloud_server: ((ibmcloud.server))
+      ibmcloud_region: ((ibmcloud.region))
+      ibmcloud_cluster: ((ibmcloud.cluster))
     file: ci/pipelines/cf-operator-nightly/tasks/clean-k8s.yml
 - name: test
   serial: true
