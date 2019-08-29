@@ -170,6 +170,8 @@ jobs:
     - put: docker.cf-operator-ci
       params:
         build: src
+        build_args:
+          GOPROXY: ((goproxy))
         tag: docker/tag
     on_failure:
       put: status
