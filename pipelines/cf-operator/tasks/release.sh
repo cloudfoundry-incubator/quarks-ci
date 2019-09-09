@@ -14,7 +14,7 @@ cp -f release/body out/
 
 binary_version=$(cat s3.cf-operator/version)
 
-version=$(python -c "import urllib, sys; print urllib.quote(sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1], \"\")" < s3.helm-charts/version)
+version=$(column -t s3.helm-charts/version | python -c "import urllib, sys; print urllib.quote(sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1], \"\")")
 helm_chart="release/helm-charts/cf-operator-$version.tgz"
 
 cat >> out/body <<EOF
