@@ -30,10 +30,10 @@ cat >> out/body <<EOF
 # Installation
 
     # Use this if you've never installed the operator before
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/release/helm-charts/$helm_chart
+    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart
 
     # Use this if the custom resources have already been created by a previous CF Operator installation
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/release/helm-charts/$helm_chart --set "customResources.enableInstallation=false"
+    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart --set "customResources.enableInstallation=false"
 
 # Assets
 
