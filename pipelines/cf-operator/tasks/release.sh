@@ -14,7 +14,7 @@ cp -f release/body out/
 
 binary_version=$(cat s3.cf-operator/version)
 
-version=$(python -c "import urllib, sys; print urllib.quote(sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1], \"\")" < s3.helm-charts/version)
+version=$(column -t s3.helm-charts/version | python -c "import urllib, sys; print urllib.quote(sys.argv[1] if len(sys.argv) > 1 else sys.stdin.read()[0:-1], \"\")")
 helm_chart="release/helm-charts/cf-operator-$version.tgz"
 
 cat >> out/body <<EOF
@@ -30,10 +30,10 @@ cat >> out/body <<EOF
 # Installation
 
     # Use this if you've never installed the operator before
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/release/helm-charts/$helm_chart
+    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart
 
     # Use this if the custom resources have already been created by a previous CF Operator installation
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/release/helm-charts/$helm_chart --set "customResources.enableInstallation=false"
+    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart --set "customResources.enableInstallation=false"
 
 # Assets
 
