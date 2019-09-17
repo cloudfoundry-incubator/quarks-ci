@@ -5,4 +5,4 @@ export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
 export GO111MODULE=on
 
-staticcheck code.cloudfoundry.org/cf-operator/...
+make -C src/code.cloudfoundry.org/cf-operator staticcheck
