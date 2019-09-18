@@ -70,6 +70,7 @@ jobs:
         release: <%= release[:name] %>-release
         s3.stemcell-version: s3.fissile-stemcell-opensuse-version
       params:
+        GOPROXY: ((goproxy))
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
         RELEASE_NAME: <%= release[:name] %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))

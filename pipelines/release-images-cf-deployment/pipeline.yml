@@ -61,10 +61,8 @@ jobs:
         file: ci/pipelines/release-images-cf-deployment/tasks/prepare_build.yml
 
   <%
-  i = 0
-  releases.each do |release|
+  releases.each_with_index do |release, i|
     serial_group = "serial_group_#{i % parallel_builds}"
-    i += 1
   %>
   - name: build-<%= cf_deployment_tag %>-<%= release %>
     serial_groups: [ <%= serial_group %> ]
@@ -86,6 +84,7 @@ jobs:
           s3.stemcell-version: s3.fissile-stemcell-version
           cf-deployment: cf-deployment-<%= cf_deployment_tag %>
         params:
+          GOPROXY: ((goproxy))
           STEMCELL_OS: ((stemcell-os))
           STEMCELL_REPOSITORY: ((stemcell-repository))
           STEMCELL_VERSIONED_FILE: ((stemcell-version-file))
