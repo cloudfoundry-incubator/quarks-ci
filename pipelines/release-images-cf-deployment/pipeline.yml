@@ -2,6 +2,7 @@
 
 <%
 cf_deployment_tags = %w(v8.0.0 v9.2.0 v9.5.0)
+releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa)
 %>
 
 resources:
@@ -37,33 +38,56 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     versioned_file: ((stemcell-version-file))
-    
+
 jobs:
 <% cf_deployment_tags.each do |cf_deployment_tag| %>
-- name: build-<%= cf_deployment_tag %>
-  plan:
-  - in_parallel:
-    - get: ci
-    - get: docker-image-resource
-    - get: cf-deployment-<%= cf_deployment_tag %>
-    - get: s3.fissile-stemcell-version
-      trigger: true
-    - get: s3.fissile-linux
-      trigger: true
-  - do:
-    - task: build
-      privileged: true
-      input_mapping:
-        s3.stemcell-version: s3.fissile-stemcell-version
-        cf-deployment: cf-deployment-<%= cf_deployment_tag %>
-      params:
-        STEMCELL_OS: ((stemcell-os))
-        STEMCELL_REPOSITORY: ((stemcell-repository))
-        STEMCELL_VERSIONED_FILE: ((stemcell-version-file))
-        CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
-        DOCKER_REGISTRY: ((docker-registry))
-        DOCKER_ORGANIZATION: ((docker-organization))
-        DOCKER_TEAM_USERNAME: ((dockerhub.username))
-        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-      file: ci/pipelines/release-images-cf-deployment/tasks/build.yml
+  - name: prepare-build-<%= cf_deployment_tag %>
+    plan:
+    - in_parallel:
+      - get: ci
+      - get: cf-deployment-<%= cf_deployment_tag %>
+      - get: s3.fissile-stemcell-version
+        trigger: true
+      - get: s3.fissile-linux
+        trigger: true
+    - do:
+      - task: prepare-build
+        input_mapping:
+          cf-deployment: cf-deployment-<%= cf_deployment_tag %>
+        params:
+          CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
+          RELEASES: <%= releases.join(" ") %>
+        file: ci/pipelines/release-images-cf-deployment/tasks/prepare_build.yml
+
+  <% releases.each do |release| %>
+  - name: build-<%= cf_deployment_tag %>-<%= release %>
+    plan:
+    - in_parallel:
+      - get: ci
+      - get: docker-image-resource
+      - get: cf-deployment-<%= cf_deployment_tag %>
+      - get: s3.fissile-stemcell-version
+        passed: [ prepare-build-<%= cf_deployment_tag %> ]
+        trigger: true
+      - get: s3.fissile-linux
+        passed: [ prepare-build-<%= cf_deployment_tag %> ]
+        trigger: true
+    - do:
+      - task: build
+        privileged: true
+        input_mapping:
+          s3.stemcell-version: s3.fissile-stemcell-version
+          cf-deployment: cf-deployment-<%= cf_deployment_tag %>
+        params:
+          STEMCELL_OS: ((stemcell-os))
+          STEMCELL_REPOSITORY: ((stemcell-repository))
+          STEMCELL_VERSIONED_FILE: ((stemcell-version-file))
+          CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
+          RELEASE: <%= release %>
+          DOCKER_REGISTRY: ((docker-registry))
+          DOCKER_ORGANIZATION: ((docker-organization))
+          DOCKER_TEAM_USERNAME: ((dockerhub.username))
+          DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        file: ci/pipelines/release-images-cf-deployment/tasks/build.yml
+  <% end %>
 <% end %>
