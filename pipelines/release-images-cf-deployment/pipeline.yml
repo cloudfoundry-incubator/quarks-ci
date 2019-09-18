@@ -1,6 +1,7 @@
 # This pipeline will setup the build for all the cf_deployment_releases specified below.
 
 <%
+parallel_builds = 5 # How many builds we run in parallel
 cf_deployment_tags = %w(v8.0.0 v9.2.0 v9.5.0)
 releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa)
 %>
@@ -59,8 +60,14 @@ jobs:
           RELEASES: <%= releases.join(" ") %>
         file: ci/pipelines/release-images-cf-deployment/tasks/prepare_build.yml
 
-  <% releases.each do |release| %>
+  <%
+  i = 0
+  releases.each do |release|
+    serial_group = "serial_group_#{i % parallel_builds}"
+    i += 1
+  %>
   - name: build-<%= cf_deployment_tag %>-<%= release %>
+    serial_groups: [ <%= serial_group %> ]
     plan:
     - in_parallel:
       - get: ci
