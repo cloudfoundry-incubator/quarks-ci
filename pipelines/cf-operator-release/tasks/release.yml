@@ -13,5 +13,5 @@ inputs:
 outputs:
 - name: out
 run:
-  path: ci/pipelines/cf-operator/tasks/release.sh
+  path: ci/pipelines/cf-operator-release/tasks/release.sh
 
