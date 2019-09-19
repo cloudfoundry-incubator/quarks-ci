@@ -1,12 +1,13 @@
 <%
-  rel_version = ENV.fetch('version', 'v0.4.1')
+  branch = ENV.fetch('branch', 'v0.4.x')
+  tag_filter = ENV.fetch('tag_filter', 'v0.4')
 %>
 resources:
 - name: src
   type: git
   source:
     uri: ((src-repo))
-    branch: <%= rel_version %>
+    branch: <%= branch %>
 - name: release
   type: github-release
   source:
@@ -15,7 +16,7 @@ resources:
     access_token: ((github.access-token-push))
     drafts: true
     pre_release: true
-    tag_filter: "v?(<%= rel_version %>[^v].*)"
+    tag_filter: "v?(<%= tag_filter %>[^v].*)"
 - name: ci
   type: git
   source:

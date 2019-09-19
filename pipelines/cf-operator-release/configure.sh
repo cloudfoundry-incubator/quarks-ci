@@ -2,19 +2,21 @@
 
 set -euo pipefail
 
-if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 <CONCOURSE_TARGET> <RELEASE_VERSION>"
+if [ "$#" -ne 3 ]; then
+  echo "Usage: $0 <CONCOURSE_TARGET> <PIPELINE_AND_BRANCH_NAME> <TAG_FILTER>"
   echo ""
-  echo "Example: $0 cfo 0.4.0"
+  echo "Example: $0 cfo v0.4.x v0.4"
   exit 1
 fi
 
 target="$1"
-version="$2"
-export version
-pipeline_name="cfo-release-$version"
+branch="$2"
+tag_filter="$3"
+export branch tag_filter
 
 fly -t "$target" login -k
+
+pipeline_name="cfo-release-$branch"
 fly --target "$target" set-pipeline \
   --pipeline="$pipeline_name" \
   --config=<(erb "pipeline.yml") \
