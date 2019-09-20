@@ -14,4 +14,4 @@ params:
   username:
   password:
 run:
-  path: ci/pipelines/cf-operator/tasks/publish.sh
+  path: ci/pipelines/tasks/publish.sh

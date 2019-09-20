@@ -172,7 +172,7 @@ jobs:
           GOPROXY: ((goproxy))
       - task: docker
         privileged: true
-        file: ci/pipelines/cf-operator/tasks/publish.yml
+        file: ci/pipelines/tasks/publish.yml
         params:
           repository: ((docker-organization))/cf-operator
           candidate_repository: ((docker-organization))/((docker-candidate-repo))
