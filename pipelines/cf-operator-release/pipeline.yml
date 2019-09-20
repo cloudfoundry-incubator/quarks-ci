@@ -1,6 +1,7 @@
 <%
-  branch = ENV.fetch('branch', 'v0.4.x')
-  tag_filter = ENV.fetch('tag_filter', 'v0.4')
+  fail "use ./configure.sh" unless ENV['branch'] && ENV['tag_filter']
+  branch = ENV['branch']
+  tag_filter = ENV['tag_filter']
 %>
 resources:
 - name: src
