@@ -1,9 +1,23 @@
+<%
+  fail "use ./configure.sh" unless ENV['branch'] && ENV['tag_filter']
+  branch = ENV['branch']
+  tag_filter = ENV['tag_filter']
+%>
 resources:
 - name: src
   type: git
   source:
     uri: ((src-repo))
-    branch: ((src-branch))
+    branch: <%= branch %>
+- name: release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: cf-operator
+    access_token: ((github.access-token-push))
+    drafts: true
+    pre_release: true
+    tag_filter: "v?(<%= tag_filter %>[^v].*)"
 - name: ci
   type: git
   source:
@@ -29,29 +43,6 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: helm-charts/cf-operator-(.*).tgz
-- name: s3.build-number
-  type: semver
-  source:
-    driver: s3
-    access_key_id: ((s3.accessKey))
-    secret_access_key: ((s3.secretKey))
-    bucket: ((s3.bucketName))
-    key: code-coverage/version
-    initial_version: 0.0.0
-- name: s3.code-coverage-unit
-  type: s3
-  source:
-    access_key_id: ((s3.accessKey))
-    secret_access_key: ((s3.secretKey))
-    bucket: ((s3.bucketName))
-    regexp: code-coverage/gover-(.*)-unit.coverprofile
-- name: s3.code-coverage-integration
-  type: s3
-  source:
-    access_key_id: ((s3.accessKey))
-    secret_access_key: ((s3.secretKey))
-    bucket: ((s3.bucketName))
-    regexp: code-coverage/gover-(.*)-integration.coverprofile
 - name: s3.env-dump
   type: s3
   source:
@@ -59,6 +50,21 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: env_dumps/env_dump-(.*).tar.gz
+- name: s3.release.cf-operator
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: release/binaries/cf-operator-(.*)
+- name: s3.release.helm-charts
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: release/helm-charts/cf-operator-(.*).tgz
+
 
 jobs:
 - name: test
@@ -68,9 +74,6 @@ jobs:
     - get: ci
     - get: src
       trigger: true
-  - put: s3.build-number
-    params:
-      bump: patch
   - in_parallel:
     - task: vet
       file: ci/pipelines/tasks/vet.yml
@@ -84,10 +87,6 @@ jobs:
       file: ci/pipelines/tasks/test.yml
       params:
         GOPROXY: ((goproxy))
-        COVERAGE: true
-  - put: s3.code-coverage-unit
-    params:
-      file: code-coverage/gover-*-unit.coverprofile
 
 - name: build
   serial: true
@@ -97,10 +96,6 @@ jobs:
     - get: src
       passed: [test]
       trigger: true
-    - get: s3.build-number
-      passed: [test]
-    - get: s3.code-coverage-unit
-      passed: [test]
   - task: build
     file: ci/pipelines/tasks/build.yml
     params:
@@ -121,10 +116,6 @@ jobs:
     - get: src
       trigger: true
       passed: [build]
-    - get: s3.build-number
-      passed: [build]
-    - get: s3.code-coverage-unit
-      passed: [build]
   - do:
     - in_parallel:
       - task: test-integration
@@ -138,7 +129,6 @@ jobs:
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
-          COVERAGE: true
           GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-integration.yml
         on_failure:
@@ -166,30 +156,6 @@ jobs:
             params:
               file: env_dumps/env_dump-*.tar.gz
               acl: public-read
-  - put: s3.code-coverage-integration
-    params:
-      file: code-coverage/gover-*-integration.coverprofile
-
-- name: coverage
-  serial: true
-  plan:
-  - in_parallel:
-    - get: ci
-    - get: src
-      trigger: true
-      passed: [test-integration]
-    - get: s3.build-number
-      passed: [test-integration]
-  - get: s3.code-coverage-unit
-    passed: [test-integration]
-  - get: s3.code-coverage-integration
-    passed: [test-integration]
-  - task: coverage
-    params:
-      COVERALLS_TOKEN: ((coveralls-token))
-      GOPROXY: ((goproxy))
-    file: ci/pipelines/cf-operator/tasks/coverage.yml
-
 - name: publish
   plan:
   - in_parallel:
@@ -222,3 +188,34 @@ jobs:
         params:
           file: helm-charts/cf-operator-*.tgz
           acl: public-read
+
+- name: release
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: release
+      trigger: true
+    - get: s3.helm-charts
+      passed: [publish]
+    - get: s3.cf-operator
+      passed: [publish]
+
+  - task: release
+    file: ci/pipelines/cf-operator-release/tasks/release.yml
+
+  - put: release
+    params:
+      name: out/name
+      tag: out/tag
+      body: out/body
+      globs:
+        - s3.helm-charts/cf-operator-*.tgz
+        - out/cf-operator-*.gz
+  - put: s3.release.cf-operator
+    params:
+      file: s3.cf-operator/cf-operator-*
+      acl: public-read
+  - put: s3.release.helm-charts
+    params:
+      file: s3.helm-charts/cf-operator-*.tgz
+      acl: public-read
