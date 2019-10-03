@@ -10,9 +10,12 @@ releases += incubator_releases.map { |r| { organization: "cloudfoundry-incubator
 releases += community_releases.map { |r| { organization: "cloudfoundry-community", name: r } }
 releases += bosh_packages_releases.map { |r| { organization: "bosh-packages", name: r } }
 releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r } }
-%>
+
 # Some releases aren't available from bosh.io but only from s3
-<% s3_releases = [{ name: 'groot-btrfs', bucket: 'suse-final-releases' }] %>
+s3_suse_releases = %s(groot-btrfs cf-acceptance-tests)
+s3_releases = s3_suse_releases.map { |r| { name: r, bucket: 'suse-final-releases' } }
+
+%>
 
 resources:
 - name: ci
