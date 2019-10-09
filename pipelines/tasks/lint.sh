@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
 set -ex
 
 export PATH=$PATH:$PWD/bin

@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
 set -ex
 
 export PATH=$PATH:$PWD/bin
@@ -10,7 +14,6 @@ git describe --tags --long || git tag v0.0.0 # Make sure there's always a tag th
 . bin/include/versioning
 popd
 
-set -ex
 make -C src/code.cloudfoundry.org/cf-operator build
 cp src/code.cloudfoundry.org/cf-operator/binaries/cf-operator binaries/cf-operator-$VERSION_TAG
 echo $VERSION_TAG > docker/tag

@@ -1,4 +1,8 @@
 #!/bin/bash
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
 set -ex
 
 # Start Docker Daemon (and set a trap to stop it once this script is done)

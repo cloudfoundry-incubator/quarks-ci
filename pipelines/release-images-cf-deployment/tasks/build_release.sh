@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -o errexit -o nounset
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 GREEN='\033[0;32m'
 NC='\033[0m'

@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
-set -euo pipefail
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -euxo pipefail
 
 echo "Setting up bluemix access"
 ibmcloud logout

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -o errexit -o nounset
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 # Start the Docker daemon.
 source docker-image-resource/assets/common.sh

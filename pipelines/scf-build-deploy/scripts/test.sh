@@ -1,6 +1,9 @@
 #!/bin/bash
 
-set -euo pipefail
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -euxo pipefail
 
 bx login -a "${BX_API}" --apikey "${BX_API_KEY}"
 eval "$(bx cs cluster-config "${CLUSTER_NAME}" --export)"
