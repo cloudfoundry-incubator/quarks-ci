@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
-set -eu
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 : "${ibmcloud_apikey:?}"
 : "${ibmcloud_server:?}"

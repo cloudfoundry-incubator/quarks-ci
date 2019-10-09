@@ -1,5 +1,9 @@
 #!/bin/bash
-set -ex
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 # Start Docker Daemon (and set a trap to stop it once this script is done)
 echo 'DOCKER_OPTS="--data-root /scratch/docker --max-concurrent-downloads 10"' >/etc/default/docker

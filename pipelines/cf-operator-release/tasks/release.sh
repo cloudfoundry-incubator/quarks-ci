@@ -1,5 +1,9 @@
 #!/bin/bash
-set -e
+
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -ex
 
 [ -f release/tag ] || ( echo "failed to determine tag. create a draft release first"; exit 1 )
 

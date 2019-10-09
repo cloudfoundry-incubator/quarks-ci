@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
 set -euxo pipefail
 
 BASE_DIR="$(pwd)"
@@ -79,4 +82,3 @@ echo "Pushing Docker images ..."
 docker images --format "{{.Repository}}:{{.Tag}}" | grep "${REGISTRY_NAMESPACE}/" | while read -r DOCKER_IMAGE_AND_TAG; do
   docker push "${DOCKER_IMAGE_AND_TAG}"
 done
-  

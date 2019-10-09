@@ -1,6 +1,9 @@
 #!/bin/bash
 
-set -e
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 mkdir /bosh-cache
 

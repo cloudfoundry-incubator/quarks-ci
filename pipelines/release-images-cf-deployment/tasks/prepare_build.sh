@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-set -o errexit -o nounset
+exec 3> `basename "$0"`.trace
+BASH_XTRACEFD=3
+
+set -eux
 
 manifest_releases=$(yq -r ".manifest_version as \$cf_version | .releases[] | .name" "${CF_DEPLOYMENT_YAML}" | sort)
 failed=false
