@@ -191,6 +191,8 @@ jobs:
   - do:
     - task: test
       file: ci/pipelines/tasks/test.yml
+      params:
+        GOPROXY: ((goproxy))
     - task: test-integration
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
