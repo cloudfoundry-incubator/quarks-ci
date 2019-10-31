@@ -21,3 +21,5 @@ jobs:
   - put: docker.go-tools
     params:
       build: ci/dockerfiles/go-tools
+      build_args:
+        GOPROXY: ((goproxy))

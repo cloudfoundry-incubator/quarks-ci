@@ -54,10 +54,16 @@ jobs:
       trigger: true
   - task: vet
     file: ci/pipelines/tasks/vet.yml
+    params:
+      GOPROXY: ((goproxy))
   - task: lint
     file: ci/pipelines/tasks/lint.yml
+    params:
+      GOPROXY: ((goproxy))
   - task: test-unit
     file: ci/pipelines/tasks/test.yml
+    params:
+      GOPROXY: ((goproxy))
   - aggregate:
     - task: test-integration
       params:
@@ -70,6 +76,7 @@ jobs:
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
+        GOPROXY: ((goproxy))
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
       params:
