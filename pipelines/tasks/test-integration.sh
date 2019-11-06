@@ -96,7 +96,7 @@ echo "--------------------------------------------------------------------------
 echo "Running integration storage tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration-storage
 
-if [ -n "$COVERAGE" ] && [ -f s3.build-number/version ]; then
+if [ "${COVERAGE+ok}" = ok ] && [ -f s3.build-number/version ]; then
   version=$(cat s3.build-number/version)
   gover_file=gover-${version}-integration.coverprofile
   # add missing newlines to work around gover bug: https://github.com/sozorogami/gover/issues/9
