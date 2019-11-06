@@ -20,13 +20,6 @@ export GOPATH=$PWD
 export GO111MODULE=on
 export TEST_NAMESPACE="test$(date +%s)"
 
-## File used for coverage reporting
-version=
-if [ -f s3.build-number/version ]; then
-  version=$(cat s3.build-number/version)
-fi
-export GOVER_FILE=gover-${version}-integration.coverprofile
-
 upload_debug_info() {
   if ls /tmp/env_dumps/* &> /dev/null; then
     TARBALL_NAME="env_dump-$(date +"%s").tar.gz"
@@ -103,7 +96,13 @@ echo "--------------------------------------------------------------------------
 echo "Running integration storage tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration-storage
 
-find src/code.cloudfoundry.org/cf-operator/code-coverage -name "gover-*.coverprofile" -print0 | xargs -0 -r cp -t code-coverage/
+if [ -n "$COVERAGE" ] && [ -f s3.build-number/version ]; then
+  version=$(cat s3.build-number/version)
+  gover_file=gover-${version}-integration.coverprofile
+  # add missing newlines to work around gover bug: https://github.com/sozorogami/gover/issues/9
+  find src/code.cloudfoundry.org/cf-operator/code-coverage -type f | while read -r f; do echo >> "$f"; done
+  gover src/code.cloudfoundry.org/cf-operator/code-coverage code-coverage/"$gover_file"
+fi
 
 echo "--------------------------------------------------------------------------------"
 echo "Running e2e CLI tests"

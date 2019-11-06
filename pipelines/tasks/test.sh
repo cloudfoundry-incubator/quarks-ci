@@ -9,13 +9,12 @@ export PATH=$PATH:$PWD/bin
 export GOPATH=$PWD
 export GO111MODULE=on
 
-version=
-
-if [ -f s3.build-number/version ]; then
-  version=$(cat s3.build-number/version)
-fi
-export GOVER_FILE=gover-${version}-unit.coverprofile
-
 make -C src/code.cloudfoundry.org/cf-operator test-unit
 
-find src/code.cloudfoundry.org/cf-operator/code-coverage -name gover-*.coverprofile | xargs -r cp -t code-coverage/
+if [ -n "$COVERAGE" ] && [ -f s3.build-number/version ]; then
+  version=$(cat s3.build-number/version)
+  gover_file=gover-${version}-unit.coverprofile
+  # add missing newlines to work around gover bug: https://github.com/sozorogami/gover/issues/9
+  find src/code.cloudfoundry.org/cf-operator/code-coverage -type f | while read -r f; do echo >> "$f"; done
+  gover src/code.cloudfoundry.org/cf-operator/code-coverage code-coverage/"$gover_file"
+fi
