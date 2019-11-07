@@ -15,12 +15,12 @@ sleep 10
 echo "$password" | docker login --username "$username" --password-stdin
 
 # Determine version
-VERSION_TAG=$(cat docker/tag)
+ARTIFACT_VERSION="$(cat docker/tag)"
 
-echo "publishing $VERSION_TAG docker image"
+echo "publishing $ARTIFACT_VERSION docker image"
 
-CANDIDATE="$candidate_repository:$VERSION_TAG"
-RELEASE="$repository:$VERSION_TAG"
+CANDIDATE="$candidate_repository:$ARTIFACT_VERSION"
+RELEASE="$repository:$ARTIFACT_VERSION"
 docker pull "$CANDIDATE"
 docker tag "$CANDIDATE" "$RELEASE"
 docker push "$RELEASE"
