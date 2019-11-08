@@ -15,5 +15,5 @@ git describe --tags --long || git tag v0.0.0 # Make sure there's always a tag th
 popd
 
 make -C src/code.cloudfoundry.org/cf-operator build
-cp src/code.cloudfoundry.org/cf-operator/binaries/cf-operator binaries/cf-operator-$VERSION_TAG
-echo $VERSION_TAG > docker/tag
+cp src/code.cloudfoundry.org/cf-operator/binaries/cf-operator binaries/cf-operator-$ARTIFACT_VERSION
+echo $ARTIFACT_VERSION > docker/tag
