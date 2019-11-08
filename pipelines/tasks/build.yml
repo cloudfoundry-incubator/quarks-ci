@@ -12,7 +12,5 @@ inputs:
 outputs:
 - name: binaries
 - name: docker
-caches:
-- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/tasks/build.sh

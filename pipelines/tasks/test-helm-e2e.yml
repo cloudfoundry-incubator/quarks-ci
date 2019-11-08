@@ -11,7 +11,5 @@ inputs:
 - name: ci
 outputs:
 - name: env_dumps
-caches:
-- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/tasks/test-helm-e2e.sh
