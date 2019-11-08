@@ -13,7 +13,5 @@ inputs:
   optional: true
 - name: s3.code-coverage-unit
 - name: s3.code-coverage-integration
-caches:
-- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/cf-operator/tasks/coverage.sh

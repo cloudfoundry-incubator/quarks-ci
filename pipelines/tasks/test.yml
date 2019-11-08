@@ -13,7 +13,5 @@ inputs:
   optional: true
 outputs:
 - name: code-coverage
-caches:
-- path: pkg/mod # Persist go modules cache
 run:
   path: ci/pipelines/tasks/test.sh
