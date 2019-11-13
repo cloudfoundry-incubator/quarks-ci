@@ -2,7 +2,7 @@
 
 <%
 parallel_builds = 5 # How many builds we run in parallel
-cf_deployment_tags = %w(v8.0.0 v9.2.0 v9.5.0)
+cf_deployment_tags = %w(v12.4.0)
 releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa)
 %>
 

@@ -43,13 +43,13 @@ resources:
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 
-- name: s3.fissile-stemcell-opensuse-version
+- name: s3.fissile-stemcell-sle-version
   type: s3
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
-    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+    versioned_file: fissile-stemcell-versions/fissile-stemcell-sle15-version
 
 jobs:
 <% (releases + s3_releases).each do |release| %>
@@ -58,7 +58,7 @@ jobs:
   - aggregate:
     - get: ci
   - aggregate:
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-sle-version
       trigger: true
     - get: <%= release[:name] %>-release
       trigger: true
@@ -71,10 +71,10 @@ jobs:
       privileged: true
       input_mapping:
         release: <%= release[:name] %>-release
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-sle-version
       params:
         GOPROXY: ((goproxy))
-        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        STEMCELL_REPOSITORY: ((stemcell-repository))
         RELEASE_NAME: <%= release[:name] %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
