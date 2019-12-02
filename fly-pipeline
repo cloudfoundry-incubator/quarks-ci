@@ -41,7 +41,7 @@ Install suggestions:
   brew install starkandwayne/cf/spruce
 
 - fly, concourse command line tool:
-  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=darwin' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  curl --progress-bar --location 'https://ci.flintstone.cf.cloud.ibm.com/api/v1/cli?arch=amd64&platform=darwin' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
 
 - lpass, LastPass command line tool:
   brew install lastpass-cli
@@ -59,7 +59,7 @@ Install suggestions:
   curl --silent --location "https://github.com/geofffranks/spruce/releases/download/$(curl --silent --location "https://api.github.com/repos/geofffranks/spruce/releases/latest" | jq --raw-output .tag_name)/spruce-linux-amd64" --output /usr/local/bin/spruce && chmod a+rx /usr/local/bin/spruce
 
 - fly, concourse command line tool:
-  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  curl --progress-bar --location 'https://ci.flintstone.cf.cloud.ibm.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
 
 - lpass, LastPass command line tool:
   apt-get update >/dev/null && \
@@ -94,7 +94,7 @@ Install suggestions:
   curl --silent --location "https://github.com/geofffranks/spruce/releases/download/$(curl --silent --location "https://api.github.com/repos/geofffranks/spruce/releases/latest" | jq --raw-output .tag_name)/spruce-linux-amd64" --output /usr/local/bin/spruce && chmod a+rx /usr/local/bin/spruce
 
 - fly, concourse command line tool:
-  curl --progress-bar --location 'https://flintstone.ci.cf-app.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
+  curl --progress-bar --location 'https://ci.flintstone.cf.cloud.ibm.com/api/v1/cli?arch=amd64&platform=linux' --output /usr/local/bin/fly && chmod a+rx /usr/local/bin/fly
 
 - lpass, LastPass command line tool:
   zypper install -y -t pattern devel_C_C++ && \

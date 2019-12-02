@@ -17,8 +17,8 @@ _First time users:_ You only need to do this once.
 - Setup Concourse target to be used:
   ```
   fly --target flintstone login \
-      --concourse-url=https://flintstone.ci.cf-app.com \
-      --team-name=containerization
+      --concourse-url=https://ci.flintstone.cf.cloud.ibm.com \
+      --team-name=quarks
   ```
 - Setup LassPass command line client:
   ```
