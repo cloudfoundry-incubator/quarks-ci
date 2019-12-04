@@ -1,3 +1,4 @@
 **/.dev_builds
 **/config/private.yml
 **/dev_releases
+.idea/
