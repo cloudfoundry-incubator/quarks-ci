@@ -2,7 +2,7 @@
 
 <%
 parallel_builds = 5 # How many builds we run in parallel
-cf_deployment_tags = %w(v12.4.0)
+cf_deployment_tags = %w(v12.4.0 v12.18.0)
 releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa)
 %>
 
@@ -57,7 +57,7 @@ jobs:
           cf-deployment: cf-deployment-<%= cf_deployment_tag %>
         params:
           CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
-          RELEASES: <%= releases.join(" ") %>
+          RELEASES: <%= releases.sort.join(" ") %>
         file: ci/pipelines/release-images-cf-deployment/tasks/prepare_build.yml
 
   <%
