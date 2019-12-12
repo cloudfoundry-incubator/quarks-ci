@@ -57,7 +57,7 @@ jobs:
           cf-deployment: cf-deployment-<%= cf_deployment_tag %>
         params:
           CF_DEPLOYMENT_YAML: ((cf-deployment-yaml))
-          RELEASES: <%= releases.join(" ") %>
+          RELEASES: <%= releases.sort.join(" ") %>
         file: ci/pipelines/release-images-cf-deployment/tasks/prepare_build.yml
 
   <%
