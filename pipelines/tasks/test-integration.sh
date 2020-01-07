@@ -64,30 +64,6 @@ export CF_OPERATOR_WEBHOOK_SERVICE_PORT=$(( ( RANDOM % 59000 )  + 4000 ))
 export CF_OPERATOR_WEBHOOK_SERVICE_HOST="$ssh_server_ip"
 export NODES=${NODES:-5}
 
-echo "Setting up webhooks and namespaces on k8s"
-for i in $(seq 1 "$NODES"); do
-  port=$(( CF_OPERATOR_WEBHOOK_SERVICE_PORT + i ))
-  namespace="${TEST_NAMESPACE}-${i}"
-  tunnel_name="tunnel-$port"
-  kubectl create namespace "$namespace"
-
-  # GatewayPorts option needs to be enabled on ssh server
-  ssh -fNT -i /tmp/cf-operator-tunnel-identity -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -R "$ssh_server_ip:$port:localhost:$port" "$ssh_server_user@$ssh_server_ip"
-
-  cat <<EOF | kubectl create -f- --namespace="$namespace"
----
-kind: Endpoints
-apiVersion: v1
-metadata:
-  name: $tunnel_name
-subsets:
-  - addresses:
-      - ip: $ssh_server_ip
-    ports:
-      - port: $port
-EOF
-done
-
 echo "--------------------------------------------------------------------------------"
 echo "Running integration tests"
 make -C src/code.cloudfoundry.org/cf-operator test-integration
