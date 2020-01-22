@@ -16,6 +16,7 @@ RUN zypper --non-interactive install \
   ruby \
   unzip \
   vim \
+  wget \
   zip
 RUN pip install --upgrade pip
 RUN pip install yq
