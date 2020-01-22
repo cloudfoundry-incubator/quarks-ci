@@ -1,0 +1,12 @@
+---
+platform: linux
+image_resource:
+ type: docker-image
+ source:
+   repository:  cfcontainerization/go-tools
+   tag: latest
+inputs:
+- name: director
+- name: ci
+run:
+  path: ci/pipelines/tasks/clean-concourse-workers.sh
