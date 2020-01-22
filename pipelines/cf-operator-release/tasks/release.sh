@@ -12,19 +12,21 @@ set -ex
 # Until we get version from a concourse resource, we need to make sure
 # assets versions match the Github tag.
 echo "check assets versions"
-semver=$( sed 's/^v//' release/tag )
+semver=$( sed 's/^v//; s/-/+/' release/tag )
 if ! grep -q "$semver" s3.helm-charts/version; then
   echo -n "Helm chart version does not match Github tag from Github release: "
   cat s3.helm-charts/version
   exit 1
 fi
 
+# Binary version is like docker version, using dash instead of plus
 if ! grep -qf release/tag s3.cf-operator/version; then
   echo -n "Operator binary version does not match Github tag from Github release: "
   cat s3.cf-operator/version
   exit 1
 fi
 
+# Docker versions are not strictly following the semantic versioning spc
 docker_tag=$(tar xOfz s3.helm-charts/cf-operator-*.tgz cf-operator/values.yaml | grep "  tag: v")
 if ! echo "$docker_tag" | grep -qf release/tag; then
   echo -n "Helm chart does not reference a docker image with the right Github"
