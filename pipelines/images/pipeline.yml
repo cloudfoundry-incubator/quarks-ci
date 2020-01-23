@@ -12,12 +12,6 @@ resources:
     repository: ((docker-organization))/go-tools
     username: ((dockerhub.username))
     password: ((dockerhub.password))
-- name: docker.clean-concourse-image
-  type: docker-image
-  source:
-    repository: ((docker-organization))/clean-concourse-image
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
 
 jobs:
 - name: go-tools
@@ -30,11 +24,3 @@ jobs:
       build: ci/dockerfiles/go-tools
       build_args:
         GOPROXY: ((goproxy))
-- name: clean-concourse-image
-  plan:
-  - aggregate:
-    - get: ci
-      trigger: true
-  - put: docker.clean-concourse-image
-    params:
-      build: ci/dockerfiles/clean-concourse-image
