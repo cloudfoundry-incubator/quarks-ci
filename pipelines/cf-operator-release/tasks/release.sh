@@ -12,7 +12,8 @@ set -ex
 # Until we get version from a concourse resource, we need to make sure
 # assets versions match the Github tag.
 echo "check assets versions"
-if ! grep -qf release/tag s3.helm-charts/version; then
+semver=$( sed 's/^v//' release/tag )
+if ! grep -q "$semver" s3.helm-charts/version; then
   echo -n "Helm chart version does not match Github tag from Github release: "
   cat s3.helm-charts/version
   exit 1

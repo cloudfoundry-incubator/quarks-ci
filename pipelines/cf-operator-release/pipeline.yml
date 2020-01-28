@@ -35,35 +35,35 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: binaries/cf-operator-(.*)
+    regexp: "binaries/cf-operator-(.*)"
 - name: s3.helm-charts
   type: s3
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: helm-charts/cf-operator-(.*).tgz
+    regexp: "helm-charts/cf-operator-v?([^v]*)\\.tgz"
 - name: s3.env-dump
   type: s3
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: env_dumps/env_dump-(.*).tar.gz
+    regexp: "env_dumps/env_dump-(.*)\\.tar\\.gz"
 - name: s3.release.cf-operator
   type: s3
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: release/binaries/cf-operator-(.*)
+    regexp: "release/binaries/cf-operator-(.*)"
 - name: s3.release.helm-charts
   type: s3
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: release/helm-charts/cf-operator-(.*).tgz
+    regexp: "release/helm-charts/cf-operator-v?([^v]*)\\.tgz"
 
 
 jobs:
