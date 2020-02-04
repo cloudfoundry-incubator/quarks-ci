@@ -64,7 +64,12 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: "release/helm-charts/cf-operator-v?([^v]*)\\.tgz"
-
+- name: helm-repo
+  type: git
+  source:
+    uri: ((helm-repo))
+    private_key: ((github.key))
+    branch: master
 
 jobs:
 - name: test
@@ -219,3 +224,16 @@ jobs:
     params:
       file: s3.helm-charts/cf-operator-*.tgz
       acl: public-read
+
+- name: helm-repo
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: s3.release.helm-charts
+      passed: [release]
+      trigger: true
+    - get: helm-repo
+  - task: update
+    file: ci/pipelines/cf-operator-release/tasks/helm-repo.yml
+  - put: helm-repo
+    params: {repository: updated}
