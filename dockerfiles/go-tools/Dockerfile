@@ -29,16 +29,10 @@ RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
 
 RUN gem install bosh-template
 
-ENV HELM_VERSION="v2.13.1"
-ENV HELM_URL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
-RUN curl --progress-bar --location ${HELM_URL} | tar -xzf - -C /tmp linux-amd64/helm && \
-    mv /tmp/linux-amd64/helm /usr/bin/helm && \
-    rm -rf /tmp/linux-amd64/
-
-ENV HELM_VERSION="v3.0.2"
+ENV HELM_VERSION="v3.1.1"
 ENV HELM_URL https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
 RUN curl --progress-bar --location ${HELM_URL} | tar -xzf - -C /tmp linux-amd64/helm && \
-    mv /tmp/linux-amd64/helm /usr/bin/helm3 && \
+    mv /tmp/linux-amd64/helm /usr/bin/helm && \
     rm -rf /tmp/linux-amd64/
 
 RUN wget https://github.com/cloudfoundry/bosh-cli/releases/download/v6.1.1/bosh-cli-6.1.1-linux-amd64 -O bosh

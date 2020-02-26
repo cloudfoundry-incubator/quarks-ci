@@ -9,7 +9,7 @@ cp -rv helm-repo/. updated/
 cp -v s3.release.helm-charts/*tgz updated/
 
 pushd updated
-  helm3 repo index .
+  helm repo index .
   git add .
   git config --global user.name "CFContainerizationBot"
   git config --global user.email "cfcontainerizationbot@cloudfoundry.org"
