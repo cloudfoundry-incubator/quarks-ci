@@ -12,7 +12,7 @@ releases += bosh_packages_releases.map { |r| { organization: "bosh-packages", na
 releases += pivotal_cf_releases.map { |r| { organization: "pivotal-cf", name: r } }
 
 # Some releases aren't available from bosh.io but only from s3
-s3_suse_releases = %w(groot-btrfs cf-acceptance-tests brain-tests sync-tests scf-helper-release)
+s3_suse_releases = %w(groot-btrfs cf-acceptance-tests brain-tests sync-tests scf-helper)
 s3_releases = s3_suse_releases.map { |r| { name: r, bucket: 'suse-final-releases' } }
 
 %>
