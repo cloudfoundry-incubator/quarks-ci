@@ -23,6 +23,11 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
+- name: kubecf-src
+  type: git
+  source:
+    uri: ((kubecf-repo))
+    branch: ((kubecf-branch))
 - name: docker.cf-operator-rc
   type: docker-image
   source:
@@ -64,6 +69,13 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: "release/helm-charts/cf-operator-v?([^v]*)\\.tgz"
+- name: s3.shas
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "shas/([^v]*)"
 - name: helm-repo
   type: git
   source:
@@ -188,11 +200,14 @@ jobs:
           file: binaries/cf-operator-*
     - do:
       - task: helm
-        file: ci/pipelines/tasks/build-helm.yml
+        file: ci/pipelines/cf-operator-release/tasks/build-helm.yml
       - put: s3.helm-charts
         params:
           file: helm-charts/cf-operator-*.tgz
           acl: public-read
+      - put: s3.shas
+        params:
+          file: shas/*
 
 - name: release
   plan:
@@ -224,6 +239,21 @@ jobs:
     params:
       file: s3.helm-charts/cf-operator-*.tgz
       acl: public-read
+
+- name: create-pr
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: kubecf-src
+    - get: s3.release.helm-charts
+      passed: [release]
+    - get: s3.shas
+      passed: [publish]
+  - task: create-pr
+    file: ci/pipelines/cf-operator-release/tasks/create-pr.yml
+    params:
+      USERNAME: ((github.user))
+      PASSWORD: ((github.password))
 
 - name: helm-repo
   plan:
