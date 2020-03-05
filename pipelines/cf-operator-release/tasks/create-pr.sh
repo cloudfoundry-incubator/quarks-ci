@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ev
+set -e
 
 url=$( cat s3.release.helm-charts/url )
 version=$( cat s3.release.helm-charts/version )
