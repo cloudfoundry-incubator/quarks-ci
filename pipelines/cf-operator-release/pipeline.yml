@@ -245,6 +245,8 @@ jobs:
   - in_parallel:
     - get: ci
     - get: kubecf-src
+    - get: release
+      trigger: true
     - get: s3.release.helm-charts
       passed: [release]
     - get: s3.shas
