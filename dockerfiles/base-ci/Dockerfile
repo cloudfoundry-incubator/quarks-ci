@@ -13,6 +13,8 @@ RUN zypper --non-interactive install \
   make \
   python \
   python2-pip \
+  python3 \
+  python3-pip \
   ruby \
   unzip \
   vim \

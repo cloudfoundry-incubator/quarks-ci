@@ -1,7 +1,9 @@
 src-repo: https://github.com/cloudfoundry-incubator/cf-operator
 ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci.git
 helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm.git
+kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf.git
 ci-branch: master
+kubecf-branch: master
 docker-organization: cfcontainerization
 docker-candidate-repo: cf-operator-candidate
 storageclass: hostpath-containerization
