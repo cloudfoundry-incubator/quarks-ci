@@ -11,12 +11,11 @@ pushd kubecf-src/
 sed -i '/\"cf_operator\": struct/{n;n;s,".*","'$sha'",}' ./def.bzl
 sed -i '/\"cf_operator\": struct/{n;n;n;s,".*","'$version'",}' ./def.bzl
 git checkout -b bot/cf-operator
-git status
-git add .
-git commit -m "feat: bump cf-operator $url $version"
 
 git config --global user.name "CFContainerizationBot"
 git config --global user.email "cfcontainerizationbot@cloudfoundry.org"
+git add .
+git commit -m "feat: bump cf-operator $url $version"
 git config --global credential.helper cache
 git config core.sshCommand 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 git config --global core.editor "cat"
