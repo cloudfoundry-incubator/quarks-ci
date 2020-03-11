@@ -240,12 +240,13 @@ jobs:
       file: s3.helm-charts/cf-operator-*.tgz
       acl: public-read
 
-- name: create-pr
+- name: createpr
   plan:
   - in_parallel:
     - get: ci
     - get: kubecf-src
     - get: release
+      passed: [release]
       trigger: true
     - get: s3.release.helm-charts
       passed: [release]
