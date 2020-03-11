@@ -12,11 +12,30 @@ resources:
     repository: ((docker-organization))/go-tools
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: docker.base-ci
+  type: docker-image
+  source:
+    repository: ((docker-organization))/base-ci
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
 
 jobs:
+- name: base-ci
+  plan:
+  - aggregate:
+    - get: ci
+      trigger: true
+  - put: docker.base-ci
+    params:
+      build: ci/dockerfiles/base-ci
+      build_args:
+        GOPROXY: ((goproxy))
 - name: go-tools
   plan:
   - aggregate:
+    - get: docker.base-ci
+      passed: [base-ci]
+      trigger: true
     - get: ci
       trigger: true
   - put: docker.go-tools
