@@ -69,6 +69,7 @@ jobs:
   - do:
     - task: build
       privileged: true
+      timeout: 1h30m
       input_mapping:
         release: <%= release[:name] %>-release
         s3.stemcell-version: s3.fissile-stemcell-sle-version
