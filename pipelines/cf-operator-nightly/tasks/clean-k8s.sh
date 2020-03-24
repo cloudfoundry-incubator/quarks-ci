@@ -7,8 +7,7 @@ set -euxo pipefail
 
 echo "Setting up bluemix access"
 ibmcloud logout
-ibmcloud login -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
-ibmcloud cs  region-set "$ibmcloud_region"
+ibmcloud login -r "$ibmcloud_region" -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 
 echo "Running in cluster: $ibmcloud_cluster"
 
