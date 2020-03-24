@@ -13,7 +13,7 @@ echo "Running in cluster: $ibmcloud_cluster"
 
 export BLUEMIX_CS_TIMEOUT=500
 
-eval "$(ibmcloud ks cluster config --cluster "$ibmcloud_cluster")"
+ibmcloud ks cluster config --cluster "$ibmcloud_cluster"
 
 OLD_DATE=$(date -d '4 hour ago' "+%s")
 export OLD_DATE

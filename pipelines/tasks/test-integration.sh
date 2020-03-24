@@ -48,7 +48,7 @@ trap cleanup EXIT
 echo "Setting up bluemix access"
 ibmcloud login -r "$ibmcloud_region" -a "$ibmcloud_server" --apikey "$ibmcloud_apikey"
 export BLUEMIX_CS_TIMEOUT=500
-eval $(ibmcloud ks cluster config --cluster "$ibmcloud_cluster")
+ibmcloud ks cluster config --cluster "$ibmcloud_cluster"
 echo "Running integration tests in the ${ibmcloud_cluster} cluster."
 
 ## Set up SSH tunnels to make our webhook server available to k8s
