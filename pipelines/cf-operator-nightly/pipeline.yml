@@ -9,12 +9,6 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
-- name: director
-  type: git
-  source:
-    uri: ((director-repo)) 
-    branch: ((director-branch))
-    private_key: ((github.key))
 - name: docker.cf-operator-rc
   type: docker-image
   source:
@@ -25,12 +19,6 @@ resources:
   type: time
   source:
     interval: 12h
-- name: daily
-  type: time
-  source:
-    start: 12:00 AM
-    stop: 1:00 AM
-    location: Europe/Berlin
 
 jobs:
 - name: clean-k8s
@@ -131,13 +119,3 @@ jobs:
       trigger: true
   - task: build
     file: ci/pipelines/tasks/build-helm.yml
-
-- name: clean-concourse-workers
-  plan:
-  - aggregate:
-    - get: director
-    - get: ci 
-    - get: daily
-      trigger: true
-  - task: clean-concourse-workers
-    file: ci/pipelines/tasks/clean-concourse-workers.yml
