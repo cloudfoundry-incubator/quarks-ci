@@ -81,4 +81,5 @@ fi
 
 echo "--------------------------------------------------------------------------------"
 echo "Running e2e CLI tests"
+export CF_OPERATOR_NAMESPACE="$TEST_NAMESPACE"
 make -C src/code.cloudfoundry.org/cf-operator test-cli-e2e
