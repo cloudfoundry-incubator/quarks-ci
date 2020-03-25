@@ -77,10 +77,6 @@ export CF_OPERATOR_WEBHOOK_SERVICE_HOST="$ssh_server_ip"
 
 
 echo "Running e2e tests with helm"
-# fix SSL path
-kube_path=$(dirname "$KUBECONFIG")
-sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' $KUBECONFIG
-
 echo "--------------------------------------------------------------------------------"
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
 
