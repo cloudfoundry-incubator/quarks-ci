@@ -81,7 +81,4 @@ fi
 
 echo "--------------------------------------------------------------------------------"
 echo "Running e2e CLI tests"
-# fix relative SSL path in KUBECONFIG
-kube_path=$(dirname "$KUBECONFIG")
-sed -i 's@certificate-authority: \(.*\)$@certificate-authority: '$kube_path'/\1@' "$KUBECONFIG"
 make -C src/code.cloudfoundry.org/cf-operator test-cli-e2e
