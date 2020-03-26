@@ -12,6 +12,6 @@ pushd updated
   helm repo index .
   git add .
   git config --global user.name "CFContainerizationBot"
-  git config --global user.email "cfcontainerizationbot@cloudfoundry.org"
+  git config --global user.email "cf-containerization@cloudfoundry.org"
   git commit -m "add helm chart for $url $version"
 popd
