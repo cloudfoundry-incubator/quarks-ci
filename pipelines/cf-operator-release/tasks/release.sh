@@ -63,12 +63,21 @@ cat >> out/body <<EOF
 # Installation
 
     # Use this if you've never installed the operator before
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart_url
+    helm repo add quarks https://cloudfoundry-incubator.github.io/quarks-helm/
+    helm install cf-operator quarks/cf-operator
 
     # Use this if the custom resources have already been created by a previous CF Operator installation
-    helm install --namespace cf-operator --name cf-operator https://s3.amazonaws.com/cf-operators/$helm_chart_url --set "customResources.enableInstallation=false"
+    helm repo update
+    helm install cf-operator quarks/cf-operator --set "customResources.enableInstallation=false"
+
+    # For more options look at the README for the chart
+    helm show readme quarks/cf-operator
 
 # Assets
+
+Helm repository
+
+* https://cloudfoundry-incubator.github.io/quarks-helm/
 
 Helm chart and standalone binary:
 
