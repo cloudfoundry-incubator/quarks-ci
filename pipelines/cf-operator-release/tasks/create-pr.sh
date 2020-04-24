@@ -10,8 +10,8 @@ version=$(echo "$version" | sed 's/+/%2B/')
 export GIT_ASKPASS=../ci/pipelines/cf-operator-release/tasks/git-password.sh
 
 pushd kubecf-src/
-sed -i '/\"cf_operator\": struct/{n;n;s,".*","'$sha'",}' ./def.bzl
-sed -i '/\"cf_operator\": struct/{n;n;n;s,".*","'$version'",}' ./def.bzl
+sed -i "/cf_operator:/{n;s/sha256: \(.*\)/sha256: ${sha}/}" ./dependencies.yaml
+sed -i "/cf_operator:/{n;n;n;s/version: \(.*\)/version: ${version}/}" ./dependencies.yaml
 git checkout -b bot/cf-operator
 
 git config --global user.name "CFContainerizationBot"
