@@ -35,6 +35,10 @@ ibmcloud login -r "$ibmcloud_region" -a "$ibmcloud_server" --apikey "$ibmcloud_a
 export BLUEMIX_CS_TIMEOUT=500
 ibmcloud ks cluster config --cluster "$ibmcloud_cluster"
 
+echo "Build helm chart."
+echo "--------------------------------------------------------------------------------"
+make -C src/code.cloudfoundry.org/cf-operator build-helm
+
 echo "Running e2e tests in the ${ibmcloud_cluster} cluster."
 echo "--------------------------------------------------------------------------------"
 make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
