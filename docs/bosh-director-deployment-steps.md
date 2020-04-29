@@ -22,10 +22,10 @@ _**Note**_:  Softlayer is the IaaS used in IBM, where most of the IBM Cloud infr
 - An specific customize BOSH cli. Required for the Softlayer CPI, to read an specific VM IP.
     ```bash
     # For Linux
-    $ wget -O /usr/bin/bosh2 https://s3.amazonaws.com/bosh-softlayer-artifacts/bosh-cli-5.4.0.1-softlayer-linux-amd64 &&    chmod +x /usr/bin/bosh2
+    $ wget -O /usr/bin/bosh2 https://s3.amazonaws.com/bosh-softlayer-artifacts/bosh-cli-6.0.0.1-softlayer-linux-amd64 &&    chmod +x /usr/bin/bosh2
 
     # Fpr Darwin
-    $ wget -O /usr/bin/bosh2 https://s3.amazonaws.com/bosh-softlayer-artifacts/bosh-cli-5.4.0.1-softlayer-darwin-amd64 &&   chmod +x /usr/bin/bosh2
+    $ wget -O /usr/bin/bosh2 https://s3.amazonaws.com/bosh-softlayer-artifacts/bosh-cli-6.0.0.1-softlayer-darwin-amd64 &&   chmod +x /usr/bin/bosh2
     ```
 
 ## Deploying the BOSH director
@@ -83,7 +83,7 @@ we can grab some CPI logs, in case we require to debug the task.
         -v sl_vm_domain=bits.ams \
         -v dns_recursor_ip=8.8.8.8 \
         -v director_name=bosh \
-        -o ~/workspace/cf-operator-ci/operations/use-softlayer-cpi-v35.yml \
+        -o ~/workspace/open-source/cf-operator-ci/operations/use-softlayer-cpi-v35.yml \
         > bosh-green-new.yml
     ```
     _**Note**_: The ~/workspace/bosh-deployment/misc/powerdns.yml, contains an ops call

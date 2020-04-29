@@ -12,19 +12,17 @@
 Currently using the following stemcells and releases version.
 
 ```
-$ bosh upload-stemcell https://s3.amazonaws.com/bosh-softlayer-cpi-stemcells/light-bosh-stemcell-315.41-softlayer-xen-ubuntu-xenial-go_agent.tgz
-$ bosh upload-release https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=37
-$ bosh upload-release https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.0.4
-$ bosh upload-release https://bosh.io/d/github.com/concourse/concourse-bosh-release?v=5.3.0
+$ bosh upload-stemcell --sha1 04799368e37cc5e577da4fc2c0e95632306e4e23 https://bosh.io/d/stemcells/bosh-softlayer-xen-ubuntu-xenial-go_agent?v=621.71
+$ bosh upload-release --sha1 4488d08ff54117a9d904f6e2f27c82c1cf4c910e https://bosh.io/d/github.com/cloudfoundry/postgres-release?v=41
+$ bosh upload-release --sha1 c956394fce7e74f741e4ae8c256b480904ad5942 https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.1.8
+$ bosh upload-release --sha1 476ede4062acab307440d8539d6270b2e8fb4c6d https://bosh.io/d/github.com/concourse/concourse-bosh-release?v=5.8.1
 ```
-
-
 
 ## Deploy concourse
 
 ```bash
 pushd ~/workspace/concourse-bosh-deployment/cluster
-bosh -d concourse deploy concourse.yml \
+bosh -d concourse-quarks deploy concourse.yml \
 --vars-store ~/workspace/quarks-private/environments/softlayer/concourse/concourse-green-vars.yml \
 -l ../versions.yml \
 -o operations/scale.yml \
@@ -32,16 +30,13 @@ bosh -d concourse deploy concourse.yml \
 -o ~/workspace/cf-operator-ci/operations/concourse-github-auth.yml \
 --var web_instances=2 \
 --var worker_instances=5 \
--o operations/basic-auth.yml \
---var local_user.username=admin \
---var local_user.password=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.concourseuser') \
 --var github_client_id=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.github."client-id"') \
 --var github_client_secret=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.github."client-secret"') \
 --var external_url=https://ci.flintstone.cf.cloud.ibm.com  \
 --var network_name=default \
 --var web_vm_type=concourse-server \
 --var worker_vm_type=concourse-worker \
---var deployment_name=concourse \
+--var deployment_name=concourse-quarks \
 --var db_vm_type=concourse-server \
 --var db_persistent_disk_type=200GB \
 -o operations/external-postgres.yml \
@@ -51,6 +46,7 @@ bosh -d concourse deploy concourse.yml \
 --var postgres_port=17376 \
 --var postgres_role=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.concoursedb."user"')  \
 --var postgres_password=$(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" show --notes | spruce json | jq -r '.concoursedb."password"') \
+--var azs=[z1] \
 --no-redact
 popd
 ```
