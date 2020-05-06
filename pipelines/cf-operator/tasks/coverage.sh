@@ -17,5 +17,5 @@ fi
 export BUILD_NUMBER=${version}
 
 
-cp s3.code-coverage*/*.coverprofile src/code.cloudfoundry.org/cf-operator
-make -C src/code.cloudfoundry.org/cf-operator coverage
+cp s3.code-coverage*/*.coverprofile src/code.cloudfoundry.org/quarks-operator
+make -C src/code.cloudfoundry.org/quarks-operator coverage

@@ -118,7 +118,7 @@ jobs:
   - put: status
     params:
       context: staticcheck
-      description: staticcheck code.cloudfoundry.org/cf-operator/...
+      description: staticcheck code.cloudfoundry.org/quarks-operator/...
       path: src
       state: pending
   - do:
@@ -130,14 +130,14 @@ jobs:
       put: status
       params:
         context: staticcheck
-        description: staticcheck code.cloudfoundry.org/cf-operator/...
+        description: staticcheck code.cloudfoundry.org/quarks-operator/...
         path: src
         state: failure
     on_success:
       put: status
       params:
         context: staticcheck
-        description: staticcheck code.cloudfoundry.org/cf-operator/...
+        description: staticcheck code.cloudfoundry.org/quarks-operator/...
         path: src
         state: success
 

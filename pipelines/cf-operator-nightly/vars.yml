@@ -1,5 +1,5 @@
-src-repo: https://github.com/cloudfoundry-incubator/cf-operator
-ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci.git
+src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 ci-branch: master
 director-repo: git@github.com:cloudfoundry/quarks-private.git
 director-branch: master

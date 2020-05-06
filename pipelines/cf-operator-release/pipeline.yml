@@ -13,7 +13,7 @@ resources:
   type: github-release
   source:
     owner: cloudfoundry-incubator
-    repository: cf-operator
+    repository: quarks-operator
     access_token: ((github.access-token-push))
     drafts: true
     pre_release: true

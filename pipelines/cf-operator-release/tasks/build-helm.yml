@@ -8,7 +8,7 @@ image_resource:
    tag: latest
 inputs:
 - name: src
-  path: src/code.cloudfoundry.org/cf-operator
+  path: src/code.cloudfoundry.org/quarks-operator
 - name: ci
 outputs:
 - name: helm-charts

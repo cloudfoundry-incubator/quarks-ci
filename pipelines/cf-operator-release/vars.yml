@@ -1,5 +1,5 @@
-src-repo: https://github.com/cloudfoundry-incubator/cf-operator
-ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci.git
+src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm.git
 kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf.git
 ci-branch: master
