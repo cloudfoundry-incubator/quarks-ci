@@ -65,21 +65,21 @@ export NODES=${NODES:-5}
 
 echo "--------------------------------------------------------------------------------"
 echo "Running integration tests"
-make -C src/code.cloudfoundry.org/cf-operator test-integration
+make -C src/code.cloudfoundry.org/quarks-operator test-integration
 
 echo "--------------------------------------------------------------------------------"
 echo "Running integration storage tests"
-make -C src/code.cloudfoundry.org/cf-operator test-integration-storage
+make -C src/code.cloudfoundry.org/quarks-operator test-integration-storage
 
 if [ "${COVERAGE+ok}" = ok ] && [ -f s3.build-number/version ]; then
   version=$(cat s3.build-number/version)
   gover_file=gover-${version}-integration.coverprofile
   # add missing newlines to work around gover bug: https://github.com/sozorogami/gover/issues/9
-  find src/code.cloudfoundry.org/cf-operator/code-coverage -type f | while read -r f; do echo >> "$f"; done
-  gover src/code.cloudfoundry.org/cf-operator/code-coverage code-coverage/"$gover_file"
+  find src/code.cloudfoundry.org/quarks-operator/code-coverage -type f | while read -r f; do echo >> "$f"; done
+  gover src/code.cloudfoundry.org/quarks-operator/code-coverage code-coverage/"$gover_file"
 fi
 
 echo "--------------------------------------------------------------------------------"
 echo "Running e2e CLI tests"
 export CF_OPERATOR_NAMESPACE="$TEST_NAMESPACE"
-make -C src/code.cloudfoundry.org/cf-operator test-cli-e2e
+make -C src/code.cloudfoundry.org/quarks-operator test-cli-e2e

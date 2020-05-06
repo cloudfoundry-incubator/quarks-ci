@@ -1,5 +1,5 @@
-pr-repo: cloudfoundry-incubator/cf-operator
-ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci.git
+pr-repo: cloudfoundry-incubator/quarks-operator
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 ci-branch: master
 docker-organization: cfcontainerization
 docker-repo: cf-operator-ci

@@ -37,8 +37,8 @@ ibmcloud ks cluster config --cluster "$ibmcloud_cluster"
 
 echo "Running e2e tests in the ${ibmcloud_cluster} cluster."
 echo "--------------------------------------------------------------------------------"
-make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e
+make -C src/code.cloudfoundry.org/quarks-operator test-helm-e2e
 
 echo "--------------------------------------------------------------------------------"
 export TEST_NAMESPACE="test-storage$(date +%s)"
-make -C src/code.cloudfoundry.org/cf-operator test-helm-e2e-storage
+make -C src/code.cloudfoundry.org/quarks-operator test-helm-e2e-storage

@@ -1,4 +1,4 @@
-# cf-operator-ci
+# quarks-ci
 
 ## Pre-reqs
 To fly one of the pipelines, a couple pre-req tools are required on your local machine:
