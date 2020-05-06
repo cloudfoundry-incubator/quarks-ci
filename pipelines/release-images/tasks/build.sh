@@ -19,6 +19,7 @@ tar xfv fissile-*.tgz
 popd
 
 VERSION=$(cat release/version)
+URL=$(cat release/url)
 
 # Prepare stemcell
 STEMCELL_NAME="${STEMCELL_REPOSITORY}:$(cat s3.stemcell-version/*-version)"
@@ -31,7 +32,10 @@ else
   SHA1=$(cat release/sha1)
 fi
 
-s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --name="${RELEASE_NAME}" --version="${VERSION}" --sha1="$SHA1" --url="$(cat release/url)"
+# Download source tarball so that it can be stored later on
+curl -L -o "s3.kubecf-sources/${RELEASE_NAME}-${VERSION}.tgz" "${URL}"
+
+s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --name="${RELEASE_NAME}" --version="${VERSION}" --sha1="$SHA1" --url="${URL}"
 
 BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "$STEMCELL_REPOSITORY" | head -1)
 docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"

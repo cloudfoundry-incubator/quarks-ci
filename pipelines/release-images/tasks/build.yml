@@ -10,6 +10,8 @@ inputs:
 - name: s3.stemcell-version
 - name: ci
 - name: s3.fissile-linux
+outputs:
+- name: s3.kubecf-sources
 params:
   STEMCELL_REPOSITORY:
   RELEASE_NAME:

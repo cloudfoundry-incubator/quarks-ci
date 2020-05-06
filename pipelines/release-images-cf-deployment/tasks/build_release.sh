@@ -48,6 +48,9 @@ function build_release() {
   if curl --silent -u "${docker_creds_string}" "https://"${docker_registry}"/v2/"${docker_organization}"/"${release_name}"/manifests/"${built_image_tag}"" | jq '.errors[0].code' | grep -q null; then
     echo -e "Skipping push for ${GREEN}${built_image}${NC} as it is already present in the registry..."
   else
+      # Download source tarball so that it can be stored later on
+      curl -L -o "s3.kubecf-sources/${release_name}-${release_version}.tgz" "${release_url}"
+
       # Build the release image.
       fissile build release-images "${build_args[@]}"
 
