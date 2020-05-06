@@ -51,6 +51,15 @@ resources:
     secret_access_key: ((s3.secretKey))
     versioned_file: fissile-stemcell-versions/fissile-stemcell-sle15-version
 
+- name: s3.kubecf-sources
+  type: s3
+  source:
+    regexp: bosh-releases/(.*)\.tgz
+    bucket: ((kubecf-sources-s3-bucket))
+    region_name: ((kubecf-sources-s3-bucket-region))
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+
 jobs:
 <% (releases + s3_releases).each do |release| %>
 - name: build-<%= release[:name] %>
@@ -81,4 +90,8 @@ jobs:
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         REGISTRY_NAMESPACE: "cfcontainerization"
       file: ci/pipelines/release-images/tasks/build.yml
+    - put: s3.kubecf-sources
+      params:
+        file: s3.kubecf-sources/*
+        acl: public-read
 <% end %>

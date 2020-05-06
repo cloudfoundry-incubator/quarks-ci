@@ -10,15 +10,15 @@ failed=false
 
 # Find releases which are not covered by the pipeline yet
 new_releases=$(comm -23 <(echo $manifest_releases | tr " " "\n") <(echo $RELEASES | tr " " "\n") | tr -d '[:space:]')
-if [ -z "$new_releases" ]; then
-  echo "There are new release which are not covered by the pipeline yet: $new_releases"
+if [ -n "$new_releases" ]; then
+  echo "There are new releases which are not covered by the pipeline yet: $new_releases"
   failed=true
 fi
 
 # Find releases which are no longer part of cf-deployment
 obsolete_releases=$(comm -13 <(echo $manifest_releases | tr " " "\n") <(echo $RELEASES | tr " " "\n") | tr -d '[:space:]')
 
-if [ -z "$obsolete_releases" ]; then
+if [ -n "$obsolete_releases" ]; then
   echo "There are releases which are no longer part of cf-deployment: $obsolete_releases"
   failed=true
 fi

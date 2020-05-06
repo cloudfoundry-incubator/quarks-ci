@@ -39,6 +39,14 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     versioned_file: ((stemcell-version-file))
+- name: s3.kubecf-sources
+  type: s3
+  source:
+    regexp: bosh-releases/(.*)\.tgz
+    bucket: ((kubecf-sources-s3-bucket))
+    region_name: ((kubecf-sources-s3-bucket-region))
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
 
 jobs:
 <% cf_deployment_tags.each do |cf_deployment_tag| %>
@@ -96,5 +104,9 @@ jobs:
           DOCKER_TEAM_USERNAME: ((dockerhub.username))
           DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         file: ci/pipelines/release-images-cf-deployment/tasks/build.yml
+      - put: s3.kubecf-sources
+        params:
+          file: s3.kubecf-sources/*
+          acl: public-read
   <% end %>
 <% end %>
