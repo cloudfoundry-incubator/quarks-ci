@@ -1,7 +1,7 @@
 src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
-ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
-helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm.git
-kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf.git
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci
+helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm
+kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf
 ci-branch: master
 kubecf-branch: master
 docker-organization: cfcontainerization
