@@ -14,7 +14,7 @@ pushd src/code.cloudfoundry.org/quarks-operator
 popd
 
 make -C src/code.cloudfoundry.org/quarks-operator build-helm
-cp src/code.cloudfoundry.org/quarks-operator/helm/cf-operator*.tgz helm-charts/
+cp -p src/code.cloudfoundry.org/quarks-operator/helm/cf-operator*.tgz helm-charts/
 
 SHA256=$(sha256sum src/code.cloudfoundry.org/quarks-operator/helm/cf-operator*.tgz | cut -f1 -d ' ' )
 version=$(echo "$ARTIFACT_VERSION" | sed 's/^v//; s/-/+/')
