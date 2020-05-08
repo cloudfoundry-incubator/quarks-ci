@@ -10,4 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/quarks-operator
 - name: ci
 run:
-  path: ci/pipelines/tasks/staticcheck.sh
+  path: ci/succeed_unless.sh
+  args:
+    - src/code.cloudfoundry.org/quarks-operator
+    - ci/pipelines/tasks/staticcheck.sh
