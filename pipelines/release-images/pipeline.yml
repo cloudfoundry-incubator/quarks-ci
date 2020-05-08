@@ -63,18 +63,21 @@ resources:
 <% releases.each do |release| %>
 - name: <%= release[:name] %>-release
   type: bosh-io-release
+  check_every: 1m
   source:
     repository: <%= release[:organization] %>/<%= release[:name] %>-release
 <% end %>
 <% s3_releases.each do |release| %>
 - name: <%= release[:name] %>-release
   type: s3
+  check_every: 5m
   source:
     bucket: <%= release[:bucket] %>
     regexp: <%= release[:name] %>-release-(.*).tgz
 <% end %>
 - name: s3.fissile-linux
   type: s3
+  check_every: 1m
   source:
     bucket: ((s3-bucket))
     private: true
@@ -82,6 +85,7 @@ resources:
 
 - name: s3.fissile-stemcell-sle-version
   type: s3
+  check_every: 1m
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))

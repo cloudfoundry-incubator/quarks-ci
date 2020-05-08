@@ -8,12 +8,14 @@ resources:
     paths: [bosh-releases/*, pipelines/*]
 - name: s3.fissile-linux
   type: s3
+  check_every: 1m
   source:
     bucket: ((s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-version
   type: s3
+  check_every: 1m
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
@@ -22,6 +24,7 @@ resources:
 <% releases.each do |release| %>
 - name: s3.final-release-<%= release %>
   type: s3
+  check_every: 5m
   source:
     bucket: ((versions-s3-bucket))
     regexp: <%= release %>-release-(.*).tgz

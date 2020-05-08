@@ -17,6 +17,7 @@ resources:
     password: ((dockerhub.password))
 - name: 12h
   type: time
+  check_every: 10m
   source:
     interval: 12h
 
