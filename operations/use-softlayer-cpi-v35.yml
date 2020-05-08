@@ -8,3 +8,62 @@
 
 - path: /instance_groups/name=bosh/jobs/name=health_monitor
   type: remove
+
+- type: replace
+  path: /cloud_provider/properties/agent/vcappassword?
+  value: '*'
+
+- type: remove
+  path: /instance_groups/name=bosh/jobs/name=postgres-9.4
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/-
+  value:
+    name: postgres-10
+    release: bosh
+
+- type: replace
+  path: /instance_groups/name=bosh/properties/agent/env/bosh/blobstores/0/options/endpoint
+  value: https://((internal_ip)):25250
+
+- type: replace
+  path: /instance_groups/name=bosh/properties/agent/vcappassword?
+  value: '*'
+
+- type: replace
+  path: /releases/name=bosh/url?
+  value: https://s3.amazonaws.com/bosh-compiled-release-tarballs/bosh-270.12.0-ubuntu-xenial-621.59-20200303-223845-135009468-20200303223847.tgz
+- type: replace
+  path: /releases/name=bosh/version?
+  value: 270.12.0
+- type: replace
+  path: /releases/name=bosh/sha1?
+  value: 74a87a8092336c756166cdf30967b6a501f73921
+
+- type: replace
+  path: /releases/name=bpm/url?
+  value: https://bosh.io/d/github.com/cloudfoundry/bpm-release?v=1.1.8
+- type: replace
+  path: /releases/name=bpm/version?
+  value: 1.1.8
+- type: replace
+  path: /releases/name=bpm/sha1?
+  value: c956394fce7e74f741e4ae8c256b480904ad5942
+
+- type: replace
+  path: /releases/name=bosh-softlayer-cpi/url?
+  value: https://bosh.io/d/github.com/cloudfoundry/bosh-softlayer-cpi-release?v=51
+- type: replace
+  path: /releases/name=bosh-softlayer-cpi/version?
+  value: 51
+- type: replace
+  path: /releases/name=bosh-softlayer-cpi/sha1?
+  value: e6b4ae2ccb9e5e06b8b2d260e752308ffd9e6434
+
+- type: replace
+  path: /resource_pools/name=vms/stemcell/sha1?
+  value: 0ff377697f00c69de7b4d0e3e01926f971aca3ea
+
+- type: replace
+  path: /resource_pools/name=vms/stemcell/url?
+  value: https://s3.amazonaws.com/bosh-softlayer-cpi-stemcells/light-bosh-stemcell-621.59-softlayer-xen-ubuntu-xenial-go_agent.tgz
