@@ -9,7 +9,7 @@ helm repo index --merge helm-repo s3.release.helm-charts
 
 cp -av helm-repo/. updated/
 cp -pv s3.release.helm-charts/*tgz updated/
-cp -pv s3.release.helm-charts/index.yml updated/
+cp -pv s3.release.helm-charts/index.yaml updated/
 
 pushd updated
   git add .
