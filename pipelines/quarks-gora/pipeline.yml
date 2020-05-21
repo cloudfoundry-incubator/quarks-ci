@@ -44,13 +44,10 @@ jobs:
   plan:
   - aggregate:
     - get: gora
-      trigger: true
     - get: ci
   - aggregate:
     - get: s3.fissile-stemcell-opensuse-version
-      trigger: true
     - get: s3.fissile-linux
-      trigger: true
   - do:
     - task: build
       input_mapping:
