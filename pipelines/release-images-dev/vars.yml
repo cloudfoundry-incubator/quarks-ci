@@ -1,4 +1,4 @@
-ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci
 ci-branch: master
 docker-organization: cfcontainerization
 s3-bucket: cf-opensusefs2
