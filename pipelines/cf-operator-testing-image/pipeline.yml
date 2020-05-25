@@ -53,7 +53,7 @@ jobs:
         REGISTRY_NAMESPACE: "cfcontainerization"
         ACCESS_KEY_ID: ((s3.accessKey))
         SECRET_ACCESS_KEY: ((s3.secretKey))
-      file: ci/pipelines/release-images-dev/tasks/build_final_release.yml
+      file: ci/pipelines/cf-operator-testing-image/tasks/build_final_release.yml
     - put: s3.final-release-<%= release %>
       params:
         file: release_tarball_dir/<%= release %>-release-*.tgz
@@ -82,5 +82,5 @@ jobs:
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         REGISTRY_NAMESPACE: "cfcontainerization"
-      file: ci/pipelines/release-images-dev/tasks/build.yml
+      file: ci/pipelines/cf-operator-testing-image/tasks/build.yml
 <% end %>

@@ -3,13 +3,14 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: havener/build-environment
-    tag: latest
+    repository: splatform/bosh-cli
+    tag: fcaa9c6caff58ab8da8c56481320681cdea492ee
 inputs:
 - name: s3.stemcell-version
 - name: ci
-- name: release
 - name: s3.fissile-linux
+outputs:
+- name: release_tarball_dir
 params:
   STEMCELL_REPOSITORY:
   RELEASE_NAME:
@@ -17,4 +18,4 @@ params:
   DOCKER_TEAM_PASSWORD_RW:
   REGISTRY_NAMESPACE:
 run:
-  path: ci/pipelines/release-images-dev/tasks/build.sh
+  path: ci/pipelines/cf-operator-testing-image/tasks/build_final_release.sh
