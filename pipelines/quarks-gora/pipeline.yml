@@ -18,13 +18,14 @@ resources:
     bucket: ((s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
-- name: s3.fissile-stemcell-opensuse-version
+- name: s3.fissile-stemcell-version
   type: s3
   source:
     bucket: ((versions-s3-bucket))
+    region_name: ((stemcell-s3-bucket-region))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
-    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+    versioned_file: ((stemcell-version-file))
 - name: s3.final-release-quarks-gora-release
   type: s3
   source:
@@ -46,18 +47,14 @@ jobs:
     - get: gora
     - get: ci
   - aggregate:
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-version
     - get: s3.fissile-linux
   - do:
     - task: build
       input_mapping:
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-version
       params:
-        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
         RELEASE_NAME: quarks-gora-release
-        DOCKER_TEAM_USERNAME: ((dockerhub.username))
-        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-        REGISTRY_NAMESPACE: "cfcontainerization"
         ACCESS_KEY_ID: ((s3.accessKey))
         SECRET_ACCESS_KEY: ((s3.secretKey))
       file: ci/pipelines/quarks-gora/tasks/build_final_release.yml
@@ -82,7 +79,7 @@ jobs:
     - get: s3.final-release-quarks-gora-release
       passed: [build-quarks-gora-release-release]
       trigger: true
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-version
       trigger: true
     - get: s3.fissile-linux
       trigger: true
@@ -91,9 +88,9 @@ jobs:
       privileged: true
       input_mapping:
         release: s3.final-release-quarks-gora-release
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-version
       params:
-        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        STEMCELL_REPOSITORY: ((stemcell-repository))
         RELEASE_NAME: quarks-gora-release
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
