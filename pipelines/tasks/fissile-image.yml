@@ -22,4 +22,4 @@ params:
   DOCKER_TEAM_USERNAME:
   DOCKER_TEAM_PASSWORD_RW:
 run:
-  path: ci/pipelines/release-images-cf-deployment/tasks/build.sh
+  path: ci/pipelines/tasks/fissile-image.sh
