@@ -60,6 +60,7 @@ jobs:
       file: ci/pipelines/tasks/vet.yml
       params:
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_CONTAIN: '.*\.go$'
     on_failure:
       put: status
       params:
@@ -93,6 +94,7 @@ jobs:
       file: ci/pipelines/tasks/lint.yml
       params:
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_CONTAIN: '.*\.go$'
     on_failure:
       put: status
       params:
@@ -126,6 +128,7 @@ jobs:
       file: ci/pipelines/tasks/staticcheck.yml
       params:
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_CONTAIN: '.*\.go$'
     on_failure:
       put: status
       params:
@@ -167,6 +170,7 @@ jobs:
       file: ci/pipelines/tasks/build.yml
       params:
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_BEYOND: '^docs/.*\.md'
     - put: docker.cf-operator-ci
       params:
         build: src
@@ -193,6 +197,7 @@ jobs:
       file: ci/pipelines/tasks/test.yml
       params:
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_BEYOND: '^docs/.*\.md'
     - task: test-integration
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
@@ -206,6 +211,7 @@ jobs:
         DOCKER_IMAGE_REPOSITORY: ((docker-repo))
         GOPROXY: ((goproxy))
         NODES: 6
+        SUCCEED_UNLESS_CHANGES_BEYOND: '^docs/.*\.md'
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
       params:
@@ -219,6 +225,7 @@ jobs:
         DOCKER_IMAGE_REPOSITORY: ((docker-repo))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         GOPROXY: ((goproxy))
+        SUCCEED_UNLESS_CHANGES_BEYOND: '^docs/.*\.md'
       file: ci/pipelines/tasks/test-helm-e2e.yml
     on_failure:
       in_parallel:
