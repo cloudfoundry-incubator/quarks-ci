@@ -31,4 +31,4 @@ docker pull "${stemcell_image}"
 
 # Build the releases.
 tasks_dir="$(dirname $0)"
-bash <(yq -r ".manifest_version as \$cf_version | .releases[] | select(.name==\"${RELEASE}\") | \"source ${tasks_dir}/build_release.sh; build_release \\(\$cf_version|@sh) '${DOCKER_REGISTRY}' '${DOCKER_ORGANIZATION}' '${DOCKER_TEAM_USERNAME}' '${DOCKER_TEAM_PASSWORD_RW}' '${STEMCELL_OS}' '${stemcell_version}' '${stemcell_image}' \\(.name|@sh) \\(.url|@sh) \\(.version|@sh) \\(.sha1|@sh)\"" "${CF_DEPLOYMENT_YAML}")
+bash <(yq -r ".manifest_version as \$cf_version | .releases[] | select(.name==\"${RELEASE}\") | \"source ${tasks_dir}/fissile-build-release.sh; build_release \\(\$cf_version|@sh) '${DOCKER_REGISTRY}' '${DOCKER_ORGANIZATION}' '${DOCKER_TEAM_USERNAME}' '${DOCKER_TEAM_PASSWORD_RW}' '${STEMCELL_OS}' '${stemcell_version}' '${stemcell_image}' \\(.name|@sh) \\(.url|@sh) \\(.version|@sh) \\(.sha1|@sh)\"" "${CF_DEPLOYMENT_YAML}")
