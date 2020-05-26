@@ -1,0 +1,101 @@
+resources:
+- name: ci
+  type: git
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+- name: gora
+  type: git
+  source:
+    uri: git@github.com:cloudfoundry-incubator/quarks-gora-release.git
+    branch: ((branch))
+    private_key: ((github.key))
+    submodules: all
+    fetch_tags: true
+- name: s3.fissile-linux
+  type: s3
+  source:
+    bucket: ((s3-bucket))
+    private: true
+    regexp: fissile/develop/fissile-(.*)\.tgz
+- name: s3.fissile-stemcell-opensuse-version
+  type: s3
+  source:
+    bucket: ((versions-s3-bucket))
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+- name: s3.final-release-quarks-gora-release
+  type: s3
+  source:
+    bucket: ((versions-s3-bucket))
+    regexp: quarks-gora-release-release-(.*).tgz
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+- name: release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: quarks-gora-release
+    access_token: ((github.access-token-push))
+
+jobs:
+- name: build-quarks-gora-release-release
+  plan:
+  - aggregate:
+    - get: gora
+    - get: ci
+  - aggregate:
+    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-linux
+  - do:
+    - task: build
+      input_mapping:
+        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+      params:
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        RELEASE_NAME: quarks-gora-release
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+        ACCESS_KEY_ID: ((s3.accessKey))
+        SECRET_ACCESS_KEY: ((s3.secretKey))
+      file: ci/pipelines/quarks-gora/tasks/build_final_release.yml
+    - put: s3.final-release-quarks-gora-release
+      params:
+        file: release_tarball_dir/quarks-gora-release-release-*.tgz
+        acl: public-read
+    - put: gora
+      params: {repository: git_output}
+    - put: release
+      params:
+        name: "release_tarball_dir/VERSION"
+        tag: "release_tarball_dir/VERSION"
+        commitish: "release_tarball_dir/target_commit"
+        body: "release_tarball_dir/release_body"
+
+- name: build-quarks-gora-release-image
+  plan:
+  - aggregate:
+    - get: ci
+  - aggregate:
+    - get: s3.final-release-quarks-gora-release
+      passed: [build-quarks-gora-release-release]
+      trigger: true
+    - get: s3.fissile-stemcell-opensuse-version
+      trigger: true
+    - get: s3.fissile-linux
+      trigger: true
+  - do:
+    - task: build
+      privileged: true
+      input_mapping:
+        release: s3.final-release-quarks-gora-release
+        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+      params:
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        RELEASE_NAME: quarks-gora-release
+        DOCKER_TEAM_USERNAME: ((dockerhub.username))
+        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+        REGISTRY_NAMESPACE: "cfcontainerization"
+      file: ci/pipelines/release-images-dev/tasks/build.yml
