@@ -5,3 +5,7 @@ s3-bucket: cf-opensusefs2
 versions-s3-bucket: cf-operators
 stemcell-repository: splatform/fissile-stemcell-opensuse
 branch: master
+stemcell-os: sle15
+stemcell-repository: splatform/fissile-stemcell-sle
+stemcell-version-file: fissile-stemcell-versions/fissile-stemcell-sle15-version
+stemcell-s3-bucket-region: us-east-1
