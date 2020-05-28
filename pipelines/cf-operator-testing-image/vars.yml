@@ -3,4 +3,4 @@ ci-branch: master
 docker-organization: cfcontainerization
 s3-bucket: cf-opensusefs2
 versions-s3-bucket: cf-operators
-stemcell-repository: splatform/fissile-stemcell-opensuse
+stemcell-repository: splatform/fissile-stemcell-sle
