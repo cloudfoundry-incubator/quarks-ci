@@ -5,7 +5,7 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
-    paths: [bosh-releases/*]
+    paths: [bosh-releases/*, pipelines/*]
 - name: s3.fissile-linux
   type: s3
   source:
