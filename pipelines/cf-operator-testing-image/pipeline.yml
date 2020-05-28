@@ -12,13 +12,13 @@ resources:
     bucket: ((s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
-- name: s3.fissile-stemcell-opensuse-version
+- name: s3.fissile-stemcell-version
   type: s3
   source:
     bucket: ((versions-s3-bucket))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
-    versioned_file: fissile-stemcell-versions/fissile-stemcell-opensuse-version
+    versioned_file: fissile-stemcell-versions/fissile-stemcell-sle15-version
 <% releases.each do |release| %>
 - name: s3.final-release-<%= release %>
   type: s3
@@ -37,16 +37,16 @@ jobs:
     - get: ci
       trigger: true
   - aggregate:
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-version
       trigger: true
     - get: s3.fissile-linux
       trigger: true
   - do:
     - task: build
       input_mapping:
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-version
       params:
-        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-sle
         RELEASE_NAME: <%= release %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
@@ -66,7 +66,7 @@ jobs:
     - get: s3.final-release-<%= release %>
       passed: [build-<%= release %>-release]
       trigger: true
-    - get: s3.fissile-stemcell-opensuse-version
+    - get: s3.fissile-stemcell-version
       trigger: true
     - get: s3.fissile-linux
       trigger: true
@@ -75,9 +75,9 @@ jobs:
       privileged: true
       input_mapping:
         release: s3.final-release-<%= release %>
-        s3.stemcell-version: s3.fissile-stemcell-opensuse-version
+        s3.stemcell-version: s3.fissile-stemcell-version
       params:
-        STEMCELL_REPOSITORY: splatform/fissile-stemcell-opensuse
+        STEMCELL_REPOSITORY: splatform/fissile-stemcell-sle
         RELEASE_NAME: <%= release %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
