@@ -3,23 +3,18 @@ platform: linux
 image_resource:
   type: docker-image
   source:
-    repository: cfcontainerization/base-ci
+    repository: havener/build-environment
     tag: latest
 inputs:
-- name: ci
-- name: docker-image-resource
-- name: cf-deployment
 - name: s3.stemcell-version
+- name: ci
+- name: release
 - name: s3.fissile-linux
-outputs:
-- name: s3.kubecf-sources
 params:
-  STEMCELL_OS:
   STEMCELL_REPOSITORY:
-  CF_DEPLOYMENT_YAML:
-  RELEASE:
-  DOCKER_ORGANIZATION:
+  RELEASE_NAME:
   DOCKER_TEAM_USERNAME:
   DOCKER_TEAM_PASSWORD_RW:
+  REGISTRY_NAMESPACE:
 run:
   path: ci/pipelines/tasks/fissile-image.sh

@@ -82,5 +82,5 @@ jobs:
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         REGISTRY_NAMESPACE: "cfcontainerization"
-      file: ci/pipelines/cf-operator-testing-image/tasks/build.yml
+      file: ci/pipelines/tasks/build.yml
 <% end %>
