@@ -14,8 +14,6 @@ branch="$2"
 tag_filter="$3"
 export branch tag_filter
 
-fly -t "$target" login -k
-
 pipeline_name="cfo-release-$branch"
 fly --target "$target" set-pipeline \
   --pipeline="$pipeline_name" \
