@@ -103,7 +103,7 @@ jobs:
           DOCKER_ORGANIZATION: ((docker-organization))
           DOCKER_TEAM_USERNAME: ((dockerhub.username))
           DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-        file: ci/pipelines/tasks/fissile-image.yml
+        file: ci/pipelines/release-images-cf-deployment/tasks/build.yml
       - put: s3.kubecf-sources
         params:
           file: s3.kubecf-sources/*
