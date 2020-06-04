@@ -17,6 +17,43 @@ s3_releases = s3_suse_releases.map { |r| { name: r, bucket: 'suse-final-releases
 
 %>
 
+groups:
+  - name: cloudfoundry
+    jobs:
+    <% cloudfoundry_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: incubator
+    jobs:
+    <% incubator_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: community
+    jobs:
+    <% community_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: bosh
+    jobs:
+    <% bosh_packages_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: pivotal
+    jobs:
+    <% pivotal_cf_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: s3
+    jobs:
+    <% s3_suse_releases.each do |r| %>
+    - build-<%= r %>
+    <% end %>
+  - name: all
+    jobs:
+    <% releases.each do |r| %>
+    - build-<%= r[:name] %>
+    <% end %>
+
 resources:
 - name: ci
   type: git
