@@ -63,7 +63,7 @@ resources:
 <% releases.each do |release| %>
 - name: <%= release[:name] %>-release
   type: bosh-io-release
-  check_every: 1m
+  check_every: 5m
   source:
     repository: <%= release[:organization] %>/<%= release[:name] %>-release
 <% end %>
