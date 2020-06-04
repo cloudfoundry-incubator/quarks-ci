@@ -12,6 +12,7 @@ resource_types:
 resources:
 - name: src
   type: pull-request
+  check_every: 1m
   webhook_token: ((github.webhook-token))
   source:
     repository: ((pr-repo))

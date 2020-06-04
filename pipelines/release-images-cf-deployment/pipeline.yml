@@ -37,12 +37,14 @@ resources:
 <% end %>
 - name: s3.fissile-linux
   type: s3
+  check_every: 1m
   source:
     bucket: ((fissile-linux-s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-version
   type: s3
+  check_every: 1m
   source:
     bucket: ((stemcell-versions-s3-bucket))
     region_name: ((stemcell-s3-bucket-region))

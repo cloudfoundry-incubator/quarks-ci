@@ -1,6 +1,7 @@
 resources:
 - name: ci
   type: git
+  check_every: 1m
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))

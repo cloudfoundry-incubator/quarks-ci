@@ -6,6 +6,7 @@
 resources:
 - name: src
   type: git
+  check_every: 1m
   source:
     uri: ((src-repo))
     branch: <%= branch %>
