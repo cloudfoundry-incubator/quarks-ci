@@ -159,7 +159,7 @@ jobs:
         RELEASE_NAME: <%= release[:name] %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-        REGISTRY_NAMESPACE: "cfcontainerization"
+        REGISTRY_NAMESPACE: ((docker-organization))
       file: ci/pipelines/release-images/tasks/build.yml
     - put: s3.kubecf-sources
       params:
