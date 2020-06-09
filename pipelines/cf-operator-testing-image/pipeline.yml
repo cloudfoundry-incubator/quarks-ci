@@ -1,4 +1,3 @@
-<% releases = %w(cf-operator-testing-release) %>
 resources:
 - name: ci
   type: git
@@ -21,20 +20,17 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     versioned_file: fissile-stemcell-versions/fissile-stemcell-sle15-version
-<% releases.each do |release| %>
-- name: s3.final-release-<%= release %>
+- name: s3.final-release-cf-operator-testing-release
   type: s3
   check_every: 5m
   source:
     bucket: ((versions-s3-bucket))
-    regexp: <%= release %>-release-(.*).tgz
+    regexp: cf-operator-testing-release-release-(.*).tgz
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
-<% end %>
 
 jobs:
-<% releases.each do |release| %>
-- name: build-<%= release %>-release
+- name: build-cf-operator-testing-release-release
   plan:
   - aggregate:
     - get: ci
@@ -50,24 +46,24 @@ jobs:
         s3.stemcell-version: s3.fissile-stemcell-version
       params:
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-sle
-        RELEASE_NAME: <%= release %>
+        RELEASE_NAME: cf-operator-testing-release
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         REGISTRY_NAMESPACE: "cfcontainerization"
         ACCESS_KEY_ID: ((s3.accessKey))
         SECRET_ACCESS_KEY: ((s3.secretKey))
       file: ci/pipelines/cf-operator-testing-image/tasks/build_final_release.yml
-    - put: s3.final-release-<%= release %>
+    - put: s3.final-release-cf-operator-testing-release
       params:
-        file: release_tarball_dir/<%= release %>-release-*.tgz
+        file: release_tarball_dir/cf-operator-testing-release-release-*.tgz
         acl: public-read
-- name: build-<%= release %>-image
+- name: build-cf-operator-testing-release-image
   plan:
   - aggregate:
     - get: ci
   - aggregate:
-    - get: s3.final-release-<%= release %>
-      passed: [build-<%= release %>-release]
+    - get: s3.final-release-cf-operator-testing-release
+      passed: [build-cf-operator-testing-release-release]
       trigger: true
     - get: s3.fissile-stemcell-version
       trigger: true
@@ -77,13 +73,12 @@ jobs:
     - task: build
       privileged: true
       input_mapping:
-        release: s3.final-release-<%= release %>
+        release: s3.final-release-cf-operator-testing-release
         s3.stemcell-version: s3.fissile-stemcell-version
       params:
         STEMCELL_REPOSITORY: splatform/fissile-stemcell-sle
-        RELEASE_NAME: <%= release %>
+        RELEASE_NAME: cf-operator-testing-release
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
         REGISTRY_NAMESPACE: "cfcontainerization"
-      file: ci/pipelines/tasks/build.yml
-<% end %>
+      file: ci/pipelines/tasks/fissile-image.yml
