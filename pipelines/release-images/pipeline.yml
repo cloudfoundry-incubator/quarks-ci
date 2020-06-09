@@ -1,6 +1,37 @@
 <%
-cloudfoundry_releases = %w(binary-buildpack dotnet-core-buildpack go-buildpack java-buildpack nodejs-buildpack php-buildpack python-buildpack ruby-buildpack staticfile-buildpack cf-mysql capi cf-networking cf-smoke-tests cf-syslog-drain cflinuxfs2 cflinuxfs3 diego garden-runc loggregator nats statsd-injector uaa loggregator-agent log-cache bosh-dns-aliases syslog postgres nfs-volume)
-incubator_releases = %w(bpm cf-routing pxc bits-service app-autoscaler)
+cloudfoundry_releases = %w(
+  binary-buildpack
+  dotnet-core-buildpack
+  go-buildpack
+  java-buildpack
+  nodejs-buildpack
+  php-buildpack
+  python-buildpack
+  ruby-buildpack
+  staticfile-buildpack
+
+  bosh-dns-aliases
+  capi
+  cf-mysql
+  cf-networking
+  cf-smoke-tests
+  cf-syslog-drain
+  cflinuxfs2
+  cflinuxfs3
+  diego
+  garden-runc
+  log-cache
+  loggregator
+  loggregator-agent
+  nats
+  nfs-volume
+  postgres
+  routing
+  statsd-injector
+  syslog
+  uaa
+)
+incubator_releases = %w(bpm pxc bits-service app-autoscaler)
 bosh_packages_releases = %w(cf-cli)
 pivotal_cf_releases = %w(credhub)
 community_releases = %w(eirini-bosh)
@@ -105,9 +136,8 @@ jobs:
 <% (releases + s3_releases).each do |release| %>
 - name: build-<%= release[:name] %>
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
-  - aggregate:
     - get: s3.fissile-stemcell-sle-version
       trigger: true
     - get: <%= release[:name] %>-release
@@ -129,7 +159,7 @@ jobs:
         RELEASE_NAME: <%= release[:name] %>
         DOCKER_TEAM_USERNAME: ((dockerhub.username))
         DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-        REGISTRY_NAMESPACE: "cfcontainerization"
+        REGISTRY_NAMESPACE: ((docker-organization))
       file: ci/pipelines/release-images/tasks/build.yml
     - put: s3.kubecf-sources
       params:
