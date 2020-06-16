@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+def usage
+  puts "Usage: #{$PROGRAM_NAME} git-dir task.sh"
+end
+
+dir = ARGV[0]
+if dir.empty? || !File.directory?(dir)
+  puts 'missing git dir to check for changes'
+  usage
+  exit 1
+end
+
+task = ARGV[1]
+if task.empty? || !File.executable?(task)
+  puts 'missing task script which is conditionally executed'
+  usage
+  exit 1
+end
+
+Dir.chdir(dir) do
+  lines = `git diff --name-only HEAD~1`.split
+
+  # after excluding all lines matching the regex, exit if no lines are left
+  if ENV['SUCCEED_UNLESS_CHANGES_BEYOND']
+    exit 0 if lines.grep(/#{ENV['SUCCEED_UNLESS_CHANGES_BEYOND']}/).empty?
+  end
+
+  # if changes do not include any lines matching the regex, exit early
+  if ENV['SUCCEED_UNLESS_CHANGES_CONTAIN']
+    exit 0 if lines.grep(/#{ENV['SUCCEED_UNLESS_CHANGES_CONTAIN']}/).any?
+  end
+end
+
+exec task, *ARGV[2..-1]

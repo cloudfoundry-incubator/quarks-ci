@@ -10,7 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/quarks-operator
 - name: ci
 run:
-  path: ci/succeed_unless.sh
+  path: ci/succeed_unless
   args:
     - src/code.cloudfoundry.org/quarks-operator
     - ci/pipelines/tasks/lint.sh
