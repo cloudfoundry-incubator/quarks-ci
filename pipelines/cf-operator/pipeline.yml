@@ -187,6 +187,7 @@ jobs:
   - task: coverage
     params:
       COVERALLS_TOKEN: ((coveralls-token))
+      CONCOURSE : true
       GOPROXY: ((goproxy))
     file: ci/pipelines/cf-operator/tasks/coverage.yml
 
