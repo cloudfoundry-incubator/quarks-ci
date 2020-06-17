@@ -40,6 +40,13 @@ resources:
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
     regexp: env_dumps/env_dump-(.*).tar.gz
+- name: s3.ginkgo-logs
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: ginkgo-logs/ginkgo-logs-(.*).tar.gz
 
 
 jobs:
@@ -144,6 +151,7 @@ jobs:
         GOPROXY: ((goproxy))
         NODES: 6
         SUCCEED_UNLESS_CHANGES_BEYOND: '^docs/.*\.md'
+        DEBUG: "yes"
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
       params:
@@ -165,6 +173,30 @@ jobs:
         params:
           file: env_dumps/env_dump-*.tar.gz
           acl: public-read
+      - do:
+        - task: collect-logs
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: cfcontainerization/go-tools
+                tag: latest
+            inputs:
+            - name: src
+            run:
+              path: /bin/bash
+              args:
+              - -c
+              - |
+                #!/bin/bash
+                find /tmp -name ginkgo-node-1.log | grep -q "." || exit 0
+                TARBALL_NAME="ginkgo-logs-$(date +"%s").tar.gz"
+                tar cfzv src/env_dumps/"$TARBALL_NAME" src/**/ginkgo-node-*.log
+        - put: s3.ginkgo-logs
+          params:
+            file: env_dumps/ginkgo-logs-(.*).tar.gz
+            acl: public-read
       - put: status
         params:
           context: test
