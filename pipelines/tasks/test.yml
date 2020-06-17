@@ -14,7 +14,4 @@ inputs:
 outputs:
 - name: code-coverage
 run:
-  path: ci/succeed_unless
-  args:
-    - src/code.cloudfoundry.org/quarks-operator
-    - ci/pipelines/tasks/test.sh
+  path: ci/pipelines/tasks/test.sh
