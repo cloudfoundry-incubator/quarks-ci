@@ -93,10 +93,6 @@ jobs:
     - get: src
       trigger: true
   - in_parallel:
-    - task: vet
-      file: ci/pipelines/tasks/vet.yml
-      params:
-        GOPROXY: ((goproxy))
     - task: lint
       file: ci/pipelines/tasks/lint.yml
       params:

@@ -53,10 +53,6 @@ jobs:
       trigger: true
     - get: 12h
       trigger: true
-  - task: vet
-    file: ci/pipelines/tasks/vet.yml
-    params:
-      GOPROXY: ((goproxy))
   - task: lint
     file: ci/pipelines/tasks/lint.yml
     params:

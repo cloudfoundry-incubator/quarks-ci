@@ -43,40 +43,6 @@ resources:
 
 
 jobs:
-- name: vet
-  max_in_flight: 3
-  plan:
-  - aggregate:
-    - get: ci
-    - get: src
-      trigger: true
-  - put: status
-    params:
-      context: vet
-      description: go vet check
-      path: src
-      state: pending
-  - do:
-    - task: vet
-      file: ci/pipelines/tasks/vet.yml
-      params:
-        GOPROXY: ((goproxy))
-        SUCCEED_UNLESS_CHANGES_CONTAIN: '.*\.go$'
-    on_failure:
-      put: status
-      params:
-        context: vet
-        description: go vet check
-        path: src
-        state: failure
-    on_success:
-      put: status
-      params:
-        context: vet
-        description: go vet check
-        path: src
-        state: success
-
 - name: lint
   max_in_flight: 3
   plan:
@@ -110,41 +76,6 @@ jobs:
         description: go lint check
         path: src
         state: success
-
-- name: staticcheck
-  max_in_flight: 3
-  plan:
-  - aggregate:
-    - get: ci
-    - get: src
-      trigger: true
-  - put: status
-    params:
-      context: staticcheck
-      description: staticcheck code.cloudfoundry.org/quarks-operator/...
-      path: src
-      state: pending
-  - do:
-    - task: staticcheck
-      file: ci/pipelines/tasks/staticcheck.yml
-      params:
-        GOPROXY: ((goproxy))
-        SUCCEED_UNLESS_CHANGES_CONTAIN: '.*\.go$'
-    on_failure:
-      put: status
-      params:
-        context: staticcheck
-        description: staticcheck code.cloudfoundry.org/quarks-operator/...
-        path: src
-        state: failure
-    on_success:
-      put: status
-      params:
-        context: staticcheck
-        description: staticcheck code.cloudfoundry.org/quarks-operator/...
-        path: src
-        state: success
-
 - name: test
   max_in_flight: 2
   plan:
