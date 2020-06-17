@@ -15,7 +15,4 @@ outputs:
 - name: code-coverage
 - name: env_dumps
 run:
-  path: ci/succeed_unless
-  args:
-    - src/code.cloudfoundry.org/quarks-operator
-    - ci/pipelines/tasks/test-integration.sh
+  path: ci/pipelines/tasks/test-integration.sh
