@@ -12,4 +12,7 @@ inputs:
 outputs:
 - name: env_dumps
 run:
-  path: ci/pipelines/tasks/test-helm-e2e.sh
+  path: ci/bin/kurzschluss.rb
+  args:
+    - src/code.cloudfoundry.org/quarks-operator
+    - ci/pipelines/tasks/test-helm-e2e.sh
