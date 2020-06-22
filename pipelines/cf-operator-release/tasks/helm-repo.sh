@@ -5,7 +5,7 @@ set -ev
 url=$( cat s3.release.helm-charts/url )
 version=$( cat s3.release.helm-charts/version )
 
-helm repo index --merge helm-repo s3.release.helm-charts
+helm repo index --merge helm-repo/index.yaml s3.release.helm-charts
 
 cp -av helm-repo/. updated/
 cp -pv s3.release.helm-charts/*tgz updated/
