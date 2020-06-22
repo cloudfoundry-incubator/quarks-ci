@@ -10,4 +10,7 @@ inputs:
   path: src/code.cloudfoundry.org/quarks-operator
 - name: ci
 run:
-  path: ci/pipelines/tasks/lint.sh
+  path: ci/bin/kurzschluss.rb
+  args:
+    - src/code.cloudfoundry.org/quarks-operator
+    - ci/pipelines/tasks/lint.sh

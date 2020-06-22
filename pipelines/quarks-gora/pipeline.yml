@@ -21,7 +21,7 @@ resources:
 - name: s3.fissile-stemcell-version
   type: s3
   source:
-    bucket: ((versions-s3-bucket))
+    bucket: ((s3.bucketName))
     region_name: ((stemcell-s3-bucket-region))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
@@ -29,8 +29,8 @@ resources:
 - name: s3.final-release-quarks-gora-release
   type: s3
   source:
-    bucket: ((versions-s3-bucket))
-    regexp: quarks-gora-release-release-(.*).tgz
+    bucket: ((s3.bucketName))
+    regexp: quarks-gora/quarks-gora-release-release-(.*).tgz
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
 - name: release

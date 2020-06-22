@@ -16,7 +16,7 @@ resources:
   type: s3
   check_every: 1m
   source:
-    bucket: ((versions-s3-bucket))
+    bucket: ((s3.bucketName))
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     versioned_file: fissile-stemcell-versions/fissile-stemcell-sle15-version
@@ -24,8 +24,8 @@ resources:
   type: s3
   check_every: 5m
   source:
-    bucket: ((versions-s3-bucket))
-    regexp: cf-operator-testing-release-release-(.*).tgz
+    bucket: ((s3.bucketName))
+    regexp: cf-operator-testing-release/cf-operator-testing-release-release-(.*).tgz
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
 
