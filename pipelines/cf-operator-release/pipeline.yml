@@ -3,13 +3,26 @@
   branch = ENV['branch']
   tag_filter = ENV['tag_filter']
 %>
+resource_types:
+- name: lftp-resource
+  type: registry-image
+  check_every: 60m
+  source:
+    repository: machinerytool/concourse-lftp-resource
+    tag: latest
 resources:
 - name: src
   type: git
   check_every: 1m
   source:
     uri: ((src-repo))
+    private_key: ((github.key))
     branch: <%= branch %>
+- name: lftp.obs-docker-stemcell
+  type: lftp-resource
+  source:
+    url: https://download.opensuse.org/repositories/Cloud:/Platform:/quarks/SLE_15_SP1/
+    regexp: (.*).txt
 - name: release
   type: github-release
   source:
@@ -267,3 +280,21 @@ jobs:
     file: ci/pipelines/cf-operator-release/tasks/helm-repo.yml
   - put: helm-repo
     params: {repository: updated}
+
+- name: bump
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: lftp.obs-docker-stemcell
+      trigger: true
+    - get: src
+      fetch_tags: true
+      passed: [publish]
+  - task: bump
+    file: ci/pipelines/tasks/bump-patch.yml
+  - put: src
+    params:
+      repository: modified
+      tag: tag/name
+      annotate: tag/message
+      only_tag: false
