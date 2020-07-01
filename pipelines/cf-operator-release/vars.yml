@@ -1,4 +1,4 @@
-src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
+src-repo: git@github.com:cloudfoundry-incubator/quarks-operator
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci
 helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm
 kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf
