@@ -110,12 +110,6 @@ jobs:
       params:
         GOPROXY: ((goproxy))
         SUCCEED_UNLESS_CHANGES_BEYOND: '^(docs/.*\.md|website/.*|\.github/.*)'
-    - put: docker.cf-operator-ci
-      params:
-        build: src
-        build_args:
-          GOPROXY: ((goproxy))
-        tag: docker/tag
     on_failure:
       put: status
       params:
@@ -124,12 +118,19 @@ jobs:
         path: src
         state: failure
     on_success:
-      put: status
-      params:
-        context: build
-        description: go build check
-        path: src
-        state: success
+      in_parallel:
+      - put: docker.cf-operator-ci
+        params:
+          build: src
+          build_args:
+            GOPROXY: ((goproxy))
+          tag: docker/tag
+      - put: status
+        params:
+          context: build
+          description: go build check
+          path: src
+          state: success
 
   - in_parallel:
     - task: test

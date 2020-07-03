@@ -10,11 +10,18 @@ def success
   exit 0
 end
 
+def debug(*args)
+  STDERR.puts(args) if $VERBOSE
+end
+
 # true if pattern covers changed lines completely
 def full_match(pattern, lines)
   return unless pattern
 
+  debug('full_match if count equal:', lines.grep(/#{pattern}/))
   n = lines.grep(/#{pattern}/).count
+  debug('line count:', lines.count, n)
+
   lines.count == n
 end
 
@@ -22,6 +29,7 @@ end
 def no_match(pattern, lines)
   return unless pattern
 
+  debug('no_match if empty:', lines.grep(/#{pattern}/))
   lines.grep(/#{pattern}/).empty?
 end
 
@@ -39,7 +47,10 @@ if $PROGRAM_NAME == __FILE__
   end
 
   Dir.chdir(dir) do
-    lines = `git diff --name-only HEAD~1`.split
+    # https://github.com/telia-oss/github-pr-resource#get
+    base_sha = File.read('.git/resource/base_sha')
+    lines = `git diff --name-only #{base_sha}`.split
+    debug('git diff:', lines)
 
     # after excluding all lines matching the regex, exit if no lines are left
     success if full_match(ENV['SUCCEED_UNLESS_CHANGES_BEYOND'], lines)
