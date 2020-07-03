@@ -47,6 +47,8 @@ if $PROGRAM_NAME == __FILE__
   end
 
   Dir.chdir(dir) do
+    next unless File.readable?('.git/resource/base_sha')
+
     # https://github.com/telia-oss/github-pr-resource#get
     base_sha = File.read('.git/resource/base_sha')
     lines = `git diff --name-only #{base_sha}`.split
