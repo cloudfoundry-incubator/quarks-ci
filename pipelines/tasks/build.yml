@@ -13,7 +13,4 @@ outputs:
 - name: binaries
 - name: docker
 run:
-  path: ci/bin/kurzschluss.rb
-  args:
-    - src/code.cloudfoundry.org/quarks-operator
-    - ci/pipelines/tasks/build.sh
+  path: ci/pipelines/tasks/build.sh
