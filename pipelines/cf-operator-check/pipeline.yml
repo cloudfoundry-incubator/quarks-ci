@@ -109,7 +109,6 @@ jobs:
       file: ci/pipelines/tasks/build.yml
       params:
         GOPROXY: ((goproxy))
-        SUCCEED_UNLESS_CHANGES_BEYOND: '^(docs/.*\.md|website/.*|\.github/.*)'
     on_failure:
       put: status
       params:
