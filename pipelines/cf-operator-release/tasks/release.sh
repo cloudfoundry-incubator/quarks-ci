@@ -15,7 +15,7 @@ echo "check assets versions"
 semver=$( sed 's/^v//; s/-/+/' release/tag )
 if ! grep -q "$semver" s3.helm-charts/version; then
   echo -n "Helm chart version does not match Github tag from Github release: "
-  cat s3.helm-charts/version
+  grep . s3.helm-charts/version release/tag
   exit 1
 fi
 
