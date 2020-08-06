@@ -27,6 +27,7 @@ cloudfoundry_releases = %w(
   nfs-volume
   postgres
   routing
+  silk
   statsd-injector
   syslog
   uaa
