@@ -71,6 +71,10 @@ echo "--------------------------------------------------------------------------
 echo "Running integration storage tests"
 make -C src/code.cloudfoundry.org/quarks-operator test-integration-storage
 
+echo "--------------------------------------------------------------------------------"
+echo "Running integration util tests"
+make -C src/code.cloudfoundry.org/quarks-operator test-integration-subcmds
+
 if [ "${COVERAGE+ok}" = ok ] && [ -f s3.build-number/version ]; then
   version=$(cat s3.build-number/version)
   gover_file=gover-${version}-integration.coverprofile
