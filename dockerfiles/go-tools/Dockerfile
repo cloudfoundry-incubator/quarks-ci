@@ -30,7 +30,7 @@ RUN curl -fsL https://clis.ng.bluemix.net/install/linux | sh && \
 RUN gem install bosh-template
 RUN pip3 install git-pull-request
 
-ENV HELM_VERSION="v3.1.2"
+ENV HELM_VERSION="v3.2.4"
 ENV HELM_URL https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
 RUN curl --progress-bar --location ${HELM_URL} | tar -xzf - -C /tmp linux-amd64/helm && \
     mv /tmp/linux-amd64/helm /usr/bin/helm && \

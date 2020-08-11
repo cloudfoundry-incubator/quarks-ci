@@ -38,6 +38,7 @@ jobs:
       passed: [base-ci]
       trigger: true
     - get: ci
+      passed: [base-ci]
       trigger: true
   - put: docker.go-tools
     params:
