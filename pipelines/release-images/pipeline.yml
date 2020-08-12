@@ -9,6 +9,8 @@ cloudfoundry_releases = %w(
   python-buildpack
   ruby-buildpack
   staticfile-buildpack
+  r-buildpack
+  nginx-buildpack
 
   bosh-dns-aliases
   capi

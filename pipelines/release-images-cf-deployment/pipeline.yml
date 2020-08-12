@@ -2,8 +2,8 @@
 
 <%
 parallel_builds = 5 # How many builds we run in parallel
-cf_deployment_tags = %w(v12.4.0 v12.18.0)
-releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa)
+cf_deployment_tags = %w(v12.36.0 v13.9.0)
+releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa metrics-discovery)
 %>
 
 groups:

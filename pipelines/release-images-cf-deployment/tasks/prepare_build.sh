@@ -20,7 +20,6 @@ obsolete_releases=$(comm -13 <(echo $manifest_releases | tr " " "\n") <(echo $RE
 
 if [ -n "$obsolete_releases" ]; then
   echo "There are releases which are no longer part of cf-deployment: $obsolete_releases"
-  failed=true
 fi
 
 if [ "$failed" = true ]; then
