@@ -4,3 +4,5 @@ ci-branch: master
 docker-organization: cfcontainerization
 docker-repo: cf-operator-ci
 storageclass: hostpath-containerization
+goproxy: http://10.72.144.202:30080,https://proxy.golang.org
+ibmcloud-cluster: pebbles01
