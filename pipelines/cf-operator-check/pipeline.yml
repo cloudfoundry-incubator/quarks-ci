@@ -142,7 +142,7 @@ jobs:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster-dino))
+        ibmcloud_cluster: ((ibmcloud-cluster))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
@@ -151,14 +151,13 @@ jobs:
         GOPROXY: ((goproxy))
         NODES: 6
         SUCCEED_UNLESS_CHANGES_BEYOND: '^(docs/.*\.md|website/.*|\.github/.*)'
-        DEBUG: "yes"
       file: ci/pipelines/tasks/test-integration.yml
     - task: test-helm-e2e
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
         ibmcloud_server: ((ibmcloud.server))
         ibmcloud_region: ((ibmcloud.region))
-        ibmcloud_cluster: ((ibmcloud.cluster-dino))
+        ibmcloud_cluster: ((ibmcloud-cluster))
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))

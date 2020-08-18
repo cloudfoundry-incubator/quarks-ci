@@ -64,11 +64,7 @@ cat >> out/body <<EOF
 
     # Use this if you've never installed the operator before
     helm repo add quarks https://cloudfoundry-incubator.github.io/quarks-helm/
-    helm install cf-operator quarks/cf-operator
-
-    # Use this if the custom resources have already been created by a previous CF Operator installation
-    helm repo update
-    helm install cf-operator quarks/cf-operator --set "customResources.enableInstallation=false"
+    helm install cf-operator quarks/cf-operator --wait
 
     # For more options look at the README for the chart
     helm show readme quarks/cf-operator
