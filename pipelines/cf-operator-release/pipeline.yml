@@ -20,6 +20,7 @@ resources:
     branch: <%= branch %>
 - name: lftp.obs-docker-stemcell
   type: lftp-resource
+  check_every: 96h
   source:
     url: https://download.opensuse.org/repositories/Cloud:/Platform:/quarks/SLE_15_SP1/
     regexp: (.*).txt
@@ -289,7 +290,6 @@ jobs:
       trigger: true
     - get: src
       fetch_tags: true
-      passed: [publish]
   - task: bump
     file: ci/pipelines/tasks/bump-patch.yml
   - put: src
