@@ -1,6 +1,6 @@
 src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
-ci-branch: master
+ci-branch: main
 director-repo: git@github.com:cloudfoundry/quarks-private.git
 director-branch: master
 docker-organization: cfcontainerization

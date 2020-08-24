@@ -1,7 +1,7 @@
 src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
-src-branch: master
+src-branch: main
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
-ci-branch: master
+ci-branch: main
 docker-organization: cfcontainerization
 docker-candidate-repo: cf-operator-candidate
 storageclass: hostpath-containerization

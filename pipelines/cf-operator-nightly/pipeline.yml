@@ -3,7 +3,7 @@ resources:
   type: git
   source:
     uri: ((src-repo))
-    branch: master
+    branch: main
 - name: ci
   type: git
   source:

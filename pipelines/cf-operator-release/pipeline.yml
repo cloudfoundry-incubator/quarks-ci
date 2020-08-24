@@ -96,7 +96,7 @@ resources:
   source:
     uri: ((helm-repo))
     private_key: ((github.key))
-    branch: master
+    branch: main
 
 jobs:
 - name: test

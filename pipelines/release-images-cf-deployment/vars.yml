@@ -1,5 +1,5 @@
 ci-repo: https://github.com/cloudfoundry-incubator/cf-operator-ci
-ci-branch: master
+ci-branch: main
 docker-image-resource-repo: https://github.com/concourse/docker-image-resource
 docker-image-resource-branch: master
 cf-deployment-repo: https://github.com/cloudfoundry/cf-deployment

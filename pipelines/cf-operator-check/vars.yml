@@ -1,6 +1,6 @@
 pr-repo: cloudfoundry-incubator/quarks-operator
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
-ci-branch: master
+ci-branch: main
 docker-organization: cfcontainerization
 docker-repo: cf-operator-ci
 storageclass: hostpath-containerization
