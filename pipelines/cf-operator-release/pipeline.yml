@@ -209,6 +209,8 @@ jobs:
     - do:
       - task: helm
         file: ci/pipelines/cf-operator-release/tasks/build-helm.yml
+        params:
+          RELEASE: "true"
       - put: s3.helm-charts
         params:
           file: helm-charts/cf-operator-*.tgz
