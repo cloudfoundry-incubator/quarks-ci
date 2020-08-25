@@ -10,13 +10,9 @@ export GOPATH=$PWD
 export GO111MODULE=on
 
 pushd src/code.cloudfoundry.org/quarks-operator
-git describe --tags --long || git tag v0.0.0 # Make sure there's always a tag that can be used for building the version
-. bin/include/versioning
+  bin/tools
+  bin/build
 popd
 
-# for backwards-compatibility
-ARTIFACT_VERSION=${ARTIFACT_VERSION:-$VERSION_TAG}
-
-make -C src/code.cloudfoundry.org/quarks-operator build
-cp src/code.cloudfoundry.org/quarks-operator/binaries/cf-operator binaries/cf-operator-$ARTIFACT_VERSION
-echo $ARTIFACT_VERSION > docker/tag
+cp src/code.cloudfoundry.org/quarks-operator/binaries/cf-operator "binaries/cf-operator-$ARTIFACT_VERSION"
+echo "$ARTIFACT_VERSION" > docker/tag
