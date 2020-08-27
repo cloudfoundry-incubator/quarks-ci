@@ -24,7 +24,6 @@ upload_debug_info() {
   fi
 }
 
-## Make sure to cleanup the tunnel pod and service
 cleanup () {
   upload_debug_info
 }
@@ -35,10 +34,15 @@ ibmcloud login -r "$ibmcloud_region" -a "$ibmcloud_server" --apikey "$ibmcloud_a
 export BLUEMIX_CS_TIMEOUT=500
 ibmcloud ks cluster config --cluster "$ibmcloud_cluster"
 
+cd src/code.cloudfoundry.org/quarks-operator
+
+bin/tools
+bin/build-helm
+
 echo "Running e2e tests in the ${ibmcloud_cluster} cluster."
 echo "--------------------------------------------------------------------------------"
-make -C src/code.cloudfoundry.org/quarks-operator test-helm-e2e
-
+bin/test-helm-e2e
+echo "Running e2e storage tests in the ${ibmcloud_cluster} cluster."
 echo "--------------------------------------------------------------------------------"
 export TEST_NAMESPACE="test-storage$(date +%s)"
-make -C src/code.cloudfoundry.org/quarks-operator test-helm-e2e-storage
+bin/test-helm-e2e-storage

@@ -171,9 +171,6 @@ jobs:
           ibmcloud_server: ((ibmcloud.server))
           ibmcloud_region: ((ibmcloud.region))
           ibmcloud_cluster: ((ibmcloud-cluster))
-          ssh_server_ip: ((ssh-server.ip))
-          ssh_server_user: ((ssh-server.user))
-          ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           GOPROXY: ((goproxy))
@@ -212,6 +209,8 @@ jobs:
     - do:
       - task: helm
         file: ci/pipelines/cf-operator-release/tasks/build-helm.yml
+        params:
+          RELEASE: "true"
       - put: s3.helm-charts
         params:
           file: helm-charts/cf-operator-*.tgz

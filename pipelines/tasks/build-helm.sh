@@ -10,8 +10,8 @@ export GOPATH=$PWD
 export GO111MODULE=on
 
 pushd src/code.cloudfoundry.org/quarks-operator
-. bin/include/versioning
+  bin/tools
+  bin/build-helm
 popd
 
-make -C src/code.cloudfoundry.org/quarks-operator build-helm
 cp src/code.cloudfoundry.org/quarks-operator/helm/cf-operator*.tgz helm-charts/
