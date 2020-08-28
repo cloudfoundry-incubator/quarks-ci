@@ -25,7 +25,7 @@ jobs:
 - name: clean-k8s
   serial: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
     - get: 12h
       trigger: true
@@ -43,10 +43,42 @@ jobs:
       ibmcloud_region: ((ibmcloud.region))
       ibmcloud_cluster: ((ibmcloud-cluster2))
     file: ci/pipelines/cf-operator-nightly/tasks/clean-k8s.yml
+
+- name: build
+  serial: true
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+    - get: 12h
+      trigger: true
+      passed: [clean-k8s]
+  - task: build
+    file: ci/pipelines/tasks/build.yml
+    params:
+      GOPROXY: ((goproxy))
+  - put: docker.cf-operator-rc
+    params:
+      build: src
+      build_args:
+        GOPROXY: ((goproxy))
+      tag: docker/tag
+
+- name: build-helm
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+    - get: 12h
+      trigger: true
+      passed: [clean-k8s]
+  - task: build
+    file: ci/pipelines/tasks/build-helm.yml
+
 - name: test
   serial: true
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
     - get: src
       passed: [build]
@@ -61,7 +93,7 @@ jobs:
     file: ci/pipelines/tasks/test.yml
     params:
       GOPROXY: ((goproxy))
-  - aggregate:
+  - in_parallel:
     - task: test-integration
       params:
         ibmcloud_apikey: ((ibmcloud.key-value))
@@ -88,31 +120,3 @@ jobs:
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
       file: ci/pipelines/tasks/test-helm-e2e.yml
 
-- name: build
-  serial: true
-  plan:
-  - aggregate:
-    - get: ci
-      passed: [clean-k8s]
-    - get: src
-    - get: 12h
-      trigger: true
-  - task: build
-    file: ci/pipelines/tasks/build.yml
-  - put: docker.cf-operator-rc
-    params:
-      build: src
-      build_args:
-        GOPROXY: ((goproxy))
-      tag: docker/tag
-
-- name: build-helm
-  plan:
-  - aggregate:
-    - get: ci
-      passed: [clean-k8s]
-    - get: src
-    - get: 12h
-      trigger: true
-  - task: build
-    file: ci/pipelines/tasks/build-helm.yml
