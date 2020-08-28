@@ -10,4 +10,5 @@
 pushd pipelines/cf-operator-release
   ./configure.sh cfo v4.0.x v4.
   ./configure.sh cfo v5.0.x v5.
+  ./configure.sh cfo v6.x v6.
 popd
