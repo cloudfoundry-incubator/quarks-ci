@@ -18,6 +18,7 @@ export TEST_NAMESPACE="test$(date +%s)"
 
 upload_debug_info() {
   if ls /tmp/env_dumps/* &> /dev/null; then
+    cd $GOPATH 
     TARBALL_NAME="env_dump-$(date +"%s").tar.gz"
     echo "Env dumps will be uploaded as ${TARBALL_NAME}"
     tar cfzv env_dumps/"$TARBALL_NAME" -C /tmp/env_dumps/ .
