@@ -49,6 +49,18 @@ resources:
     repository: ((docker-organization))/((docker-candidate-repo))
     username: ((dockerhub.username))
     password: ((dockerhub.password))
+- name: docker.cf-operator
+  type: docker-image
+  source:
+    repository: ((docker-organization))/cf-operator
+    username: ((dockerhub.username))
+    password: ((dockerhub.password))
+- name: ghcr.quarks-operator
+  type: docker-image
+  source:
+    repository: ((ghcr-repository))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
 - name: s3.cf-operator
   type: s3
   source:
@@ -195,17 +207,22 @@ jobs:
         file: ci/pipelines/tasks/build.yml
         params:
           GOPROXY: ((goproxy))
-      - task: docker
-        privileged: true
-        file: ci/pipelines/tasks/publish.yml
+      - get: docker.cf-operator-rc
         params:
-          repository: ((docker-organization))/cf-operator
-          candidate_repository: ((docker-organization))/((docker-candidate-repo))
-          username: ((dockerhub.username))
-          password: ((dockerhub.password))
-      - put: s3.cf-operator
-        params:
-          file: binaries/cf-operator-*
+          save: true
+          tag: docker/tag
+      - in_parallel:
+        - put: docker.cf-operator
+          params:
+            load: docker.cf-operator-rc
+            tag: docker/tag
+        - put: ghcr.quarks-operator
+          params:
+            load: docker.cf-operator-rc
+            tag: docker/tag
+        - put: s3.cf-operator
+          params:
+            file: binaries/cf-operator-*
     - do:
       - task: helm
         file: ci/pipelines/cf-operator-release/tasks/build-helm.yml

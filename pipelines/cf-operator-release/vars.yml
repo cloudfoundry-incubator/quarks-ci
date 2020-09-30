@@ -6,6 +6,7 @@ ci-branch: master
 kubecf-branch: master
 docker-organization: cfcontainerization
 docker-candidate-repo: cf-operator-candidate
+ghcr-repository: ghcr.io/cloudfoundry-incubator/quarks-operator
 storageclass: hostpath-containerization
 goproxy: http://10.72.144.202:30080,https://proxy.golang.org
 ibmcloud-cluster: pebbles01
