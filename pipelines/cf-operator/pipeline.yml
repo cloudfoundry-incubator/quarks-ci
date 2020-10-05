@@ -31,7 +31,7 @@ resources:
   type: docker-image
   check_every: 48h
   source:
-    repository: registry.opensuse.org/cloud/platform/quarks/images/images/coredns
+    repository: ((coredns-repo))
 - name: s3.cf-operator
   type: s3
   source:
@@ -252,3 +252,4 @@ jobs:
     params:
       USERNAME: ((github.user))
       PASSWORD: ((github.password))
+      coredns_repo: ((coredns-repo))

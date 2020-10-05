@@ -2,11 +2,12 @@
 
 set -e
 
+: "${coredns_repo:?}"
 
 # find new coredns version
 pushd docker.coredns
 version=$(cat digest)
-url="registry.opensuse.org/cloud/platform/quarks/images/images/coredns@$version"
+url="$coredns_repo@$version"
 rpmversion=$(chroot rootfs rpm -q coredns)
 popd
 

@@ -8,3 +8,4 @@ ghcr-repository: ghcr.io/cloudfoundry-incubator/quarks-operator
 storageclass: hostpath-containerization
 goproxy: http://10.72.144.202:30080,https://proxy.golang.org
 ibmcloud-cluster: pebbles01
+coredns-repo: docker.io/cfcontainerization/coredns
