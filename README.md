@@ -35,6 +35,23 @@ _Example:_
 ./fly-pipeline flintstone hello-world
 ```
 
+### Set pipelines for Quarks
+
+First create the team, then create and expose the pipelines.
+
+```
+# Create teams
+fly -t flintstone login -k -n admin -c https://ci.flintstone.cf.cloud.ibm.com/
+fly -t flintstone set-team -n quarks --github-org=cloudfoundry-incubator:quarks
+
+# Create pipelines
+fly -t flintstone login -k -n quarks -c https://ci.flintstone.cf.cloud.ibm.com/
+./set-all.sh flintstone
+./expose-all.sh flintstone
+```
+
+Unpause pipelines as necessary.
+
 ## Pipeline directory structure
 The pipelines must follow a simple contract in order to work with the convenience script `fly-pipeline`:
 - A directory with the final pipeline name must be located under `pipelines` in the Git repo root.
@@ -75,3 +92,15 @@ export NODE_PORT=$(kubectl get --namespace athens -o jsonpath="{.spec.ports[0].n
 export NODE_IP=$(kubectl get nodes --namespace athens -o jsonpath="{.items[0].status.addresses[0].address}")
 ```
 
+### Currently
+
+Athens didn't update the Helm chart for their latest 0.10.0 release.
+The old 0.9.0 release is using `extensions/v1beta1` instead of `apps/v1`: https://github.com/Drachenfels-GmbH/kubernetes-crio-lxc/issues/2#issuecomment-663580690
+
+
+Fix up the old release and deploy from local dir:
+```
+helm pull gomods/athens-proxy
+vi athens-proxy/templates/jaeger-deploy.yaml
+helm install athens athens-proxy --create-namespace --namespace athens --set service.type=NodePort
+```

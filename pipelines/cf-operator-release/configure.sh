@@ -18,5 +18,5 @@ pipeline_name="cfo-release-$branch"
 fly --target "$target" set-pipeline \
   --pipeline="$pipeline_name" \
   --config=<(erb "pipeline.yml") \
-  --load-vars-from="vars.yml" \
-  --load-vars-from=<(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" --notes)
+  --load-vars-from=<(lpass show "Shared-CF-Containerization/ContainerizedCF-CI-Secrets" --notes) \
+  --load-vars-from="vars.yml"
