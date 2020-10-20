@@ -12,3 +12,7 @@ pushd pipelines/cf-operator-release
   ./configure.sh cfo v5.0.x v5.
   ./configure.sh cfo v6.x v6.
 popd
+
+# pushd pipelines/quarks-release
+#   ./configure.sh cfo v7.x v7.
+# popd

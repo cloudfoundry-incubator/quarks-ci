@@ -1,0 +1,16 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: cfcontainerization/go-tools
+    tag: latest
+inputs:
+- name: ci
+- name: release
+- name: s3.helm-charts
+- name: s3.quarks-operator
+outputs:
+- name: out
+run:
+  path: ci/pipelines/quarks-release/tasks/release.sh

@@ -1,0 +1,11 @@
+src-repo: git@github.com:cloudfoundry-incubator/quarks-operator
+ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci
+helm-repo: git@github.com:cloudfoundry-incubator/quarks-helm
+kubecf-repo: https://github.com/cloudfoundry-incubator/kubecf
+ci-branch: master
+kubecf-branch: master
+ghcr-repository: ghcr.io/cloudfoundry-incubator/quarks-operator
+ghcr-rc-repository: ghcr.io/cfcontainerizationbot/quarks-operator-rc
+storageclass: hostpath-containerization
+goproxy: http://10.72.144.202:30080,https://proxy.golang.org
+ibmcloud-cluster: pebbles01

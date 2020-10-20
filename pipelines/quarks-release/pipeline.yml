@@ -1,0 +1,306 @@
+<%
+  fail "use ./configure.sh" unless ENV['branch'] && ENV['tag_filter']
+  branch = ENV['branch']
+  tag_filter = ENV['tag_filter']
+%>
+resource_types:
+- name: lftp-resource
+  type: registry-image
+  check_every: 60m
+  source:
+    repository: machinerytool/concourse-lftp-resource
+    tag: latest
+resources:
+- name: src
+  type: git
+  check_every: 1m
+  source:
+    uri: ((src-repo))
+    private_key: ((github.key))
+    branch: <%= branch %>
+- name: lftp.obs-docker-stemcell
+  type: lftp-resource
+  check_every: 96h
+  source:
+    url: https://download.opensuse.org/repositories/Cloud:/Platform:/quarks/SLE_15_SP1/
+    regexp: (.*).txt
+- name: release
+  type: github-release
+  source:
+    owner: cloudfoundry-incubator
+    repository: quarks-operator
+    access_token: ((github.access-token-push))
+    drafts: true
+    pre_release: true
+    tag_filter: "v?(<%= tag_filter %>[^v].*)"
+- name: ci
+  type: git
+  source:
+    uri: ((ci-repo))
+    branch: ((ci-branch))
+- name: kubecf-src
+  type: git
+  source:
+    uri: ((kubecf-repo))
+    branch: ((kubecf-branch))
+- name: ghcr.quarks-operator
+  type: docker-image
+  source:
+    repository: ((ghcr-repository))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
+- name: ghcr.quarks-operator-rc
+  type: docker-image
+  source:
+    repository: ((ghcr-rc-repository))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
+- name: s3.quarks-operator
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "binaries/quarks-operator-(.*)"
+- name: s3.helm-charts
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "helm-charts/quarks-v?([^v]*)\\.tgz"
+- name: s3.env-dump
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "env_dumps/env_dump-(.*)\\.tar\\.gz"
+- name: s3.release.quarks-operator
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "release/binaries/quarks-operator-(.*)"
+- name: s3.release.helm-charts
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "release/helm-charts/quarks-v?([^v]*)\\.tgz"
+- name: s3.shas
+  type: s3
+  source:
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    bucket: ((s3.bucketName))
+    regexp: "shas/([^v]*)"
+- name: helm-repo
+  type: git
+  source:
+    uri: ((helm-repo))
+    private_key: ((github.key))
+    branch: master
+
+jobs:
+- name: test
+  serial: true
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+      trigger: true
+  - in_parallel:
+    - task: lint
+      file: ci/pipelines/tasks/lint.yml
+      params:
+        GOPROXY: ((goproxy))
+    - task: test-unit
+      file: ci/pipelines/tasks/test.yml
+      params:
+        GOPROXY: ((goproxy))
+
+- name: build
+  serial: true
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+      passed: [test]
+      trigger: true
+  - task: build
+    file: ci/pipelines/tasks/build.yml
+    params:
+      GOPROXY: ((goproxy))
+  - do:
+    - put: ghcr.quarks-operator-rc
+      params:
+        build: src
+        build_args:
+          GOPROXY: ((goproxy))
+        tag: docker/tag
+
+- name: test-integration
+  serial: true
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+      trigger: true
+      passed: [build]
+  - do:
+    - in_parallel:
+      - task: test-integration
+        params:
+          ibmcloud_apikey: ((ibmcloud.key-value))
+          ibmcloud_server: ((ibmcloud.server))
+          ibmcloud_region: ((ibmcloud.region))
+          ibmcloud_cluster: ((ibmcloud-cluster))
+          ssh_server_ip: ((ssh-server.ip))
+          ssh_server_user: ((ssh-server.user))
+          ssh_server_key: ((ssh-server.key))
+          OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+          DOCKER_IMAGE_REPOSITORY: ((ghcr-rc-repository))
+          GOPROXY: ((goproxy))
+        file: ci/pipelines/tasks/test-integration.yml
+        on_failure:
+          do:
+          - put: s3.env-dump
+            params:
+              file: env_dumps/env_dump-*.tar.gz
+              acl: public-read
+      - task: test-helm-e2e
+        params:
+          ibmcloud_apikey: ((ibmcloud.key-value))
+          ibmcloud_server: ((ibmcloud.server))
+          ibmcloud_region: ((ibmcloud.region))
+          ibmcloud_cluster: ((ibmcloud-cluster))
+          OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+          DOCKER_IMAGE_REPOSITORY: ((ghcr-rc-repository))
+          GOPROXY: ((goproxy))
+        file: ci/pipelines/tasks/test-helm-e2e.yml
+        on_failure:
+          do:
+          - put: s3.env-dump
+            params:
+              file: env_dumps/env_dump-*.tar.gz
+              acl: public-read
+- name: publish
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: src
+      passed: [test-integration]
+      trigger: true
+
+  - in_parallel:
+    - do:
+      - task: build
+        file: ci/pipelines/tasks/build.yml
+        params:
+          GOPROXY: ((goproxy))
+      - get: ghcr.quarks-operator-rc
+        params:
+          save: true
+          tag: docker/tag
+      - in_parallel:
+        - put: ghcr.quarks-operator
+          params:
+            load: ghcr.quarks-operator-rc
+            tag: docker/tag
+        - put: s3.quarks-operator
+          params:
+            file: binaries/quarks-operator-*
+    - do:
+      - task: helm
+        file: ci/pipelines/quarks-release/tasks/build-helm.yml
+        params:
+          RELEASE: "true"
+      - put: s3.helm-charts
+        params:
+          file: helm-charts/quarks-*.tgz
+          acl: public-read
+      - put: s3.shas
+        params:
+          file: shas/*
+
+- name: release
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: release
+      trigger: true
+    - get: s3.helm-charts
+      passed: [publish]
+    - get: s3.quarks-operator
+      passed: [publish]
+
+  - task: release
+    file: ci/pipelines/quarks-release/tasks/release.yml
+
+  - put: release
+    params:
+      name: out/name
+      tag: out/tag
+      body: out/body
+      globs:
+        - s3.helm-charts/quarks-operator-*.tgz
+        - out/quarks-operator-*.gz
+  - put: s3.release.quarks-operator
+    params:
+      file: s3.quarks-operator/quarks-operator-*
+      acl: public-read
+  - put: s3.release.helm-charts
+    params:
+      file: s3.helm-charts/quarks-*.tgz
+      acl: public-read
+
+- name: createpr
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: kubecf-src
+    - get: release
+      passed: [release]
+      trigger: true
+    - get: s3.release.helm-charts
+      passed: [release]
+    - get: s3.shas
+      passed: [publish]
+  - task: create-pr
+    file: ci/pipelines/cf-operator-release/tasks/create-pr.yml
+    params:
+      USERNAME: ((github.user))
+      PASSWORD: ((github.password))
+
+- name: helm-repo
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: s3.release.helm-charts
+      passed: [release]
+      trigger: true
+    - get: helm-repo
+  - task: update
+    file: ci/pipelines/cf-operator-release/tasks/helm-repo.yml
+  - put: helm-repo
+    params: {repository: updated}
+
+- name: bump
+  plan:
+  - in_parallel:
+    - get: ci
+    - get: lftp.obs-docker-stemcell
+      trigger: true
+    - get: src
+      fetch_tags: true
+  - task: bump
+    file: ci/pipelines/tasks/bump-patch.yml
+  - put: src
+    params:
+      repository: modified
+      tag: tag/name
+      annotate: tag/message
+      only_tag: false

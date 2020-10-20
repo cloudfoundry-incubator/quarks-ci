@@ -1,0 +1,17 @@
+---
+platform: linux
+image_resource:
+ type: docker-image
+ # we could use a smaller image
+ source:
+   repository: cfcontainerization/go-tools
+   tag: latest
+inputs:
+- name: src
+  path: src/code.cloudfoundry.org/quarks-operator
+- name: ci
+outputs:
+- name: helm-charts
+- name: shas
+run:
+  path: ci/pipelines/quarks-release/tasks/build-helm.sh

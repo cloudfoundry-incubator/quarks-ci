@@ -14,5 +14,5 @@ pushd src/code.cloudfoundry.org/quarks-operator
   echo "$ARTIFACT_VERSION" > "$BASE"/docker/tag
 popd
 
-cp src/code.cloudfoundry.org/quarks-operator/binaries/cf-operator "binaries/cf-operator-$ARTIFACT_VERSION"
+cp src/code.cloudfoundry.org/quarks-operator/binaries/quarks-operator "binaries/quarks-operator-$ARTIFACT_VERSION"
 echo "Built $ARTIFACT_VERSION binary"
