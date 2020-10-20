@@ -115,6 +115,10 @@ jobs:
           DOCKER_ORGANIZATION: ((docker-organization))
           DOCKER_TEAM_USERNAME: ((dockerhub.username))
           DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
+          GHCR_REGISTRY: ((ghrc-registry))
+          GHCR_ORGANIZATION: ((ghrc-organization))
+          GHCR_USERNAME: ((github.user))
+          GHCR_PASSWORD: ((github.access-token-push-quarks))
         file: ci/pipelines/release-images-cf-deployment/tasks/build.yml
       - put: s3.kubecf-sources
         params:

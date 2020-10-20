@@ -21,6 +21,10 @@ function build_release() {
   release_url="${10}"
   release_version="${11}"
   release_sha1="${12}"
+  ghcr_registry="${13}"
+  ghcr_organization="${14}"
+  ghcr_username="${15}"
+  ghcr_password="${16}"
 
   stemcell_name="${stemcell_os}-${stemcell_version}"
 
@@ -56,6 +60,13 @@ function build_release() {
 
       echo -e "Built image: ${GREEN}${built_image}${NC}"
       docker push "${built_image}"
+
+      echo "$GHCR_PASSWORD" | docker login --username "$GHCR_USERNAME" --password-stdin
+      ghcr_image=${built_image/$DOCKER_REGISTRY/$GHCR_REGISTRY}
+      ghcr_image=${ghcr_image/$DOCKER_ORGANIZATION/$GHCR_ORGANIZATION}
+      docker tag "$built_image" "$ghcr_image"
+      docker push "$ghcr_image"
+
       docker rmi "${built_image}"
   fi
 

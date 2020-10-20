@@ -15,3 +15,5 @@ kubecf-sources-s3-bucket: kubecf-sources
 kubecf-sources-s3-bucket-region: us-east-1
 docker-registry: docker.io
 docker-organization: cfcontainerization
+ghcr-registry: ghcr.io
+ghcr-organization: cloudfoundry-incubator

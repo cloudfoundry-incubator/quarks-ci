@@ -40,3 +40,7 @@ s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --na
 BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "$STEMCELL_REPOSITORY" | head -1)
 docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 docker push "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
+
+echo "$GHCR_PASSWORD" | docker login --username "$GHCR_USERNAME" --password-stdin
+docker tag "$BUILT_IMAGE" "$GHCR_REGISTRY/$BUILT_IMAGE"
+docker push "$GHCR_REGISTRY/$BUILT_IMAGE"
