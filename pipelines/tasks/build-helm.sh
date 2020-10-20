@@ -14,4 +14,4 @@ pushd src/code.cloudfoundry.org/quarks-operator
   bin/build-helm
 popd
 
-cp src/code.cloudfoundry.org/quarks-operator/helm/cf-operator*.tgz helm-charts/
+cp src/code.cloudfoundry.org/quarks-operator/helm/quarks*.tgz helm-charts/
