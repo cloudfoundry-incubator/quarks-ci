@@ -22,7 +22,7 @@ git config credential.https://github.com.username CFContainerizationBot
 
 # make commit
 git checkout -b bot/bump-coredns
-sed -i "s#boshDNSDockerImage: \".*#boshDNSDockerImage: \"$url\"#" deploy/helm/cf-operator/values.yaml
+sed -i "s#boshDNSDockerImage: \".*#boshDNSDockerImage: \"$url\"#" deploy/helm/quarks/values.yaml
 git --no-pager diff
 
 # create pr
