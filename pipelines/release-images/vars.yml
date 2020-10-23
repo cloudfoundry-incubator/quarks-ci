@@ -6,3 +6,4 @@ versions-s3-bucket: cf-operators
 stemcell-repository: splatform/fissile-stemcell-sle
 kubecf-sources-s3-bucket: kubecf-sources
 kubecf-sources-s3-bucket-region: us-east-1
+ghcr-organization: ghcr.io/cloudfoundry-incubator
