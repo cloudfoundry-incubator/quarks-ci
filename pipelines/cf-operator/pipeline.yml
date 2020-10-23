@@ -18,7 +18,7 @@ resources:
 - name: docker.cf-operator
   type: docker-image
   source:
-    repository: ((docker-organization))/cf-operator
+    repository: ((docker-organization))/quarks-operator
     username: ((dockerhub.username))
     password: ((dockerhub.password))
 - name: ghcr.quarks-operator
@@ -38,14 +38,14 @@ resources:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: binaries/cf-operator-(.*)
+    regexp: binaries/quarks-operator-(.*)
 - name: s3.helm-charts
   type: s3
   source:
     access_key_id: ((s3.accessKey))
     secret_access_key: ((s3.secretKey))
     bucket: ((s3.bucketName))
-    regexp: helm-charts/cf-operator-(.*).tgz
+    regexp: helm-charts/quarks-(.*).tgz
 - name: s3.build-number
   type: semver
   source:
@@ -230,13 +230,13 @@ jobs:
             tag: docker/tag
         - put: s3.cf-operator
           params:
-            file: binaries/cf-operator-*
+            file: binaries/quarks-operator-*
     - do:
       - task: helm
         file: ci/pipelines/tasks/build-helm.yml
       - put: s3.helm-charts
         params:
-          file: helm-charts/cf-operator-*.tgz
+          file: helm-charts/quarks-*.tgz
           acl: public-read
 
 # - name: create-coredns-pr
