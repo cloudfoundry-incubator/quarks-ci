@@ -37,10 +37,14 @@ curl -L -o "s3.kubecf-sources/${RELEASE_NAME}-${VERSION}.tgz" "${URL}"
 
 s3.fissile-linux/fissile build release-images --stemcell="${STEMCELL_NAME}" --name="${RELEASE_NAME}" --version="${VERSION}" --sha1="$SHA1" --url="${URL}"
 
+echo "Push to docker.io"
 BUILT_IMAGE=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep -v "$STEMCELL_REPOSITORY" | head -1)
+echo docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 docker push "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 
+echo "Push to ghcr.io"
 echo "$GHCR_PASSWORD" | docker login --username "$GHCR_USERNAME" --password-stdin
+echo docker tag "$BUILT_IMAGE" "$GHCR_REGISTRY/$BUILT_IMAGE"
 docker tag "$BUILT_IMAGE" "$GHCR_REGISTRY/$BUILT_IMAGE"
 docker push "$GHCR_REGISTRY/$BUILT_IMAGE"
