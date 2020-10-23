@@ -18,5 +18,8 @@ params:
   DOCKER_TEAM_USERNAME:
   DOCKER_TEAM_PASSWORD_RW:
   REGISTRY_NAMESPACE:
+  GHCR_USERNAME:
+  GHCR_PASSWORD:
+  GHCR_ORGANIZATION:
 run:
   path: ci/pipelines/release-images/tasks/build.sh

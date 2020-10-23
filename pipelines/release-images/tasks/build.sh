@@ -44,7 +44,7 @@ docker tag "${BUILT_IMAGE}" "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 docker push "${REGISTRY_NAMESPACE}/${BUILT_IMAGE}"
 
 echo "Push to ghcr.io"
-echo "$GHCR_PASSWORD" | docker login --username "$GHCR_USERNAME" --password-stdin
+echo "$GHCR_PASSWORD" | docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
 echo docker tag "$BUILT_IMAGE" "$GHCR_REGISTRY/$BUILT_IMAGE"
 docker tag "$BUILT_IMAGE" "$GHCR_REGISTRY/$BUILT_IMAGE"
 docker push "$GHCR_REGISTRY/$BUILT_IMAGE"

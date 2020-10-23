@@ -61,7 +61,7 @@ function build_release() {
       echo -e "Built image: ${GREEN}${built_image}${NC}"
       docker push "${built_image}"
 
-      echo "$GHCR_PASSWORD" | docker login --username "$GHCR_USERNAME" --password-stdin
+      echo "$GHCR_PASSWORD" | docker login ghcr.io --username "$GHCR_USERNAME" --password-stdin
       ghcr_image=${built_image/$DOCKER_REGISTRY/$GHCR_REGISTRY}
       ghcr_image=${ghcr_image/$DOCKER_ORGANIZATION/$GHCR_ORGANIZATION}
       docker tag "$built_image" "$ghcr_image"
