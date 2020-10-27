@@ -27,11 +27,6 @@ resources:
     repository: ((ghcr-repository))
     username: ((github.user))
     password: ((github.access-token-push-quarks))
-# - name: docker.coredns
-#   type: docker-image
-#   check_every: 48h
-#   source:
-#     repository: ((coredns-repo))
 - name: s3.cf-operator
   type: s3
   source:
@@ -238,18 +233,3 @@ jobs:
         params:
           file: helm-charts/quarks-*.tgz
           acl: public-read
-
-# - name: create-coredns-pr
-#   plan:
-#   - in_parallel:
-#     - get: ci
-#     - get: src
-#       passed: [test-integration]
-#     - get: docker.coredns
-#       trigger: true
-#   - task: bump
-#     file: ci/pipelines/cf-operator/tasks/create-coredns-pr.yml
-#     params:
-#       USERNAME: ((github.user))
-#       PASSWORD: ((github.password))
-#       coredns_repo: ((coredns-repo))
