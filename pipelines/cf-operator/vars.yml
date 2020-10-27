@@ -2,9 +2,8 @@ src-repo: https://github.com/cloudfoundry-incubator/quarks-operator
 src-branch: master
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 ci-branch: master
-docker-organization: cfcontainerization
 docker-candidate-repo: quarks-operator-candidate
-ghcr-repository: ghcr.io/cloudfoundry-incubator/quarks-operator
+ghcr-organization: ghcr.io/cfcontainerizationbot
 storageclass: hostpath-containerization
 goproxy: http://10.72.144.202:30080,https://proxy.golang.org
 ibmcloud-cluster: pebbles01
