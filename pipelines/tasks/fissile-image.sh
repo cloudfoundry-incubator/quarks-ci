@@ -2,7 +2,7 @@
 
 exec 3> `basename "$0"`.trace
 BASH_XTRACEFD=3
-
+REGISTRY="${REGISTRY:-}"
 set -eux
 
 # Start Docker Daemon (and set a trap to stop it once this script is done)
@@ -12,7 +12,7 @@ service docker status
 trap 'service docker stop' EXIT
 sleep 10
 
-echo "${DOCKER_TEAM_PASSWORD_RW}" | docker login --username "${DOCKER_TEAM_USERNAME}" --password-stdin
+echo "${DOCKER_TEAM_PASSWORD_RW}" | docker login "${REGISTRY}" --username "${DOCKER_TEAM_USERNAME}" --password-stdin
 
 pushd s3.fissile-linux
 tar xfv fissile-*.tgz
