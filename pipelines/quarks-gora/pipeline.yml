@@ -92,7 +92,8 @@ jobs:
       params:
         STEMCELL_REPOSITORY: ((stemcell-repository))
         RELEASE_NAME: quarks-gora-release
-        DOCKER_TEAM_USERNAME: ((dockerhub.username))
-        DOCKER_TEAM_PASSWORD_RW: ((dockerhub.password))
-        REGISTRY_NAMESPACE: "cfcontainerization"
+        DOCKER_TEAM_USERNAME: ((github.user))
+        DOCKER_TEAM_PASSWORD_RW: ((github.access-token-push-quarks))
+        REGISTRY: "ghcr.io"
+        REGISTRY_NAMESPACE: ghcr.io/cloudfoundry-incubator
       file: ci/pipelines/tasks/fissile-image.yml
