@@ -204,7 +204,41 @@ jobs:
   - in_parallel:
     - do:
       - task: build
-        file: ci/pipelines/tasks/build.yml
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: cfcontainerization/go-tools
+              tag: latest
+          inputs:
+          - name: src
+            path: src/code.cloudfoundry.org/quarks-operator
+          - name: ci
+          outputs:
+          - name: binaries
+          - name: docker
+          run:
+            path: sh
+            args:
+            - -c
+            - |
+              #!/bin/bash
+              set -ex
+
+              export BASE="$PWD"
+              cd src/code.cloudfoundry.org/quarks-operator
+
+              bin/tools
+              . bin/include/versioning
+              ARTIFACT_VERSION=$( echo "$ARTIFACT_VERSION" | sed 's/-dirty//' )
+
+              bin/build
+              cp binaries/cf-operator "$BASE/binaries/cf-operator-$ARTIFACT_VERSION"
+
+              echo "$ARTIFACT_VERSION" > "$BASE"/docker/tag
+
+              echo "Built quarks-operator binary for $ARTIFACT_VERSION and set docker tag."
         params:
           GOPROXY: ((goproxy))
       - get: docker.cf-operator-rc
