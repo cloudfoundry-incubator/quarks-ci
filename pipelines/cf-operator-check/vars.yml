@@ -1,8 +1,8 @@
 pr-repo: cloudfoundry-incubator/quarks-operator
 ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 ci-branch: master
-docker-organization: cfcontainerization
-docker-repo: cf-operator-ci
+docker-organization: ghcr.io/cfcontainerizationbot
+docker-pr-repo: quarks-operator-pr
 storageclass: hostpath-containerization
 goproxy: http://10.72.144.202:30080,https://proxy.golang.org
 ibmcloud-cluster: pebbles01

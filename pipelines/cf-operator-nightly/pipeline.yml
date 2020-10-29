@@ -13,8 +13,8 @@ resources:
   type: docker-image
   source:
     repository: ((docker-organization))/((docker-candidate-repo))
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
 - name: 12h
   type: time
   check_every: 10m
@@ -104,6 +104,7 @@ jobs:
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+        DOCKER_IMAGE_ORG: ((docker-organization))
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
         GOPROXY: ((goproxy))
       file: ci/pipelines/tasks/test-integration.yml
@@ -117,6 +118,7 @@ jobs:
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+        DOCKER_IMAGE_ORG: ((docker-organization))
         DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
       file: ci/pipelines/tasks/test-helm-e2e.yml
 

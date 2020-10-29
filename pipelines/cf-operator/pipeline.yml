@@ -12,7 +12,7 @@ resources:
 - name: docker.cf-operator-rc
   type: docker-image
   source:
-    repository: ((ghcr-organization))/((docker-candidate-repo))
+    repository: ((docker-organization))/((docker-candidate-repo))
     username: ((github.user))
     password: ((github.access-token-push-quarks))
 - name: s3.build-number
@@ -119,7 +119,7 @@ jobs:
           ssh_server_user: ((ssh-server.user))
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
-          DOCKER_IMAGE_ORG: ((ghcr-organization))
+          DOCKER_IMAGE_ORG: ((docker-organization))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           COVERAGE: true
           GOPROXY: ((goproxy))
@@ -137,7 +137,7 @@ jobs:
           ibmcloud_region: ((ibmcloud.region))
           ibmcloud_cluster: ((ibmcloud-cluster))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
-          DOCKER_IMAGE_ORG: ((ghcr-organization))
+          DOCKER_IMAGE_ORG: ((docker-organization))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-helm-e2e.yml
