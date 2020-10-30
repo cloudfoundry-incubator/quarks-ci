@@ -30,9 +30,9 @@ resources:
 - name: docker.cf-operator-ci
   type: docker-image
   source:
-    repository: ((docker-organization))/((docker-repo))
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
+    repository: ((docker-organization))/((docker-pr-repo))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
 - name: s3.env-dump
   type: s3
   source:
@@ -147,7 +147,8 @@ jobs:
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
-        DOCKER_IMAGE_REPOSITORY: ((docker-repo))
+        DOCKER_IMAGE_ORG: ((docker-organization))
+        DOCKER_IMAGE_REPOSITORY: ((docker-pr-repo))
         GOPROXY: ((goproxy))
         NODES: 6
         SUCCEED_UNLESS_CHANGES_BEYOND: '^(docs/.*\.md|website/.*|\.github/.*)'
@@ -161,7 +162,8 @@ jobs:
         ssh_server_ip: ((ssh-server.ip))
         ssh_server_user: ((ssh-server.user))
         ssh_server_key: ((ssh-server.key))
-        DOCKER_IMAGE_REPOSITORY: ((docker-repo))
+        DOCKER_IMAGE_ORG: ((docker-organization))
+        DOCKER_IMAGE_REPOSITORY: ((docker-pr-repo))
         OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
         GOPROXY: ((goproxy))
         SUCCEED_UNLESS_CHANGES_BEYOND: '^(docs/.*\.md|website/.*|\.github/.*)'

@@ -43,24 +43,24 @@ resources:
   source:
     uri: ((kubecf-repo))
     branch: ((kubecf-branch))
-- name: docker.cf-operator-rc
+- name: ghrc.cf-operator-rc
   type: docker-image
   source:
     repository: ((docker-organization))/((docker-candidate-repo))
-    username: ((dockerhub.username))
-    password: ((dockerhub.password))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
+- name: ghcr.cf-operator
+  type: docker-image
+  source:
+    repository: (((docker-organization))/(docker-repo))
+    username: ((github.user))
+    password: ((github.access-token-push-quarks))
 - name: docker.cf-operator
   type: docker-image
   source:
-    repository: ((docker-organization))/cf-operator
+    repository: cfcontainerization/cf-operator
     username: ((dockerhub.username))
     password: ((dockerhub.password))
-- name: ghcr.quarks-operator
-  type: docker-image
-  source:
-    repository: ((ghcr-repository))
-    username: ((github.user))
-    password: ((github.access-token-push-quarks))
 - name: s3.cf-operator
   type: s3
   source:
@@ -141,7 +141,7 @@ jobs:
     params:
       GOPROXY: ((goproxy))
   - do:
-    - put: docker.cf-operator-rc
+    - put: ghrc.cf-operator-rc
       params:
         build: src
         build_args:
@@ -168,6 +168,7 @@ jobs:
           ssh_server_user: ((ssh-server.user))
           ssh_server_key: ((ssh-server.key))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+          DOCKER_IMAGE_ORG: ((docker-organization))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-integration.yml
@@ -184,6 +185,7 @@ jobs:
           ibmcloud_region: ((ibmcloud.region))
           ibmcloud_cluster: ((ibmcloud-cluster))
           OPERATOR_TEST_STORAGE_CLASS: ((storageclass))
+          DOCKER_IMAGE_ORG: ((docker-organization))
           DOCKER_IMAGE_REPOSITORY: ((docker-candidate-repo))
           GOPROXY: ((goproxy))
         file: ci/pipelines/tasks/test-helm-e2e.yml
@@ -204,21 +206,55 @@ jobs:
   - in_parallel:
     - do:
       - task: build
-        file: ci/pipelines/tasks/build.yml
+        config:
+          platform: linux
+          image_resource:
+            type: docker-image
+            source:
+              repository: cfcontainerization/go-tools
+              tag: latest
+          inputs:
+          - name: src
+            path: src/code.cloudfoundry.org/quarks-operator
+          - name: ci
+          outputs:
+          - name: binaries
+          - name: docker
+          run:
+            path: sh
+            args:
+            - -c
+            - |
+              #!/bin/bash
+              set -ex
+
+              export BASE="$PWD"
+              cd src/code.cloudfoundry.org/quarks-operator
+
+              bin/tools
+              . bin/include/versioning
+              ARTIFACT_VERSION=$( echo "$ARTIFACT_VERSION" | sed 's/-dirty//' )
+
+              bin/build
+              cp binaries/cf-operator "$BASE/binaries/cf-operator-$ARTIFACT_VERSION"
+
+              echo "$ARTIFACT_VERSION" > "$BASE"/docker/tag
+
+              echo "Built quarks-operator binary for $ARTIFACT_VERSION and set docker tag."
         params:
           GOPROXY: ((goproxy))
-      - get: docker.cf-operator-rc
+      - get: ghrc.cf-operator-rc
         params:
           save: true
           tag: docker/tag
       - in_parallel:
         - put: docker.cf-operator
           params:
-            load: docker.cf-operator-rc
+            load: ghrc.cf-operator-rc
             tag: docker/tag
-        - put: ghcr.quarks-operator
+        - put: ghcr.cf-operator
           params:
-            load: docker.cf-operator-rc
+            load: ghrc.cf-operator-rc
             tag: docker/tag
         - put: s3.cf-operator
           params:
