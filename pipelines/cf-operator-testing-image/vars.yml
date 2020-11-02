@@ -1,5 +1,0 @@
-ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci
-ci-branch: master
-docker-organization: cfcontainerization
-s3-bucket: cf-opensusefs2
-stemcell-repository: splatform/fissile-stemcell-sle
