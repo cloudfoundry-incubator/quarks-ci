@@ -30,6 +30,7 @@ resources:
 <% cf_deployment_tags.each do |cf_deployment_tag| %>
 - name: cf-deployment-<%= cf_deployment_tag %>
   type: git
+  check_every: 5m
   source:
     uri: ((cf-deployment-repo))
     branch: ((cf-deployment-branch))
@@ -37,14 +38,14 @@ resources:
 <% end %>
 - name: s3.fissile-linux
   type: s3
-  check_every: 1m
+  check_every: 10m
   source:
     bucket: ((fissile-linux-s3-bucket))
     private: true
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-version
   type: s3
-  check_every: 1m
+  check_every: 10m
   source:
     bucket: ((stemcell-versions-s3-bucket))
     region_name: ((stemcell-s3-bucket-region))

@@ -3,7 +3,7 @@ ci-branch: master
 docker-image-resource-repo: https://github.com/concourse/docker-image-resource
 docker-image-resource-branch: master
 cf-deployment-repo: https://github.com/cloudfoundry/cf-deployment
-cf-deployment-branch: master
+cf-deployment-branch: main
 cf-deployment-yaml: cf-deployment/cf-deployment.yml
 fissile-linux-s3-bucket: cf-opensusefs2
 stemcell-os: sle15
