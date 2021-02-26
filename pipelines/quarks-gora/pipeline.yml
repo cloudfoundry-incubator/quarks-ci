@@ -4,7 +4,7 @@ resources:
   source:
     uri: ((ci-repo))
     branch: ((ci-branch))
-- name: gora
+- name: gora-release
   type: git
   source:
     uri: git@github.com:cloudfoundry-incubator/quarks-gora-release.git
@@ -44,7 +44,7 @@ jobs:
 - name: build-quarks-gora-release-release
   plan:
   - aggregate:
-    - get: gora
+    - get: gora-release
     - get: ci
   - aggregate:
     - get: s3.fissile-stemcell-version
@@ -62,7 +62,7 @@ jobs:
       params:
         file: release_tarball_dir/quarks-gora-release-release-*.tgz
         acl: public-read
-    - put: gora
+    - put: gora-release
       params: {repository: git_output}
     - put: release
       params:
