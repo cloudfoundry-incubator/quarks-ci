@@ -70,13 +70,11 @@ The pipelines must follow a simple contract in order to work with the convenienc
 
 You can find a pipeline example under `pipelines/hello-world`.
 
-### Caveat
-
-#### LastPass
+## LastPass
 
 In order to not have to explicitly specify each secret by key in the `fly` command, we use the _Notes_  section of one secret as a YAML and store the required secrets in there as one block. This keeps the `fly` command simple and allows for an easy way to add more secrets, however this also means that everybody has to use one LastPass site entry. The usage of CredHub would be preferred if possible in the future.
 
-### Deploying Athens Goproxy
+## Deploying Athens Goproxy
 
 We use [athens](https://github.com/gomods/athens) as a Go module proxy to speed up builds. It's deployed from as a helm chart in the `athens` namespace and it's URL is stored in the lastpass store. See [the documentation](https://docs.gomods.io/install/install-on-kubernetes/) for details on how to install it.
 
@@ -91,7 +89,7 @@ export NODE_PORT=$(kubectl get --namespace athens -o jsonpath="{.spec.ports[0].n
 export NODE_IP=$(kubectl get nodes --namespace athens -o jsonpath="{.items[0].status.addresses[0].address}")
 ```
 
-#### Issue with old Athens Helm Chart
+### Issue with old Athens Helm Chart
 
 Athens didn't update the Helm chart for their latest 0.10.0 release.
 The old 0.9.0 release is using `extensions/v1beta1` instead of `apps/v1`: https://github.com/Drachenfels-GmbH/kubernetes-crio-lxc/issues/2#issuecomment-663580690
