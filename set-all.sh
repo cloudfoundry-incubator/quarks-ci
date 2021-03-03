@@ -20,15 +20,5 @@ fly:pipeline release-images-cf-deployment release-images-cf-deployment
 fly:pipeline quarks-gora quarks-gora
 fly:pipeline images quarks-images
 
-# old pipelines, now running on Github Actions:
-# fly:pipeline cf-operator
-# fly:pipeline cf-operator-check
-# fly:pipeline cf-operator-nightly
-# fly:pipeline cf-operator-testing-image
+# unsused?
 # fly:pipeline release-images
-
-# pushd pipelines/cf-operator-release
-#   ./configure.sh "$target" v4.0.x v4.
-#   ./configure.sh "$target" v5.0.x v5.
-#   ./configure.sh "$target" v6.x v6.
-# popd
