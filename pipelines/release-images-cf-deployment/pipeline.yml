@@ -2,19 +2,24 @@
 
 <%
 parallel_builds = 5 # How many builds we run in parallel
-cf_deployment_tags = %w(v12.36.0 v13.9.0 v13.17.0 v15.1.0)
+
+fail "use ./set-all.sh or set CF_VERSION" unless ENV['CF_VERSION']
+cf_deployment_tag = ENV['CF_VERSION']
 releases = %w(binary-buildpack bosh-dns-aliases bpm capi cf-cli cflinuxfs3 cf-networking cf-smoke-tests cf-syslog-drain credhub diego dotnet-core-buildpack garden-runc go-buildpack java-buildpack log-cache loggregator loggregator-agent nats nginx-buildpack nodejs-buildpack php-buildpack pxc python-buildpack r-buildpack routing ruby-buildpack silk staticfile-buildpack statsd-injector uaa metrics-discovery)
 %>
 
 groups:
-<% cf_deployment_tags.each do |cf_deployment_tag| %>
-- name: <%= cf_deployment_tag %>
+- name: jobs
   jobs:
   - prepare-build-<%= cf_deployment_tag %>
-  <% releases.each do |release| %>
+  <% releases.grep_v(/buildpack/) do |release| %>
   - build-<%= cf_deployment_tag %>-<%= release %>
   <% end %>
-<% end %>
+- name: buildpacks
+  jobs:
+  <% releases.grep(/buildpack/) do |release| %>
+  - build-<%= cf_deployment_tag %>-<%= release %>
+  <% end %>
 
 resources:
 - name: ci
@@ -27,7 +32,7 @@ resources:
   source:
     uri: ((docker-image-resource-repo))
     branch: ((docker-image-resource-branch))
-<% cf_deployment_tags.each do |cf_deployment_tag| %>
+
 - name: cf-deployment-<%= cf_deployment_tag %>
   type: git
   check_every: 5m
@@ -35,7 +40,7 @@ resources:
     uri: ((cf-deployment-repo))
     branch: ((cf-deployment-branch))
     tag_filter: <%= cf_deployment_tag %>
-<% end %>
+
 - name: s3.fissile-linux
   type: s3
   check_every: 10m
@@ -62,7 +67,6 @@ resources:
     secret_access_key: ((s3.secretKey))
 
 jobs:
-<% cf_deployment_tags.each do |cf_deployment_tag| %>
   - name: prepare-build-<%= cf_deployment_tag %>
     plan:
     - in_parallel:
@@ -126,4 +130,3 @@ jobs:
           file: s3.kubecf-sources/*
           acl: public-read
   <% end %>
-<% end %>

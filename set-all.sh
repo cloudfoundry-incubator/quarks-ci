@@ -16,9 +16,12 @@ fly:pipeline() {
   popd
 }
 
-fly:pipeline release-images-cf-deployment release-images-cf-deployment
 fly:pipeline quarks-gora quarks-gora
 fly:pipeline images quarks-images
+fly:pipeline release-images release-image
 
-# unsused?
-# fly:pipeline release-images
+#for v in v12.36.0 v13.9.0 v13.17.0 v15.1.0 v16.3.0; do
+for v in v15.1.0 v16.3.0; do
+  export CF_VERSION="$v"
+  fly:pipeline release-images-cf-deployment release-images-"$v"
+done
