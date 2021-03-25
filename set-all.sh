@@ -18,7 +18,7 @@ fly:pipeline() {
 
 fly:pipeline quarks-gora quarks-gora
 fly:pipeline images quarks-images
-fly:pipeline release-images release-image
+fly:pipeline release-images release-images
 
 #for v in v12.36.0 v13.9.0 v13.17.0 v15.1.0 v16.3.0; do
 for v in v15.1.0 v16.3.0; do
