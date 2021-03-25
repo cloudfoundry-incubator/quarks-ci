@@ -91,6 +91,7 @@ jobs:
   %>
   - name: build-<%= cf_deployment_tag %>-<%= release %>
     serial_groups: [ <%= serial_group %> ]
+    serial: true
     plan:
     - in_parallel:
       - get: ci

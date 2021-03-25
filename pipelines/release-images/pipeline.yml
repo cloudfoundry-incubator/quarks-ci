@@ -1,4 +1,6 @@
 <%
+parallel_builds = 5
+
 cloudfoundry_releases = %w(
   binary-buildpack
   dotnet-core-buildpack
@@ -136,8 +138,12 @@ resources:
     secret_access_key: ((s3.secretKey))
 
 jobs:
-<% (releases + s3_releases).each do |release| %>
+<% (releases + s3_releases).each_with_index do |release, i|
+    serial_group = "serial_group_#{i % parallel_builds}"
+%>
 - name: build-<%= release[:name] %>
+  serial: true
+  serial_groups: [ <%= serial_group %> ]
   plan:
   - in_parallel:
     - get: ci
