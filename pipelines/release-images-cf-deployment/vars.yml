@@ -6,6 +6,7 @@ cf-deployment-repo: https://github.com/cloudfoundry/cf-deployment
 cf-deployment-branch: main
 cf-deployment-yaml: cf-deployment/cf-deployment.yml
 fissile-linux-s3-bucket: cf-opensusefs2
+fissile-linux-s3-region: us-west-2
 stemcell-os: sle15
 stemcell-repository: splatform/fissile-stemcell-sle
 stemcell-versions-s3-bucket: cf-operators

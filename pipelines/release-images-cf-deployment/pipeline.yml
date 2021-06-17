@@ -47,6 +47,9 @@ resources:
   source:
     bucket: ((fissile-linux-s3-bucket))
     private: true
+    access_key_id: ((s3.accessKey))
+    secret_access_key: ((s3.secretKey))
+    region_name: ((fissile-linux-s3-region))
     regexp: fissile/develop/fissile-(.*)\.tgz
 - name: s3.fissile-stemcell-version
   type: s3

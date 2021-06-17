@@ -2,6 +2,7 @@ ci-repo: https://github.com/cloudfoundry-incubator/quarks-ci.git
 ci-branch: master
 docker-organization: cfcontainerization
 s3-bucket: cf-opensusefs2
+s3-region: us-west-2
 versions-s3-bucket: cf-operators
 stemcell-repository: splatform/fissile-stemcell-sle
 kubecf-sources-s3-bucket: kubecf-sources

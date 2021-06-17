@@ -17,7 +17,7 @@ resources:
 jobs:
 - name: base-ci
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
       trigger: true
   - put: docker.base-ci

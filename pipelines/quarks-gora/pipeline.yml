@@ -1,3 +1,4 @@
+---
 resources:
 - name: ci
   type: git
@@ -43,10 +44,10 @@ resources:
 jobs:
 - name: build-quarks-gora-release-release
   plan:
-  - aggregate:
+  - in_parallel:
     - get: gora
     - get: ci
-  - aggregate:
+  - in_parallel:
     - get: s3.fissile-stemcell-version
     - get: s3.fissile-linux
   - do:
@@ -73,9 +74,9 @@ jobs:
 
 - name: build-quarks-gora-release-image
   plan:
-  - aggregate:
+  - in_parallel:
     - get: ci
-  - aggregate:
+  - in_parallel:
     - get: s3.final-release-quarks-gora-release
       passed: [build-quarks-gora-release-release]
       trigger: true

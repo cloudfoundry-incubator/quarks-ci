@@ -101,3 +101,18 @@ helm pull gomods/athens-proxy
 vi athens-proxy/templates/jaeger-deploy.yaml
 helm install athens athens-proxy --create-namespace --namespace athens --set service.type=NodePort
 ```
+
+
+### Images Used By Pipelines
+
+Base-CI image built by `pipelines/images`:
+* cfcontainerization/base-ci
+
+Also for building the quarks-gora release, which is only used in tests:
+* splatform/bosh-cli
+* splatform/fissile-stemcell-sle
+
+Finally the pipelines that use fissile to convert BOSH releases into Docker images:
+* cfcontainerization/base-ci
+* splatform/fissile-stemcell-sle
+* havener/build-environment
